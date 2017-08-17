@@ -1,0 +1,90 @@
+---
+title: Capitalized Title Here
+author:
+  - name: Author One
+    affiliation: Affiliation
+    address:
+    - line 1
+    - line 2
+    email:  author1@work
+  - name: Author Two
+    affiliation: Affiliation
+    address:
+    - line 1
+    - line 2
+    email:  author2@work
+  - name: Author Three
+    affiliation: Affiliation
+    address:
+    - line 1
+    - line 2
+    email:  author3@work
+abstract: >
+  An abstract of less than 150 words.
+preamble: >
+  % Any extra latex you need in the preamble
+output: rticles::rjournal_article
+---
+
+## TODO:
+
+* Review Q-Q plots and P-P plots, including other arrangements, and what is implemented in other packages
+* Write about what the package implements
+* Give examples
+    + Heike: BRFSS example
+* Intro/conclusion
+* Abstract
+
+
+## Introduction
+
+Univariate distributional assessment is a common thread throughout statistical analyses during both the exploratory and confirmatory stages. When we begin exploring a new data set we often consider the distribution of individual variables before moving on to explore multivariate relationships. After a model has been fit to a data set, we must assess whether the distributional assumptions made were reasonable, and if they are not we then must understand the impact this has on the conclusions. Graphics provide are arguably the most common way to carry out these univariate assessments. While there are many graphics that can be used for distribution exploration and assessment, one of the most common graphics used in distribution...
+
+
+From GSoC proposal:
+
+Quantile-quantile (Q-Q) plots are a powerful ways of visually diagnosing distributional assumptions of a random variable. Help with this assessment is provided by a line through points in the first and third quartiles of the empirical and theoretical distributions (commonly known as qqline) as well as by a confidence band or pointwise intervals around the line. It has been shown by Aldor-Noiman et al (2013) and Loy et al (2016) that both the choice of the interval around the line and the design of the Q-Q plot, such as a rotation by 90 degree, have an impact on our ability to use Q-Q plots. In the ggplot2 framework (Wickham, 2009 and 2016) quantile-quantile plots are supported by the stat_qq and the geom geom_qq, which is connected to drawing the points for the quantile-quantile- plot. We are proposing to add extensions to the ggplot2 framework for adding a Q-Q line as well as support for bands around this line. Since ggplot2 version 2.0.0 the way that geoms are support has been completely overhauled, which makes extensions much easier to write.
+
+
+Q-Q plots have been implemented in various forms in R, starting with qqplot and qqline in the base package. However, the functionality within the ggplot2 package is restricted to stat_qq and geom_qq, both of which are only concerned with the placement of points in a Q-Q plot. By providing functionality for the drawing of the Q-Q line and a confidence region in form of a geom additional ggplot2 tools such as facetting and layering are made available to the analyst.
+
+
+
+References to incorporate:
+
+\citet{Wilk1968-ii} for general Q-Q and P-P plot reference
+
+\citet{Aldor-Noiman2013-xw} for TS bands
+
+\citet{Loy2016-fg} for detrended Q-Q plots, etc.
+
+Previously implemented Q-Q or P-P plots:
+
+* `qqnorm` and `qqline` functions in **base** \citep{R}
+* `qqmath` in **lattice** \citep{lattice}
+* `qqPlot` in **car** \citep{car}
+* `probplot` in **e1071** \citep{e1071}
+* `geom_qq` and `geom_qq_line` in **ggplot2** \citep{ggplot2}
+
+
+## Section title in sentence case
+
+
+
+## Examples
+
+In this section, we demonstrate the capabilities of the **qqplotr** package.
+
+```{r message=FALSE}
+library(qqplotr)
+```
+
+
+## Summary
+
+This file is only a basic article template. For full details of _The R Journal_ style and information on how to prepare your article for submission, see the [Instructions for Authors](https://journal.r-project.org/share/author-guide.pdf).
+\bibliography{RJreferences}
+
+## Acknowledgements
+
+Mention GSoC here...

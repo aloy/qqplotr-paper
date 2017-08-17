@@ -1,0 +1,135 @@
+% !TeX root = RJwrapper.tex
+\title{Capitalized Title Here}
+\author{by Author One, Author Two, Author Three}
+
+\maketitle
+
+\abstract{%
+An abstract of less than 150 words.
+}
+
+\subsection{TODO:}\label{todo}
+
+\begin{itemize}
+\tightlist
+\item
+  Review Q-Q plots and P-P plots, including other arrangements, and what
+  is implemented in other packages
+\item
+  Write about what the package implements
+\item
+  Give examples
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Heike: BRFSS example
+  \end{itemize}
+\item
+  Intro/conclusion
+\item
+  Abstract
+\end{itemize}
+
+\subsection{Introduction}\label{introduction}
+
+From GSoC proposal:
+
+Quantile-quantile (Q-Q) plots are a powerful ways of visually diagnosing
+distributional assumptions of a random variable. Help with this
+assessment is provided by a line through points in the first and third
+quartiles of the empirical and theoretical distributions (commonly known
+as qqline) as well as by a confidence band or pointwise intervals around
+the line. It has been shown by Aldor-Noiman et al (2013) and Loy et al
+(2016) that both the choice of the interval around the line and the
+design of the Q-Q plot, such as a rotation by 90 degree, have an impact
+on our ability to use Q-Q plots. In the ggplot2 framework (Wickham, 2009
+and 2016) quantile-quantile plots are supported by the stat\_qq and the
+geom geom\_qq, which is connected to drawing the points for the
+quantile-quantile- plot. We are proposing to add extensions to the
+ggplot2 framework for adding a Q-Q line as well as support for bands
+around this line. Since ggplot2 version 2.0.0 the way that geoms are
+support has been completely overhauled, which makes extensions much
+easier to write.
+
+Q-Q plots have been implemented in various forms in R, starting with
+qqplot and qqline in the base package. However, the functionality within
+the ggplot2 package is restricted to stat\_qq and geom\_qq, both of
+which are only concerned with the placement of points in a Q-Q plot. By
+providing functionality for the drawing of the Q-Q line and a confidence
+region in form of a geom additional ggplot2 tools such as facetting and
+layering are made available to the analyst.
+
+References to incorporate:
+
+\citet{Wilk1968-ii} for general Q-Q and P-P plot reference
+
+\citet{Aldor-Noiman2013-xw} for TS bands
+
+\citet{Loy2016-fg} for detrended Q-Q plots, etc.
+
+Previously implemented Q-Q or P-P plots:
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{qqnorm} and \texttt{qqline} functions in \textbf{base}
+  \citep{R}
+\item
+  \texttt{qqmath} in \textbf{lattice} \citep{lattice}
+\item
+  \texttt{qqPlot} in \textbf{car} \citep{car}
+\item
+  \texttt{probplot} in \textbf{e1071} \citep{e1071}
+\item
+  \texttt{geom\_qq} and \texttt{geom\_qq\_line} in \textbf{ggplot2}
+  \citep{ggplot2}
+\end{itemize}
+
+\subsection{Section title in sentence
+case}\label{section-title-in-sentence-case}
+
+\subsection{Examples}\label{examples}
+
+In this section, we demonstrate the capabilities of the \textbf{qqplotr}
+package.
+
+\begin{Schunk}
+\begin{Sinput}
+library(qqplotr)
+\end{Sinput}
+\end{Schunk}
+
+\subsection{Summary}\label{summary}
+
+This file is only a basic article template. For full details of
+\emph{The R Journal} style and information on how to prepare your
+article for submission, see the
+\href{https://journal.r-project.org/share/author-guide.pdf}{Instructions
+for Authors}. \bibliography{RJreferences}
+
+\subsection{Acknowledgements}\label{acknowledgements}
+
+Mention GSoC here\ldots{}
+
+\address{%
+Author One\\
+Affiliation\\
+line 1\\ line 2\\
+}
+\href{mailto:author1@work}{\nolinkurl{author1@work}}
+
+\address{%
+Author Two\\
+Affiliation\\
+line 1\\ line 2\\
+}
+\href{mailto:author2@work}{\nolinkurl{author2@work}}
+
+\address{%
+Author Three\\
+Affiliation\\
+line 1\\ line 2\\
+}
+\href{mailto:author3@work}{\nolinkurl{author3@work}}
+
