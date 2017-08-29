@@ -199,7 +199,7 @@ p2 <- sub %>% mutate(
 library(gridExtra)  
 grid.arrange(p1, p2, ncol = 2)
 ```
-```{r, echo=FALSE, fig.width = 4, fig.height = 3.5, fig.cap = "Sample (200 men and 200 women) of weights. Unlike people's height, weight seems to be heavily right skewed with some additional outliers on the extreme left.", out.width='\\textwidth', fig.align="center", message=FALSE, warning = FALSE}
+```{r, echo=FALSE, fig.width = 4, fig.height = 3.5, fig.cap = "Sample (200 men and 200 women) of weights. Unlike people's height, weight seems to be heavily right skewed with some additional outliers on the extreme left.", out.width='.5\\textwidth', fig.align="center", message=FALSE, warning = FALSE}
 p3 <- sub %>% ggplot(aes(sample = WTKG3/100, colour=Gender, fill=Gender)) + 
   stat_qq_band(alpha = 0.6) + stat_qq_line() + stat_qq_point() +
   scale_fill_brewer(palette="Set1") +
