@@ -199,7 +199,7 @@ p2 <- sub %>% mutate(
 library(gridExtra)  
 grid.arrange(p1, p2, ncol = 2)
 ```
-```{r, echo=FALSE, fig.width = 8, fig.height = 3.5, fig.cap = "Sample (200 men and 200 women) of weights (raw data, left; jittered data, right). Unlike people's height, weight seems to have heavier tails than a normal distribution. Jittereing (on the right) emphasizes that the distribution of weight is heavily right skewed.", out.width='\\textwidth', fig.align="center", message=FALSE, warning = FALSE}
+```{r, echo=FALSE, fig.width = 4, fig.height = 3.5, fig.cap = "Sample (200 men and 200 women) of weights. Unlike people's height, weight seems to be heavily right skewed with some additional outliers on the extreme left.", out.width='\\textwidth', fig.align="center", message=FALSE, warning = FALSE}
 p3 <- sub %>% ggplot(aes(sample = WTKG3, colour=Gender, fill=Gender)) + 
   stat_qq_band(alpha = 0.6) + stat_qq_line() + stat_qq_point() +
   scale_fill_brewer(palette="Set1") +
@@ -220,8 +220,8 @@ p4 <- sub %>% mutate(
   theme_bw() + 
   theme(legend.position = c(0.8, 0.2), aspect.ratio=1)
   
-library(gridExtra)  
-grid.arrange(p3, p4, ncol = 2)
+# don't need the jittering
+p3
 ```
 ## Summary
 
