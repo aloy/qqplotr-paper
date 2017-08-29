@@ -163,8 +163,27 @@ In this section, we demonstrate the capabilities of the **qqplotr** package.
 library(qqplotr)
 ```
 
+### BRFSS example
 
+The Center for Disease Control and Prevention runs an annual telephone survey, the Behavioral Risk Factor Surveillance System (BRFSS), to keep track of the US populations' 'health-related risk behaviors, chronic health conditions, and use of preventive services'.  
+Close to half a million interviews are conducted each year. Here, we are focussing on the 2012 responses for Iowa. 7166 responses were gathered across 359 questions and derived variables. Among these, are people's height and weight, which we are going to assess using a normal assumption:
 
+```{r, echo=FALSE, fig.width = 3.5, fig.height = 3, fig.caption = "Sample (500 men and 500 women) of raw heights. The distribution is dominated by the discreteness of the data.", message=FALSE, warning = FALSE}
+library(tidyverse)
+iowa <- readRDS("data/brfss-iowa.rda")
+sub <- iowa %>% nest(-SEX) %>% mutate(
+  data = data %>% purrr::map(.f = function(x) sample_n(x, size = 500))  
+) %>% unnest(data) %>% select(SEX, WTKG3, HTIN4) %>%
+  mutate(Gender = c("Male", "Female")[SEX])
+sub %>% ggplot(aes(sample = HTIN4, colour=Gender, fill=Gender)) + 
+  stat_qq_band(alpha = 0.6) + stat_qq_line() + stat_qq_point() +
+  scale_fill_brewer(palette="Set1") +
+  scale_colour_brewer(palette = "Set1") +
+  xlab("Sample quantiles") +
+  ylab("Height (in inch)") +
+  theme_bw()
+  
+```
 
 ## Summary
 
