@@ -243,29 +243,29 @@ p4 <- sub %>% ggplot(aes(sample = WTKG3/100, colour=Gender, fill=Gender)) +
   theme(legend.position = c(0.2, 0.8), aspect.ratio=1)
 
 
-  layers <- sub %>% nest(-Gender) %>% mutate(
+layers <- sub %>% nest(-Gender) %>% mutate(
   band = data %>% purrr::map(.f = function(d) {
-    mlog <- mean(d$WTKG3/100, na.rm=TRUE)
-    sdlog <- sd(d$WTKG3/100, na.rm=TRUE)
+    mlog <- mean(log(d$WTKG3/100), na.rm=TRUE)
+    sdlog <- sd(log(d$WTKG3/100), na.rm=TRUE)
     d$Gender <- c("Male", "Female")[d$SEX[1]]
     d %>% geom_qq_band(alpha=0.6, distribution="lnorm", 
-                       meanlog = mlog, sdlog = sdlog, 
+                       dparams=list(meanlog = mlog, sdlog = sdlog),
                        aes(colour = Gender, fill = Gender))
   }),
   line = data %>% purrr::map(.f = function(d) {
-    mlog <- mean(d$WTKG3/100, na.rm=TRUE)
-    sdlog <- sd(d$WTKG3/100, na.rm=TRUE)
+    mlog <- mean(log(d$WTKG3/100), na.rm=TRUE)
+    sdlog <- sd(log(d$WTKG3/100), na.rm=TRUE)
     d$Gender <- c("Male", "Female")[d$SEX[1]]
     d %>% stat_qq_line(alpha=0.6, distribution="lnorm", 
-                       meanlog = mlog, sdlog = sdlog,
+                      dparams=list(meanlog = mlog, sdlog = sdlog),
                       aes(colour = Gender))
   }),
   points = data %>% purrr::map(.f = function(d) {
-    mlog <- mean(d$WTKG3/100, na.rm=TRUE)
-    sdlog <- sd(d$WTKG3/100, na.rm=TRUE)
+    mlog <- mean(log(d$WTKG3/100), na.rm=TRUE)
+    sdlog <- sd(log(d$WTKG3/100), na.rm=TRUE)
     d$Gender <- c("Male", "Female")[d$SEX[1]]
-    d %>% stat_qq_point(distribution="lnorm", 
-                       meanlog = mlog, sdlog = sdlog,
+    d %>% qqplotr::stat_qq_point(alpha=0.6, distribution="lnorm", 
+                      dparams=list(meanlog = mlog, sdlog = sdlog),
                       aes(colour = Gender))
   })
 )
