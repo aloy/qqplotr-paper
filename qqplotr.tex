@@ -71,15 +71,6 @@ different slope and intercept, as seen in Figure \ref{fig:qq}. P-P plots
 are sensitive to linear transformations.
 
 \begin{Schunk}
-\begin{Soutput}
-#> 
-#> Attaching package: 'qqplotr'
-\end{Soutput}
-\begin{Soutput}
-#> The following objects are masked from 'package:ggplot2':
-#> 
-#>     stat_qq_line, StatQqLine
-\end{Soutput}
 \begin{figure}
 
 {\centering \includegraphics[width=.45\linewidth]{qqplotr_files/figure-latex/unnamed-chunk-1-1} \includegraphics[width=.45\linewidth]{qqplotr_files/figure-latex/unnamed-chunk-1-2} 
@@ -204,7 +195,18 @@ assumption:
 
 }
 
-\caption[Sample (200 men and 200 women) of weights]{Sample (200 men and 200 women) of weights. Unlike people's height, weight seems to be heavily right skewed with some additional outliers on the extreme left. (left plot), On the right,  }\label{fig:unnamed-chunk-6}
+\caption[Sample (200 men and 200 women) of weights]{Sample (200 men and 200 women) of weights. Unlike people's height, weight seems to be heavily right skewed with some additional outliers on the extreme left. (left plot), on the right, weight was log-transfomed before its distribution is compared to a theoretical normal. }\label{fig:unnamed-chunk-6}
+\end{figure}
+\end{Schunk}
+
+\begin{Schunk}
+\begin{figure}
+
+{\centering \includegraphics[width=\textwidth]{qqplotr_files/figure-latex/unnamed-chunk-7-1} 
+
+}
+
+\caption[Sample (200 men and 200 women) of weights]{Sample (200 men and 200 women) of weights. On the left, the theoretical distribution  is changed to a log normal. On the right, we additionally estimate shift and scale parameters for each of the genders separately before comparing distributions to a log-normal. XXX need to fix alpha}\label{fig:unnamed-chunk-7}
 \end{figure}
 \end{Schunk}
 
