@@ -173,7 +173,7 @@ library(tidyverse)
 iowa <- readRDS("data/brfss-iowa.rda")
 sub <- iowa %>% nest(-SEX) %>% mutate(
   data = data %>% purrr::map(.f = function(x) sample_n(x, size = 200))  
-) %>% unnest(data) %>% select(SEX, WTKG3, HTIN4) %>%
+) %>% unnest(data) %>% dplyr::select(SEX, WTKG3, HTIN4) %>%
   mutate(Gender = c("Male", "Female")[SEX])
 
 p1 <- sub %>% ggplot(aes(sample = HTIN4, colour=Gender, fill=Gender)) + 
@@ -232,7 +232,7 @@ grid.arrange(p3, p5, ncol = 2)
 
 
 p4 <- sub %>% ggplot(aes(sample = WTKG3/100, colour=Gender, fill=Gender)) + 
-  stat_qq_band(distribution="lnorm", alpha = 0.6) + 
+  stat_qq_band(distribution="lnorm", alpha = 0.3) + 
   stat_qq_line(distribution="lnorm") + 
   stat_qq_point(distribution="lnorm") +
   scale_fill_brewer(palette="Set1") +
@@ -248,29 +248,29 @@ layers <- sub %>% nest(-Gender) %>% mutate(
     mlog <- mean(log(d$WTKG3/100), na.rm=TRUE)
     sdlog <- sd(log(d$WTKG3/100), na.rm=TRUE)
     d$Gender <- c("Male", "Female")[d$SEX[1]]
-    d %>% geom_qq_band(alpha=0.6, distribution="lnorm", 
+    geom_qq_band(alpha=0.6, distribution="lnorm", 
                        dparams=list(meanlog = mlog, sdlog = sdlog),
-                       aes(colour = Gender, fill = Gender))
+                       aes(colour = Gender, fill = Gender), data = d)
   }),
   line = data %>% purrr::map(.f = function(d) {
     mlog <- mean(log(d$WTKG3/100), na.rm=TRUE)
     sdlog <- sd(log(d$WTKG3/100), na.rm=TRUE)
     d$Gender <- c("Male", "Female")[d$SEX[1]]
-    d %>% stat_qq_line(alpha=0.6, distribution="lnorm", 
+    stat_qq_line(alpha=0.6, distribution="lnorm", 
                       dparams=list(meanlog = mlog, sdlog = sdlog),
-                      aes(colour = Gender))
+                      aes(colour = Gender, sample=WTKG3/100), data = d)
   }),
   points = data %>% purrr::map(.f = function(d) {
     mlog <- mean(log(d$WTKG3/100), na.rm=TRUE)
     sdlog <- sd(log(d$WTKG3/100), na.rm=TRUE)
     d$Gender <- c("Male", "Female")[d$SEX[1]]
-    d %>% qqplotr::stat_qq_point(alpha=0.6, distribution="lnorm", 
+    qqplotr::stat_qq_point(alpha=0.6, distribution="lnorm", 
                       dparams=list(meanlog = mlog, sdlog = sdlog),
-                      aes(colour = Gender))
+                      aes(colour = Gender, sample=WTKG3/100), data = d)
   })
 )
 
-p6 <- sub %>% ggplot(aes(sample = WTKG3/100, colour = Gender, fill = Gender)) + 
+p6 <- ggplot(aes(sample = WTKG3/100, colour = Gender, fill = Gender), data = data.frame()) + 
   layers$band[[1]] + layers$band[[2]] +
   layers$line[[1]] + layers$line[[2]] +
   layers$point[[1]] + layers$point[[2]] +
