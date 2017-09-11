@@ -237,7 +237,7 @@ On the right, parameters for the log-normal distribution are fit separately. The
 ```{r weights-log, echo=FALSE, fig.width = 8, fig.height = 3.5, fig.cap = "Sample (200 men and 200 women) of weights. On the left, the theoretical distribution  is changed to a log normal. On the right, we additionally estimate shift and scale parameters for each of the genders separately before comparing distributions to a log-normal. XXX need to fix alpha", out.width='\\textwidth', fig.align="center", message=FALSE, warning = FALSE}
 
 
-mlog <- mean(log(sub$WTKG3/100), na.rm=TRUE)
+mlog <- median(log(sub$WTKG3/100), na.rm=TRUE)
 sdlog <- sd(log(sub$WTKG3/100), na.rm=TRUE)
 
 p4 <- sub %>% ggplot(aes(sample = WTKG3/100, colour=Gender, fill=Gender)) + 
@@ -254,26 +254,26 @@ p4 <- sub %>% ggplot(aes(sample = WTKG3/100, colour=Gender, fill=Gender)) +
 
 layers <- sub %>% nest(-Gender) %>% mutate(
   band = data %>% purrr::map(.f = function(d) {
-    mlog <- mean(log(d$WTKG3/100), na.rm=TRUE)
+    mlog <- median(log(d$WTKG3/100), na.rm=TRUE)
     sdlog <- sd(log(d$WTKG3/100), na.rm=TRUE)
     d$Gender <- c("Male", "Female")[d$SEX[1]]
-    geom_qq_band(alpha=0.6, distribution="lnorm", 
+    geom_qq_band(alpha=0.4, distribution="lnorm", 
                        dparams=list(meanlog = mlog, sdlog = sdlog),
                        aes(colour = Gender, fill = Gender), data = d)
   }),
   line = data %>% purrr::map(.f = function(d) {
-    mlog <- mean(log(d$WTKG3/100), na.rm=TRUE)
+    mlog <- median(log(d$WTKG3/100), na.rm=TRUE)
     sdlog <- sd(log(d$WTKG3/100), na.rm=TRUE)
     d$Gender <- c("Male", "Female")[d$SEX[1]]
-    stat_qq_line(alpha=0.6, distribution="lnorm", 
+    stat_qq_line(distribution="lnorm", 
                       dparams=list(meanlog = mlog, sdlog = sdlog),
                       aes(colour = Gender, sample=WTKG3/100), data = d)
   }),
   points = data %>% purrr::map(.f = function(d) {
-    mlog <- mean(log(d$WTKG3/100), na.rm=TRUE)
+    mlog <- median(log(d$WTKG3/100), na.rm=TRUE)
     sdlog <- sd(log(d$WTKG3/100), na.rm=TRUE)
     d$Gender <- c("Male", "Female")[d$SEX[1]]
-    qqplotr::stat_qq_point(alpha=0.6, distribution="lnorm", 
+    qqplotr::stat_qq_point(alpha=1, distribution="lnorm", 
                       dparams=list(meanlog = mlog, sdlog = sdlog),
                       aes(colour = Gender, sample=WTKG3/100), data = d)
   })
@@ -282,7 +282,7 @@ layers <- sub %>% nest(-Gender) %>% mutate(
 p6 <- ggplot(aes(sample = WTKG3/100, colour = Gender, fill = Gender), data = data.frame()) + 
   layers$band[[1]] + layers$band[[2]] +
   layers$line[[1]] + layers$line[[2]] +
-  layers$point[[1]] + layers$point[[2]] +
+  layers$points[[1]] + layers$points[[2]] +
   theme_bw() +
   scale_fill_brewer(palette="Set1") +
   scale_colour_brewer(palette = "Set1") +
