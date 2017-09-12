@@ -199,7 +199,7 @@ p2 <- sub %>% mutate(
 library(gridExtra)  
 grid.arrange(p1, p2, ncol = 2)
 ```
-```{r, echo=FALSE, fig.width = 8, fig.height = 3.5, fig.cap = "Sample (200 men and 200 women) of weights. Unlike people's height, weight seems to be heavily right skewed with some additional outliers on the extreme left. (left plot), On the right, the theoretdistribution  ", out.width='\\textwidth', fig.align="center", message=FALSE, warning = FALSE}
+```{r, echo=FALSE, fig.width = 8, fig.height = 3.5, fig.cap = "Sample (200 men and 200 women) of weights. Unlike people's height, weight seems to be heavily right skewed with some additional outliers on the extreme left. (left plot), on the right, weight was log-transfomed before its distribution is compared to a theoretical normal. ", out.width='\\textwidth', fig.align="center", message=FALSE, warning = FALSE}
 p3 <- sub %>% ggplot(aes(sample = WTKG3/100, colour=Gender, fill=Gender)) + 
   stat_qq_band(alpha = 0.6) + stat_qq_line() + stat_qq_point() +
   scale_fill_brewer(palette="Set1") +
@@ -209,32 +209,120 @@ p3 <- sub %>% ggplot(aes(sample = WTKG3/100, colour=Gender, fill=Gender)) +
   coord_equal() +
   theme_bw() +
   theme(legend.position = c(0.8, 0.2), aspect.ratio = 1)
-p4 <- sub %>% ggplot(aes(sample = WTKG3, colour=Gender, fill=Gender)) + 
-  stat_qq_band(alpha = 0.6, distribution="lnorm") + 
-#  stat_qq_line(distribution="lnorm") + 
+
+p5 <- sub %>% 
+  ggplot(aes(sample = log(WTKG3/100), colour=Gender, fill=Gender)) + 
+  stat_qq_band(alpha = 0.6) + stat_qq_line() + stat_qq_point() +
+  scale_fill_brewer(palette="Set1") +
+  scale_colour_brewer(palette = "Set1") +
+  xlab("Sample quantiles") +
+  ylab("log Weight (in kg)") +
+  coord_equal() +
+  theme_bw() +
+  theme(legend.position = c(0.8, 0.2), aspect.ratio = 1)
+
+
+
+# don't need the jittering
+grid.arrange(p3, p5, ncol = 2)
+
+```
+
+```{r, echo=FALSE, fig.width = 8, fig.height = 3.5, fig.cap = "Sample (200 men and 200 women) of weights. On the left, the theoretical distribution  is changed to a log normal. On the right, we additionally estimate shift and scale parameters for each of the genders separately before comparing distributions to a log-normal. XXX need to fix alpha", out.width='\\textwidth', fig.align="center", message=FALSE, warning = FALSE}
+
+
+p4 <- sub %>% ggplot(aes(sample = WTKG3/100, colour=Gender, fill=Gender)) + 
+  stat_qq_band(distribution="lnorm", alpha = 0.6) + 
+  stat_qq_line(distribution="lnorm") + 
   stat_qq_point(distribution="lnorm") +
   scale_fill_brewer(palette="Set1") +
   scale_colour_brewer(palette = "Set1") +
   xlab("Sample quantiles") +
-  ylab("Weight (in inch)") +
+  ylab("Weight (in kg)") +
   theme_bw() + 
   theme(legend.position = c(0.2, 0.8), aspect.ratio=1)
 
-p5 <- sub %>% ggplot(aes(sample = log(WTKG3), colour=Gender, fill=Gender)) + 
-  stat_qq_band(alpha = 0.6) + 
-  stat_qq_line() + 
-  stat_qq_point() +
+
+layers <- sub %>% nest(-Gender) %>% mutate(
+  band = data %>% purrr::map(.f = function(d) {
+    mlog <- mean(log(d$WTKG3/100), na.rm=TRUE)
+    sdlog <- sd(log(d$WTKG3/100), na.rm=TRUE)
+    d$Gender <- c("Male", "Female")[d$SEX[1]]
+    d %>% geom_qq_band(alpha=0.6, distribution="lnorm", 
+                       dparams=list(meanlog = mlog, sdlog = sdlog),
+                       aes(colour = Gender, fill = Gender))
+  }),
+  line = data %>% purrr::map(.f = function(d) {
+    mlog <- mean(log(d$WTKG3/100), na.rm=TRUE)
+    sdlog <- sd(log(d$WTKG3/100), na.rm=TRUE)
+    d$Gender <- c("Male", "Female")[d$SEX[1]]
+    d %>% stat_qq_line(alpha=0.6, distribution="lnorm", 
+                      dparams=list(meanlog = mlog, sdlog = sdlog),
+                      aes(colour = Gender))
+  }),
+  points = data %>% purrr::map(.f = function(d) {
+    mlog <- mean(log(d$WTKG3/100), na.rm=TRUE)
+    sdlog <- sd(log(d$WTKG3/100), na.rm=TRUE)
+    d$Gender <- c("Male", "Female")[d$SEX[1]]
+    d %>% qqplotr::stat_qq_point(alpha=0.6, distribution="lnorm", 
+                      dparams=list(meanlog = mlog, sdlog = sdlog),
+                      aes(colour = Gender))
+  })
+)
+
+p6 <- sub %>% ggplot(aes(sample = WTKG3/100, colour = Gender, fill = Gender)) + 
+  layers$band[[1]] + layers$band[[2]] +
+  layers$line[[1]] + layers$line[[2]] +
+  layers$point[[1]] + layers$point[[2]] +
+  theme_bw() +
   scale_fill_brewer(palette="Set1") +
   scale_colour_brewer(palette = "Set1") +
-  xlab("Sample quantiles") +
-  ylab("log of Weight (in inch)") +
-  theme_bw() + 
-  theme(legend.position = c(0.2, 0.8), aspect.ratio=1)
-    
-# don't need the jittering
-grid.arrange(p4, p5, ncol = 2)
+  theme(legend.position=c(0.2, 0.8))
+  
+grid.arrange(p4, p6, ncol = 2)
 
 ```
+
+
+
+### Using a non-standard distribution
+
+ADAM: PULL DATA OFF EXTERNAL HARD DRIVE, EXPLAIN THE EXAMPLE...
+
+The "standard" distributions provided in `pkg{stats}` do not include a left-skewed distribution, which is clearly needed to model the long jump heights. To handle this type of situation, \pkg{qqplotr} let's users create probability plots for all of the  distributions defined in the \pkg{stats} package as well as other sources, so long as the distributions are defined following the conventions laid out in the \pkg{stats} package. Specfically, for some distribution there must be density/mass (`d` prefix), CDF (`p` prefix), quantile (`q` prefix), and simulation (`r` prefix) functions. 
+
+To illustrate this process we will consider the smallest exreme value (SEV) distribution. This is a left-skewed distribution, which is a key feature needed in order to model the long jump results. Below, we define the suite of distribution functions needed to utilize the SEV distribution.
+
+
+```{r}
+# CDF
+psev <- function(q, mu, sigma) {
+    z <- (x - mu) / sigma
+    1 - exp(-exp(z))
+}
+
+# PDF
+dsev <- function(x, mu, sigma) {
+  z <- (x - mu) / sigma
+  (1 / sigma) * exp(z - exp(z))
+}
+
+# Quantile function
+qsev <- function(p, mu, sigma) {
+  mu + log(-log(1 - p)) * sigma
+}
+
+# Simulation function
+rsev <- function(n, mu, sigma) {
+  qsev(runif(n))
+}
+```
+
+
+
+
+
+
 ## Summary
 
 Write this section once the rest of the paper is done.

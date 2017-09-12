@@ -195,8 +195,62 @@ assumption:
 
 }
 
-\caption[Sample (200 men and 200 women) of weights]{Sample (200 men and 200 women) of weights. Unlike people's height, weight seems to be heavily right skewed with some additional outliers on the extreme left. (left plot), On the right, the theoretdistribution  }\label{fig:unnamed-chunk-6}
+\caption[Sample (200 men and 200 women) of weights]{Sample (200 men and 200 women) of weights. Unlike people's height, weight seems to be heavily right skewed with some additional outliers on the extreme left. (left plot), on the right, weight was log-transfomed before its distribution is compared to a theoretical normal. }\label{fig:unnamed-chunk-6}
 \end{figure}
+\end{Schunk}
+
+\begin{Schunk}
+\begin{figure}
+
+{\centering \includegraphics[width=\textwidth]{qqplotr_files/figure-latex/unnamed-chunk-7-1} 
+
+}
+
+\caption[Sample (200 men and 200 women) of weights]{Sample (200 men and 200 women) of weights. On the left, the theoretical distribution  is changed to a log normal. On the right, we additionally estimate shift and scale parameters for each of the genders separately before comparing distributions to a log-normal. XXX need to fix alpha}\label{fig:unnamed-chunk-7}
+\end{figure}
+\end{Schunk}
+
+\subsubsection{Using a non-standard
+distribution}\label{using-a-non-standard-distribution}
+
+ADAM: PULL DATA OFF EXTERNAL HARD DRIVE, EXPLAIN THE EXAMPLE\ldots{}
+
+The ``standard'' distributions provided in \texttt{pkg\{stats\}} do not
+include a left-skewed distribution, which is clearly needed to model the
+long jump heights. To handle this type of situation, \pkg{qqplotr} let's
+users create probability plots for all of the distributions defined in
+the \pkg{stats} package as well as other sources, so long as the
+distributions are defined following the conventions laid out in the
+\pkg{stats} package. Specfically, for some distribution there must be
+density/mass (\texttt{d} prefix), CDF (\texttt{p} prefix), quantile
+(\texttt{q} prefix), and simulation (\texttt{r} prefix) functions.
+
+To illustrate this process we will consider the smallest exreme value
+(SEV) distribution. This is a left-skewed distribution, which is a key
+feature needed in order to model the long jump results. Below, we define
+the suite of distribution functions needed to utilize the SEV
+distribution.
+
+\begin{Schunk}
+\begin{Sinput}
+psev <- function(q, mu, sigma) {
+    z <- (x - mu) / sigma
+    1 - exp(-exp(z))
+}
+
+dsev <- function(x, mu, sigma) {
+  z <- (x - mu) / sigma
+  (1 / sigma) * exp(z - exp(z))
+}
+
+qsev <- function(p, mu, sigma) {
+  mu + log(-log(1 - p)) * sigma
+}
+
+rsev <- function(n, mu, sigma) {
+  qsev(runif(n))
+}
+\end{Sinput}
 \end{Schunk}
 
 \subsection{Summary}\label{summary}
