@@ -152,9 +152,70 @@ TODO: FIGURE OUT WHERE TO INTRODUCE TS BANDS \citep{Aldor-Noiman2013-xw}
 \pkg{ggplot2}
 framework}{Implementing probability plots in the  framework}}\label{implementing-probability-plots-in-the-framework}
 
+The \texttt{qqplotr} package extends some \texttt{ggplot2}
+functionalities by permitting the drawing of both quantile-quantile
+(Q-Q) and probability-probability (P-P) points, lines, and confidence
+bands. The functions of this package also allow a detrend adjustment of
+the plots, proposed by Thode (2002) to help reduce visual bias when
+assessing the results.
+
+The functions of this package, implemeneted as Stats from
+\texttt{ggplot2}, are divided into two groups: (1) Q-Q and (2) P-P plot.
+
+Both groups are composed of three functions: \emph{point}, \emph{line},
+and \emph{band}. Those Stats complement each other when drawn together,
+but they may also be plotted independently.
+
+Below we will give an overview of all those Stats and, further in the
+document, we will present some usage examples.
+
 \subsubsection{Q-Q plots}\label{q-q-plots}
 
+\begin{itemize}
+\tightlist
+\item
+  \texttt{stat\_qq\_point} This is a modified version of
+  \texttt{ggplot2::stat\_qq} with some parameters adjustments and a new
+  option to detrend the points.
+\item
+  \texttt{stat\_qq\_line} Draws a reference line based on the data
+  quantiles, as in \texttt{stats::qqline}.
+\item
+  \texttt{stat\_qq\_band} Draws confidence bands based on three methods:
+  \texttt{"normal"}, \texttt{"bs"}, and \texttt{"ts"}:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \texttt{"normal"} constructs simultaneous confidence bands based on
+    Normal confidence intervals;
+  \item
+    \texttt{"bs"} creates pointwise confidence bands based on a
+    parametric boostrap;
+  \item
+    \texttt{"ts"} constructs tail-sensitive confidence bands, as
+    proposed by Aldor-Noiman et al. (2013).
+  \end{itemize}
+\end{itemize}
+
+In order to facilitate the visualization of multiple Q-Q band methods at
+the same time, the \texttt{geom\_qq\_band} Geom was also implemented.
+Its usage will be illustrated further below.
+
 \subsubsection{P-P plots}\label{p-p-plots}
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{stat\_pp\_point} Plots cumulative probabilities versus
+  probability points. The cumulative probability function is constructed
+  with the sample data, and then evaluated at each probability point.
+\item
+  \texttt{stat\_pp\_line} Draws a reference identity line (\(x = y\)).
+\item
+  \texttt{stat\_pp\_band} Draws confidence bands. For now, only the
+  bootstrap version (\texttt{"bs"}) is available.
+\end{itemize}
 
 \subsection{Examples}\label{examples}
 
@@ -176,39 +237,95 @@ health conditions, and use of preventive services'.\\
 Close to half a million interviews are conducted each year. Here, we are
 focussing on the 2012 responses for Iowa. 7166 responses were gathered
 across 359 questions and derived variables. Among these, are people's
-height and weight, which we are going to assess using a normal
-assumption:
+height and weight, which we are going to assess in more detail.
+
+Figure \ref{fig:heights} shows two Q-Q plots side by side. For each of
+the plots, a sample of 200 men and 200 women is drawn from the overall
+number of responses. On the left hand side, individuals' heights are
+plotted in a Q-Q plot comparing raw heights to a normal distribution. We
+see that the distributions for both men and women (colour) is showing
+horizontal steps: this indicates that the distributional assessement is
+heavily dominated by the discreteness in the data, as most survey
+participants responded to the question of their height to the closest
+inch. On the right hand side of figure \ref{fig:heights}, we use
+jittering; this means that we add a random number generated from a
+random uniform distribution on \(\pm 0.5\) inch to the reported height.
+By this mean we extinguish any effect that discreteness might have on
+the distribution. This brings the observed distribution much closer to a
+normal distribution. Note that separate normal distributions were fitted
+for each gender, not surprisingly, the resulting distributions have
+different means (women are on average 6 inch shorter than men in this
+dataset). Interestingly, the slope of the two genders is similar,
+indicating that the same scale parameter fits both genders'
+distributions (the standard deviation of height in the data set is 2.97
+inch for men and 2.91 inch for women).
 
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=\textwidth]{qqplotr_files/figure-latex/unnamed-chunk-5-1} 
+{\centering \includegraphics[width=\textwidth]{qqplotr_files/figure-latex/heights-1} 
 
 }
 
-\caption[Sample (200 men and 200 women) of raw heights (left) and jittered heights (right)]{Sample (200 men and 200 women) of raw heights (left) and jittered heights (right). The distribution on the left is dominated by the discreteness of the data. On the right we see that except for some outliers an assumption of normality for people's height is not completely absurd.}\label{fig:unnamed-chunk-5}
-\end{figure}
-\end{Schunk}\begin{Schunk}
-\begin{figure}
-
-{\centering \includegraphics[width=\textwidth]{qqplotr_files/figure-latex/unnamed-chunk-6-1} 
-
-}
-
-\caption[Sample (200 men and 200 women) of weights]{Sample (200 men and 200 women) of weights. Unlike people's height, weight seems to be heavily right skewed with some additional outliers on the extreme left. (left plot), on the right, weight was log-transfomed before its distribution is compared to a theoretical normal. }\label{fig:unnamed-chunk-6}
+\caption[Sample (200 men and 200 women) of raw heights (left) and jittered heights (right)]{Sample (200 men and 200 women) of raw heights (left) and jittered heights (right). The distribution on the left is dominated by the discreteness of the data. On the right we see that except for some outliers an assumption of normality for people's height is not completely absurd.}\label{fig:heights}
 \end{figure}
 \end{Schunk}
+
+Unlike respondents' heights, their weigths do not seem to be normally
+distributed. Figure \ref{fig:weights} shows again two Q-Q plots. The Q-Q
+plot on the left uses raw weights and compares to a normal distribution.
+From the curved points we see that tails of the observed distribution
+are heavier than expected under a normal distribution. On the right,
+weights are log-transformed. We see that a normal distribution for each
+of the genders shows --with the exceptions of a few extreme outliers-- a
+reasonable fit.
 
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=\textwidth]{qqplotr_files/figure-latex/unnamed-chunk-7-1} 
+{\centering \includegraphics[width=\textwidth]{qqplotr_files/figure-latex/weights-1} 
 
 }
 
-\caption[Sample (200 men and 200 women) of weights]{Sample (200 men and 200 women) of weights. On the left, the theoretical distribution  is changed to a log normal. On the right, we additionally estimate shift and scale parameters for each of the genders separately before comparing distributions to a log-normal. XXX need to fix alpha}\label{fig:unnamed-chunk-7}
+\caption[Sample (200 men and 200 women) of weights]{Sample (200 men and 200 women) of weights. Unlike people's height, weight seems to be heavily right skewed with some additional outliers on the extreme left. (left plot), on the right, weight was log-transfomed before its distribution is compared to a theoretical normal. }\label{fig:weights}
 \end{figure}
 \end{Schunk}
+
+Instead of transforming the observed values, we can change the
+theoretical distribution against which we compare. Figure
+\ref{fig:weights-log} shows two Q-Q plots where a a log-normal
+distribution is choses as the theoretical distribution. On the left, we
+compare against a log-normal distribution with mean 4.389 and standard
+deviation 0.223 (the log-transformed averages of average weight and
+standard deviation in Iowa's population). Again, the fits seem
+reasonable. On the right, parameters for the log-normal distribution are
+fit separately. The fits are slightly different from
+
+\begin{Schunk}
+\begin{figure}
+
+{\centering \includegraphics[width=\textwidth]{qqplotr_files/figure-latex/weights-log-1} 
+
+}
+
+\caption[Sample (200 men and 200 women) of weights]{Sample (200 men and 200 women) of weights. On the left, the theoretical distribution  is changed to a log normal. On the right, we additionally estimate shift and scale parameters for each of the genders separately before comparing distributions to a log-normal. XXX need to fix alpha}\label{fig:weights-log}
+\end{figure}
+\end{Schunk}
+
+\begin{table}
+
+\caption{\label{tab:table}this table is just for us at the moment}
+\centering
+\begin{tabular}[t]{r|r|r|r|r}
+\hline
+SEX & mean\_wt & mean\_log\_wt & sd\_wt & sd\_log\_wt\\
+\hline
+1 & 91.50342 & 4.495766 & 19.22981 & 0.2011216\\
+\hline
+2 & 74.37085 & 4.282780 & 17.90126 & 0.2254663\\
+\hline
+\end{tabular}
+\end{table}
 
 \subsubsection{Using a non-standard
 distribution}\label{using-a-non-standard-distribution}
@@ -233,20 +350,24 @@ distribution.
 
 \begin{Schunk}
 \begin{Sinput}
+# CDF
 psev <- function(q, mu, sigma) {
     z <- (x - mu) / sigma
     1 - exp(-exp(z))
 }
 
+# PDF
 dsev <- function(x, mu, sigma) {
   z <- (x - mu) / sigma
   (1 / sigma) * exp(z - exp(z))
 }
 
+# Quantile function
 qsev <- function(p, mu, sigma) {
   mu + log(-log(1 - p)) * sigma
 }
 
+# Simulation function
 rsev <- function(n, mu, sigma) {
   qsev(runif(n))
 }

@@ -36,7 +36,6 @@ output: rticles::rjournal_article
 * Intro/conclusion
 * Abstract
 
-
 ## Introduction
 
 Univariate distributional assessment is a common thread throughout statistical analyses during both the exploratory and confirmatory stages. When we begin exploring a new data set we often consider the distribution of individual variables before moving on to explore multivariate relationships. After a model has been fit to a data set, we must assess whether the distributional assumptions made were reasonable, and if they are not we then must understand the impact this has on the conclusions. Graphics provide arguably the most common way to carry out these univariate assessments. While there are many graphical methods that can be used for distribution exploration and assessment, probability plotting is one of the most common graphical approaches used. 
@@ -145,15 +144,49 @@ TODO: FIGURE OUT WHERE TO INTRODUCE TS BANDS \citep{Aldor-Noiman2013-xw}
 
 ## Implementing probability plots in the \pkg{ggplot2} framework
 
+The `qqplotr` package extends some `ggplot2` functionalities by permitting the 
+drawing of both quantile-quantile (Q-Q) and probability-probability (P-P) 
+points, lines, and confidence bands. The functions of this package also allow a 
+detrend adjustment of the plots, proposed by Thode (2002) to help reduce visual
+bias when assessing the results.
+
+The functions of this package, implemeneted as Stats from `ggplot2`, are divided
+into two groups: (1) Q-Q and (2) P-P plot.
+
+Both groups are composed of three functions: *point*, *line*, and *band*. Those 
+Stats complement each other when drawn together, but they may also be plotted
+independently.
+
+Below we will give an overview of all those Stats and, further in the document,
+we will present some usage examples.
 
 
 ### Q-Q plots
 
-
+* `stat_qq_point` This is a modified version of `ggplot2::stat_qq` 
+with some parameters adjustments and a new option to detrend the points.
+* `stat_qq_line` Draws a reference line based on the data quantiles, as in
+`stats::qqline`.
+* `stat_qq_band` Draws confidence bands based on three methods: `"normal"`, 
+`"bs"`, and `"ts"`:
+	+ `"normal"` constructs simultaneous confidence bands based on Normal confidence
+intervals;
+	+ `"bs"` creates pointwise confidence bands based on a parametric boostrap;
+	+ `"ts"` constructs tail-sensitive confidence bands, as proposed by
+	Aldor-Noiman et al. (2013).
+	
+In order to facilitate the visualization of multiple Q-Q band methods at the 
+same time, the `geom_qq_band` Geom was also implemented. Its usage will be 
+illustrated further below.
 
 ### P-P plots
 
-
+* `stat_pp_point` Plots cumulative probabilities versus probability points. The 
+cumulative probability function is constructed with the sample data, and then
+evaluated at each probability point.
+* `stat_pp_line` Draws a reference identity line ($x = y$).
+* `stat_pp_band` Draws confidence bands. For now, only the bootstrap version
+(`"bs"`) is available.
 
 ## Examples
 
@@ -166,14 +199,15 @@ library(qqplotr)
 ### BRFSS example
 
 The Center for Disease Control and Prevention runs an annual telephone survey, the Behavioral Risk Factor Surveillance System (BRFSS), to keep track of the US populations' 'health-related risk behaviors, chronic health conditions, and use of preventive services'.  
-Close to half a million interviews are conducted each year. Here, we are focussing on the 2012 responses for Iowa. 7166 responses were gathered across 359 questions and derived variables. Among these, are people's height and weight, which we are going to assess using a normal assumption:
+Close to half a million interviews are conducted each year. Here, we are focussing on the 2012 responses for Iowa. 7166 responses were gathered across 359 questions and derived variables. Among these, are people's height and weight, which we are going to assess in more detail. 
 
-```{r, echo=FALSE, fig.width = 8, fig.height = 3.5, fig.cap = "Sample (200 men and 200 women) of raw heights (left) and jittered heights (right). The distribution on the left is dominated by the discreteness of the data. On the right we see that except for some outliers an assumption of normality for people's height is not completely absurd.", out.width='\\textwidth', fig.align="center", message=FALSE, warning = FALSE}
+Figure \ref{fig:heights} shows two Q-Q plots side by side. For each of the plots, a sample of 200 men and 200 women is drawn from the overall number of responses. On the left hand side, individuals' heights are plotted in a Q-Q plot comparing raw heights to a normal distribution. We see that the distributions for both men and women (colour) is showing horizontal steps: this indicates that the distributional assessement is heavily dominated by the discreteness in the data, as most survey participants responded to the question of their height to the closest inch. On the right hand side of figure \ref{fig:heights}, we use jittering; this means  that we add a random number generated from a random uniform distribution on $\pm 0.5$ inch to the reported height. By this mean we extinguish any effect that discreteness might have on the distribution. This brings the observed distribution much closer to a normal distribution. Note that separate normal distributions were fitted for each gender, not surprisingly, the resulting distributions have different means (women are on average 6 inch shorter than men in this dataset). Interestingly, the slope of the two genders is similar, indicating that the same scale parameter fits both genders' distributions (the standard deviation of height in the data set is 2.97 inch for men and 2.91 inch for women).
+```{r heights, echo=FALSE, fig.width = 8, fig.height = 3.5, fig.cap = "Sample (200 men and 200 women) of raw heights (left) and jittered heights (right). The distribution on the left is dominated by the discreteness of the data. On the right we see that except for some outliers an assumption of normality for people's height is not completely absurd.", out.width='\\textwidth', fig.align="center", message=FALSE, warning = FALSE}
 library(tidyverse)
 iowa <- readRDS("data/brfss-iowa.rda")
 sub <- iowa %>% nest(-SEX) %>% mutate(
   data = data %>% purrr::map(.f = function(x) sample_n(x, size = 200))  
-) %>% unnest(data) %>% select(SEX, WTKG3, HTIN4) %>%
+) %>% unnest(data) %>% dplyr::select(SEX, WTKG3, HTIN4) %>%
   mutate(Gender = c("Male", "Female")[SEX])
 
 p1 <- sub %>% ggplot(aes(sample = HTIN4, colour=Gender, fill=Gender)) + 
@@ -199,7 +233,9 @@ p2 <- sub %>% mutate(
 library(gridExtra)  
 grid.arrange(p1, p2, ncol = 2)
 ```
-```{r, echo=FALSE, fig.width = 8, fig.height = 3.5, fig.cap = "Sample (200 men and 200 women) of weights. Unlike people's height, weight seems to be heavily right skewed with some additional outliers on the extreme left. (left plot), on the right, weight was log-transfomed before its distribution is compared to a theoretical normal. ", out.width='\\textwidth', fig.align="center", message=FALSE, warning = FALSE}
+
+Unlike respondents' heights, their weigths do not seem to be normally distributed. Figure \ref{fig:weights} shows again two Q-Q plots. The Q-Q plot on the left uses raw weights and compares to a normal distribution. From the curved points we see that tails of the observed distribution are heavier than expected under a normal distribution. On the right, weights are log-transformed. We see that a normal distribution for each of the genders shows --with the exceptions of a few extreme outliers-- a reasonable fit.
+```{r weights, echo=FALSE, fig.width = 8, fig.height = 3.5, fig.cap = "Sample (200 men and 200 women) of weights. Unlike people's height, weight seems to be heavily right skewed with some additional outliers on the extreme left. (left plot), on the right, weight was log-transfomed before its distribution is compared to a theoretical normal. ", out.width='\\textwidth', fig.align="center", message=FALSE, warning = FALSE}
 p3 <- sub %>% ggplot(aes(sample = WTKG3/100, colour=Gender, fill=Gender)) + 
   stat_qq_band(alpha = 0.6) + stat_qq_line() + stat_qq_point() +
   scale_fill_brewer(palette="Set1") +
@@ -228,13 +264,19 @@ grid.arrange(p3, p5, ncol = 2)
 
 ```
 
-```{r, echo=FALSE, fig.width = 8, fig.height = 3.5, fig.cap = "Sample (200 men and 200 women) of weights. On the left, the theoretical distribution  is changed to a log normal. On the right, we additionally estimate shift and scale parameters for each of the genders separately before comparing distributions to a log-normal. XXX need to fix alpha", out.width='\\textwidth', fig.align="center", message=FALSE, warning = FALSE}
+Instead of transforming the observed values, we can change the theoretical distribution against which we compare. 
+Figure \ref{fig:weights-log} shows two Q-Q plots where a a log-normal distribution is choses as the theoretical distribution. On the left, we compare against a  log-normal distribution with mean 4.389 and standard deviation 0.223 (the log-transformed averages of average weight and standard deviation in Iowa's population). Again, the fits seem reasonable. 
+On the right, parameters for the log-normal distribution are fit separately. The fits are slightly different from 
 
+```{r weights-log, echo=FALSE, fig.width = 8, fig.height = 3.5, fig.cap = "Sample (200 men and 200 women) of weights. On the left, the theoretical distribution  is changed to a log normal. On the right, we additionally estimate shift and scale parameters for each of the genders separately before comparing distributions to a log-normal. XXX need to fix alpha", out.width='\\textwidth', fig.align="center", message=FALSE, warning = FALSE}
+
+mlog <- median(log(sub$WTKG3/100), na.rm=TRUE)
+sdlog <- sd(log(sub$WTKG3/100), na.rm=TRUE)
 
 p4 <- sub %>% ggplot(aes(sample = WTKG3/100, colour=Gender, fill=Gender)) + 
-  stat_qq_band(distribution="lnorm", alpha = 0.6) + 
-  stat_qq_line(distribution="lnorm") + 
-  stat_qq_point(distribution="lnorm") +
+  stat_qq_band(distribution="lnorm", dparams=list(meanlog = mlog, sdlog = sdlog), alpha = 0.3) + 
+  stat_qq_line(distribution="lnorm", dparams=list(meanlog = mlog, sdlog = sdlog)) + 
+  stat_qq_point(distribution="lnorm", dparams=list(meanlog = mlog, sdlog = sdlog)) +
   scale_fill_brewer(palette="Set1") +
   scale_colour_brewer(palette = "Set1") +
   xlab("Sample quantiles") +
@@ -245,42 +287,56 @@ p4 <- sub %>% ggplot(aes(sample = WTKG3/100, colour=Gender, fill=Gender)) +
 
 layers <- sub %>% nest(-Gender) %>% mutate(
   band = data %>% purrr::map(.f = function(d) {
-    mlog <- mean(log(d$WTKG3/100), na.rm=TRUE)
+    mlog <- median(log(d$WTKG3/100), na.rm=TRUE)
     sdlog <- sd(log(d$WTKG3/100), na.rm=TRUE)
     d$Gender <- c("Male", "Female")[d$SEX[1]]
-    d %>% geom_qq_band(alpha=0.6, distribution="lnorm", 
+    geom_qq_band(alpha=0.4, distribution="lnorm",
                        dparams=list(meanlog = mlog, sdlog = sdlog),
-                       aes(colour = Gender, fill = Gender))
+                       aes(colour = Gender, fill = Gender), data = d)
   }),
   line = data %>% purrr::map(.f = function(d) {
-    mlog <- mean(log(d$WTKG3/100), na.rm=TRUE)
+    mlog <- median(log(d$WTKG3/100), na.rm=TRUE)
     sdlog <- sd(log(d$WTKG3/100), na.rm=TRUE)
     d$Gender <- c("Male", "Female")[d$SEX[1]]
-    d %>% stat_qq_line(alpha=0.6, distribution="lnorm", 
+    stat_qq_line(distribution="lnorm",
                       dparams=list(meanlog = mlog, sdlog = sdlog),
-                      aes(colour = Gender))
+                      aes(colour = Gender, sample=WTKG3/100), data = d)
   }),
   points = data %>% purrr::map(.f = function(d) {
-    mlog <- mean(log(d$WTKG3/100), na.rm=TRUE)
+    mlog <- median(log(d$WTKG3/100), na.rm=TRUE)
     sdlog <- sd(log(d$WTKG3/100), na.rm=TRUE)
     d$Gender <- c("Male", "Female")[d$SEX[1]]
-    d %>% qqplotr::stat_qq_point(alpha=0.6, distribution="lnorm", 
+    qqplotr::stat_qq_point(alpha=1, distribution="lnorm",
                       dparams=list(meanlog = mlog, sdlog = sdlog),
-                      aes(colour = Gender))
+                      aes(colour = Gender, sample=WTKG3/100), data = d)
   })
 )
 
-p6 <- sub %>% ggplot(aes(sample = WTKG3/100, colour = Gender, fill = Gender)) + 
+p6 <- sub %>% ggplot(aes(sample = WTKG3/100, colour = Gender, fill = Gender)) +
   layers$band[[1]] + layers$band[[2]] +
   layers$line[[1]] + layers$line[[2]] +
-  layers$point[[1]] + layers$point[[2]] +
+  layers$points[[1]] + layers$points[[2]] +
   theme_bw() +
   scale_fill_brewer(palette="Set1") +
   scale_colour_brewer(palette = "Set1") +
-  theme(legend.position=c(0.2, 0.8))
-  
+  theme(legend.position=c(0.2, 0.8)) +
+	xlab("Theoretical quantiles") +
+	ylab("Weight (in kg)") +
+  guides(fill = guide_legend(override.aes = list(alpha = 0.3)))
+
+
 grid.arrange(p4, p6, ncol = 2)
 
+```
+
+```{r table, echo=FALSE, results = 'asis'} 
+tabs <- iowa %>% group_by(SEX) %>% summarize(
+  mean_wt = mean(WTKG3/100, na.rm=TRUE),
+  mean_log_wt = mean(log(WTKG3/100), na.rm=TRUE),
+  sd_wt = sd(WTKG3/100, na.rm=TRUE),
+  sd_log_wt = sd(log(WTKG3/100), na.rm=TRUE)
+)
+knitr::kable(tabs, format="latex", caption="this table is just for us at the moment")
 ```
 
 
