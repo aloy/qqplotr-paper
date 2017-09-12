@@ -71,6 +71,15 @@ different slope and intercept, as seen in Figure \ref{fig:qq}. P-P plots
 are sensitive to linear transformations.
 
 \begin{Schunk}
+\begin{Soutput}
+#> 
+#> Attaching package: 'qqplotr'
+\end{Soutput}
+\begin{Soutput}
+#> The following objects are masked from 'package:ggplot2':
+#> 
+#>     stat_qq_line, StatQqLine
+\end{Soutput}
 \begin{figure}
 
 {\centering \includegraphics[width=.45\linewidth]{qqplotr_files/figure-latex/unnamed-chunk-1-1} \includegraphics[width=.45\linewidth]{qqplotr_files/figure-latex/unnamed-chunk-1-2} 
@@ -138,9 +147,8 @@ confidence bands based on the standard errors of the order statistics or
 the parametric bootstrap \citep{car}. \pkg{ggplot2} provides
 \texttt{geom\_qq} and \texttt{geom\_qq\_line}, enabling the creation of
 traditional Q-Q plots with a reference line, much like those created
-using \texttt{qqmath}. \pkg{qqplotr} extends
-\textbackslash{}pkg\{ggplot2 to provide the most complete implementation
-of probability plotting.
+using \texttt{qqmath}. \pkg{qqplotr} extends \pkg{ggplot2} to provide
+the most complete implementation of probability plotting.
 
 In the remainder of this paper, we introduce the probability plotting
 framework provided by \pkg{qqplotr}\ldots{} FILL THIS IN ONCE OTHER
@@ -152,12 +160,18 @@ TODO: FIGURE OUT WHERE TO INTRODUCE TS BANDS \citep{Aldor-Noiman2013-xw}
 \pkg{ggplot2}
 framework}{Implementing probability plots in the  framework}}\label{implementing-probability-plots-in-the-framework}
 
-The \texttt{qqplotr} package extends some \texttt{ggplot2}
-functionalities by permitting the drawing of both quantile-quantile
-(Q-Q) and probability-probability (P-P) points, lines, and confidence
-bands. The functions of this package also allow a detrend adjustment of
-the plots, proposed by Thode (2002) to help reduce visual bias when
-assessing the results.
+With \pkg{qqplotr} we extend some of the original \pkg{ggplot2}
+probability plot functionatilites by permitting the drawing of Q-Q and
+P-P points, lines, and confidence bands. For each one of those plot
+elements, our approach was to implement a \pkg{ggplot2} ``stat''
+(statistical transformation). In addition, we also implemented a
+\pkg{ggplot2} ``geom'' (geometrical object) for the confidence bands,
+which permits a cleaner way of handling graphical parameters. This will
+become clearer in the \nameref{sec:examples} section.
+
+functions of this package also allow a detrend adjustment of the plots,
+proposed by Thode (2002) to help reduce visual bias when assessing the
+results.
 
 The functions of this package, implemeneted as Stats from
 \texttt{ggplot2}, are divided into two groups: (1) Q-Q and (2) P-P plot.
@@ -219,6 +233,8 @@ Its usage will be illustrated further below.
 
 \subsection{Examples}\label{examples}
 
+\label{sec:examples}
+
 In this section, we demonstrate the capabilities of the \textbf{qqplotr}
 package.
 
@@ -228,7 +244,7 @@ library(qqplotr)
 \end{Sinput}
 \end{Schunk}
 
-\subsubsection{BRFSS example}\label{brfss-example}
+\subsubsection{BRFSS exampl}\label{brfss-exampl}
 
 The Center for Disease Control and Prevention runs an annual telephone
 survey, the Behavioral Risk Factor Surveillance System (BRFSS), to keep
