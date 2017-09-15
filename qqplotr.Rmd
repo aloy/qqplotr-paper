@@ -345,7 +345,7 @@ knitr::kable(tabs, format="latex", caption="this table is just for us at the mom
 
 ADAM: PULL DATA OFF EXTERNAL HARD DRIVE, EXPLAIN THE EXAMPLE...
 
-The "standard" distributions provided in `pkg{stats}` do not include a left-skewed distribution, which is clearly needed to model the long jump heights. To handle this type of situation, \pkg{qqplotr} let's users create probability plots for all of the  distributions defined in the \pkg{stats} package as well as other sources, so long as the distributions are defined following the conventions laid out in the \pkg{stats} package. Specfically, for some distribution there must be density/mass (`d` prefix), CDF (`p` prefix), quantile (`q` prefix), and simulation (`r` prefix) functions. 
+The "standard" distributions provided in \pkg{stats} do not include a left-skewed distribution, which is clearly needed to model the long jump heights. To handle this type of situation, \pkg{qqplotr} let's users create probability plots for all of the  distributions defined in the \pkg{stats} package as well as other sources, so long as the distributions are defined following the conventions laid out in the \pkg{stats} package. Specfically, for some distribution there must be density/mass (`d` prefix), CDF (`p` prefix), quantile (`q` prefix), and simulation (`r` prefix) functions. 
 
 To illustrate this process we will consider the smallest exreme value (SEV) distribution. This is a left-skewed distribution, which is a key feature needed in order to model the long jump results. Below, we define the suite of distribution functions needed to utilize the SEV distribution.
 
