@@ -35,6 +35,8 @@ An abstract of less than 150 words.
 
 \subsection{Introduction}\label{introduction}
 
+\label{sec:introduction}
+
 Univariate distributional assessment is a common thread throughout
 statistical analyses during both the exploratory and confirmatory
 stages. When we begin exploring a new data set we often consider the
@@ -63,23 +65,15 @@ illustrated in Figure \ref{fig:qq}. A P-P plot is constructed by
 plotting \(F(q)\) against \(\widehat{F}_y(q)\) for various quantiles,
 \(q\). This constuction is illustrated in Figure \ref{fig:pp}.
 Regardless of the plot constructed, if the two distributions are
-identical, then the scattplots will be linear with slope 1 and intercept
-0. Additionally, Q-Q plots are invariant to linear transformations, so
-if two random variables differ by a linear transformation a Q-Q plot
-showing draws from their distributions will still be linear, but with a
-different slope and intercept, as seen in Figure \ref{fig:qq}. P-P plots
-are sensitive to linear transformations.
+identical, then the scatterplots will be linear with slope 1 and
+intercept 0. Additionally, Q-Q plots are invariant to linear
+transformations, so if two random variables differ by a linear
+transformation a Q-Q plot showing draws from their distributions will
+still be linear, but with a different slope and intercept, as seen in
+Figure \ref{fig:qq}. P-P plots, in turn, are sensitive to linear
+transformations.
 
 \begin{Schunk}
-\begin{Soutput}
-#> 
-#> Attaching package: 'qqplotr'
-\end{Soutput}
-\begin{Soutput}
-#> The following objects are masked from 'package:ggplot2':
-#> 
-#>     stat_qq_line, StatQqLine
-\end{Soutput}
 \begin{figure}
 
 {\centering \includegraphics[width=.45\linewidth]{qqplotr_files/figure-latex/unnamed-chunk-1-1} \includegraphics[width=.45\linewidth]{qqplotr_files/figure-latex/unnamed-chunk-1-2} 
@@ -111,7 +105,7 @@ reference line to further aid in the visual assessment.
 
 Innovations to Q-Q and P-P plots have also been proposed.
 \citet{Loy2016-fg} discuss the creation of detrended Q-Q plots, where
-the \(y\)-axis is changed to show the difference betweeh \(q_y\) and the
+the \(y\)-axis is changed to show the difference between \(q_y\) and the
 reference line. Consequently, the line representing the agreement with
 the theoretical distribution is the \(x\)-axis. \citet{Loy2016-fg} find
 that detrended Q-Q plots are more powerful than other designs, so long
@@ -130,7 +124,7 @@ This hybrid probability plot is invariant to linear transformations.
 
 }
 
-\caption{\label{fig:pp}Illustrating different designs of probability plots.}\label{fig:unnamed-chunk-3}
+\caption{\label{fig:pp-designs}Illustrating different designs of probability plots.}\label{fig:unnamed-chunk-3}
 \end{figure}
 \end{Schunk}
 
@@ -162,74 +156,67 @@ framework}{Implementing probability plots in the  framework}}\label{implementing
 
 With \pkg{qqplotr} we extend some of the original \pkg{ggplot2}
 probability plot functionatilites by permitting the drawing of Q-Q and
-P-P points, lines, and confidence bands. For each one of those plot
-elements, our approach was to implement a \pkg{ggplot2} ``stat''
-(statistical transformation). In addition, we also implemented a
-\pkg{ggplot2} ``geom'' (geometrical object) for the confidence bands,
-which permits a cleaner way of handling graphical parameters. This will
-become clearer in the \nameref{sec:examples} section.
+P-P points, lines, and confidence bands. Our approach was to provide a
+\pkg{ggplot2} layering mechanism so that for each one of those plot
+elements we implemented a \pkg{ggplot2} ``stat'' (statistical
+transformation). In addition, we also implemented a \pkg{ggplot2}
+``geom'' (geometrical object) specifically for the confidence bands.
+That geom permits a simpler way of handling graphical parameters, which
+will become clearer in the \nameref{sec:examples} section.
 
-functions of this package also allow a detrend adjustment of the plots,
-proposed by Thode (2002) to help reduce visual bias when assessing the
-results.
+For simplicity, the Q-Q and P-P functions will be presented separately
+below.
 
-The functions of this package, implemeneted as Stats from
-\texttt{ggplot2}, are divided into two groups: (1) Q-Q and (2) P-P plot.
+\subsubsection{Q-Q}\label{q-q}
 
-Both groups are composed of three functions: \emph{point}, \emph{line},
-and \emph{band}. Those Stats complement each other when drawn together,
-but they may also be plotted independently.
-
-Below we will give an overview of all those Stats and, further in the
-document, we will present some usage examples.
-
-\subsubsection{Q-Q plots}\label{q-q-plots}
+The Q-Q plot functions are divided into three stats:
 
 \begin{itemize}
-\tightlist
 \item
-  \texttt{stat\_qq\_point} This is a modified version of
-  \texttt{ggplot2::stat\_qq} with some parameters adjustments and a new
-  option to detrend the points.
+  \texttt{stat\_qq\_point}: a modified verion of \texttt{stat\_qq} from
+  \pkg{ggplot2} that plots the sample quantiles versus the theoretical
+  quantiles (as in Figure \ref{fig:qq}). The novelty of this
+  implementation is an option to detrend the plotted points (see
+  \nameref{sec:introduction}). Moreover, all other implemented stats
+  from Q-Q and P-P plots also allow the detrend adjustment.
 \item
-  \texttt{stat\_qq\_line} Draws a reference line based on the data
-  quantiles, as in \texttt{stats::qqline}.
+  \texttt{stat\_qq\_line}: draws a reference line based on the sample
+  data quantiles, defaulting to the first and third quartiles.
 \item
-  \texttt{stat\_qq\_band} Draws confidence bands based on three methods:
-  \texttt{"normal"}, \texttt{"bs"}, and \texttt{"ts"}:
+  \texttt{stat\_qq\_band}: draws confidence bands based on three
+  methods: \emph{Normal}, \emph{Bootstrap}, and \emph{Tail-sensitive}:
 
   \begin{itemize}
   \tightlist
   \item
-    \texttt{"normal"} constructs simultaneous confidence bands based on
-    Normal confidence intervals;
+    \textbf{Normal}: constructs simultaneous confidence bands based on
+    normal distribution confidence intervals;
   \item
-    \texttt{"bs"} creates pointwise confidence bands based on a
+    \textbf{Bootstrap}: creates pointwise confidence bands with
     parametric boostrap;
   \item
-    \texttt{"ts"} constructs tail-sensitive confidence bands, as
-    proposed by Aldor-Noiman et al. (2013).
+    \textbf{Tail-sensitive}: builds tail-sensitive confidence bands, as
+    proposed by \citet{Aldor-Noiman2013-xw}.
   \end{itemize}
 \end{itemize}
 
-In order to facilitate the visualization of multiple Q-Q band methods at
-the same time, the \texttt{geom\_qq\_band} Geom was also implemented.
-Its usage will be illustrated further below.
+\subsubsection{P-P}\label{p-p}
 
-\subsubsection{P-P plots}\label{p-p-plots}
+The P-P plot functions are also divided into three plot elements:
 
 \begin{itemize}
-\tightlist
 \item
-  \texttt{stat\_pp\_point} Plots cumulative probabilities versus
-  probability points. The cumulative probability function is constructed
-  with the sample data, and then evaluated at each probability point.
+  \texttt{stat\_pp\_point}: plots cumulative probabilities versus
+  probability points (as in Figure \ref{fig:pp}).
 \item
-  \texttt{stat\_pp\_line} Draws a reference identity line (\(x = y\)).
+  \texttt{stat\_pp\_line}: draws a reference identity line (slope 1 and
+  intercept 0).
 \item
-  \texttt{stat\_pp\_band} Draws confidence bands. For now, only the
+  \texttt{stat\_pp\_band}: draws confidence bands. For now, only the
   bootstrap version (\texttt{"bs"}) is available.
 \end{itemize}
+
+TODO: TALK MORE IN-DEPTH ABOUT THE FUNCTIONS' PARAMETERS.
 
 \subsection{Examples}\label{examples}
 
@@ -244,7 +231,7 @@ library(qqplotr)
 \end{Sinput}
 \end{Schunk}
 
-\subsubsection{BRFSS exampl}\label{brfss-exampl}
+\subsubsection{BRFSS example}\label{brfss-example}
 
 The Center for Disease Control and Prevention runs an annual telephone
 survey, the Behavioral Risk Factor Surveillance System (BRFSS), to keep
