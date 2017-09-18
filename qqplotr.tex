@@ -31,6 +31,14 @@ An abstract of less than 150 words.
   Intro/conclusion
 \item
   Abstract
+\item
+  Missing references:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Figure \ref{fig:pp-designs}
+  \end{itemize}
 \end{itemize}
 
 \subsection{Introduction}\label{introduction}
@@ -177,8 +185,8 @@ The Q-Q plot functions are divided into three stats:
   \pkg{ggplot2} that plots the sample quantiles versus the theoretical
   quantiles (as in Figure \ref{fig:qq}). The novelty of this
   implementation is an option to detrend the plotted points (see
-  \nameref{sec:introduction}). Moreover, all other implemented stats
-  from Q-Q and P-P plots also allow the detrend adjustment.
+  \nameref{sec:introduction}). All other implemented functions in this
+  package also allow the detrend adjustment.
 \item
   \texttt{stat\_qq\_line}: draws a reference line based on the sample
   data quantiles, defaulting to the first and third quartiles.
@@ -192,7 +200,7 @@ The Q-Q plot functions are divided into three stats:
     \textbf{Normal}: constructs simultaneous confidence bands based on
     normal distribution confidence intervals;
   \item
-    \textbf{Bootstrap}: creates pointwise confidence bands with
+    \textbf{Bootstrap}: creates pointwise confidence bands using
     parametric boostrap;
   \item
     \textbf{Tail-sensitive}: builds tail-sensitive confidence bands, as
@@ -213,20 +221,22 @@ The P-P plot functions are also divided into three plot elements:
   intercept 0).
 \item
   \texttt{stat\_pp\_band}: draws confidence bands. For now, only the
-  bootstrap version (\texttt{"bs"}) is available.
+  \emph{Bootstrap} version is available.
 \end{itemize}
 
-TODO: TALK MORE IN-DEPTH ABOUT THE FUNCTIONS' PARAMETERS.
+TODO: * Talk more in-depth about the functions' parameters. * P-P plot
+type II.
 
 \subsection{Examples}\label{examples}
 
 \label{sec:examples}
 
-In this section, we demonstrate the capabilities of the \textbf{qqplotr}
-package.
+In this section, we demonstrate the capabilities of the \pkg{qqplotr}
+package. We start by loading the package:
 
 \begin{Schunk}
 \begin{Sinput}
+# also loads ggplot2
 library(qqplotr)
 \end{Sinput}
 \end{Schunk}
@@ -236,7 +246,8 @@ library(qqplotr)
 The Center for Disease Control and Prevention runs an annual telephone
 survey, the Behavioral Risk Factor Surveillance System (BRFSS), to keep
 track of the US populations' `health-related risk behaviors, chronic
-health conditions, and use of preventive services'.\\
+health conditions, and use of preventive services'.
+
 Close to half a million interviews are conducted each year. Here, we are
 focussing on the 2012 responses for Iowa. 7166 responses were gathered
 across 359 questions and derived variables. Among these, are people's
@@ -250,7 +261,7 @@ see that the distributions for both men and women (colour) is showing
 horizontal steps: this indicates that the distributional assessement is
 heavily dominated by the discreteness in the data, as most survey
 participants responded to the question of their height to the closest
-inch. On the right hand side of figure \ref{fig:heights}, we use
+inch. On the right hand side of Figure \ref{fig:heights}, we use
 jittering; this means that we add a random number generated from a
 random uniform distribution on \(\pm 0.5\) inch to the reported height.
 By this mean we extinguish any effect that discreteness might have on
@@ -290,14 +301,14 @@ reasonable fit.
 
 }
 
-\caption[Sample (200 men and 200 women) of weights]{Sample (200 men and 200 women) of weights. Unlike people's height, weight seems to be heavily right skewed with some additional outliers on the extreme left. (left plot), on the right, weight was log-transfomed before its distribution is compared to a theoretical normal. }\label{fig:weights}
+\caption[Sample (200 men and 200 women) of weights]{Sample (200 men and 200 women) of weights. Unlike people's height, weight seems to be heavily right skewed with some additional outliers on the extreme left (left plot). On the right, weight was log-transfomed before its distribution is compared to a theoretical normal. }\label{fig:weights}
 \end{figure}
 \end{Schunk}
 
 Instead of transforming the observed values, we can change the
 theoretical distribution against which we compare. Figure
 \ref{fig:weights-log} shows two Q-Q plots where a a log-normal
-distribution is choses as the theoretical distribution. On the left, we
+distribution is chosen as the theoretical distribution. On the left, we
 compare against a log-normal distribution with mean 4.389 and standard
 deviation 0.223 (the log-transformed averages of average weight and
 standard deviation in Iowa's population). Again, the fits seem
