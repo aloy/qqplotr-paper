@@ -1,24 +1,24 @@
 ---
-title: Capitalized Title Here
+title: ggplot2 compatible Quantile-quantile plots in R
 author:
-  - name: Author One
+  - name: Alexander Almeida
     affiliation: Affiliation
     address:
     - line 1
     - line 2
     email:  author1@work
-  - name: Author Two
+  - name: Adam Loy
     affiliation: Affiliation
     address:
     - line 1
     - line 2
     email:  author2@work
-  - name: Author Three
-    affiliation: Affiliation
+  - name: Heike Hofmann
+    affiliation: Iowa State University
     address:
-    - line 1
-    - line 2
-    email:  author3@work
+    - Department of Statistics
+    - Ames, IA 50011-1210
+    email:  hofmann@iastate.edu
 abstract: >
   An abstract of less than 150 words.
 preamble: >
@@ -29,7 +29,7 @@ output: rticles::rjournal_article
 
 ## TODO:
 
-* Order of authorship?
+* Order of authorship? 
 * Review Q-Q plots and P-P plots, including other arrangements, and what is implemented in other packages
 * Write about what the package implements
 * Give examples
@@ -145,6 +145,7 @@ confidence bands based on the standard errors of the order statistics or the par
 traditional Q-Q plots with a reference line, much like those created using `qqmath`. \pkg{qqplotr}
 extends \pkg{ggplot2} to provide the most complete implementation of probability plotting.
 
+XXX `qualityTools` \cite{qualityTools}
 
 In the remainder of this paper, we introduce the probability plotting framework provided by
 \pkg{qqplotr}... FILL THIS IN ONCE OTHER SECTIONS ARE WRITTEN...
@@ -230,7 +231,7 @@ p1 <- sub %>% ggplot(aes(sample = HTIN4, colour=Gender, fill=Gender)) +
   stat_qq_band(alpha = 0.3) + stat_qq_line() + stat_qq_point() +
   scale_fill_brewer(palette="Set1") +
   scale_colour_brewer(palette = "Set1") +
-  xlab("Sample quantiles") +
+  xlab("Theoretical quantiles") +
   ylab("Height (in inch)") +
   coord_equal() +
   theme_bw() +
@@ -241,7 +242,7 @@ p2 <- sub %>% mutate(
   stat_qq_band(alpha = 0.3) + stat_qq_line() + stat_qq_point() +
   scale_fill_brewer(palette="Set1") +
   scale_colour_brewer(palette = "Set1") +
-  xlab("Sample quantiles") +
+  xlab("Theoretical quantiles") +
   ylab("Jittered Height (in inch)") +
   theme_bw() + 
   theme(legend.position = c(0.8, 0.2), aspect.ratio=1)
@@ -256,7 +257,7 @@ p3 <- sub %>% ggplot(aes(sample = WTKG3/100, colour=Gender, fill=Gender)) +
   stat_qq_band(alpha = 0.3) + stat_qq_line() + stat_qq_point() +
   scale_fill_brewer(palette="Set1") +
   scale_colour_brewer(palette = "Set1") +
-  xlab("Sample quantiles") +
+  xlab("Theoretical quantiles") +
   ylab("Weight (in kg)") +
   coord_equal() +
   theme_bw() +
@@ -267,7 +268,7 @@ p5 <- sub %>%
   stat_qq_band(alpha = 0.3) + stat_qq_line() + stat_qq_point() +
   scale_fill_brewer(palette="Set1") +
   scale_colour_brewer(palette = "Set1") +
-  xlab("Sample quantiles") +
+  xlab("Theoretical quantiles") +
   ylab("log Weight (in kg)") +
   coord_equal() +
   theme_bw() +
@@ -286,7 +287,7 @@ On the right, parameters for the log-normal distribution are fit separately. The
 
 ```{r weights-log, echo=FALSE, fig.width = 8, fig.height = 3.5, fig.cap = "Sample (200 men and 200 women) of weights. On the left, the theoretical distribution  is changed to a log normal. On the right, we additionally estimate shift and scale parameters for each of the genders separately before comparing distributions to a log-normal. XXX need to fix alpha for the legend", out.width='\\textwidth', fig.align="center", message=FALSE, warning = FALSE}
 
-mlog <- median(log(sub$WTKG3/100), na.rm=TRUE)
+mlog <- mean(log(sub$WTKG3/100), na.rm=TRUE)
 sdlog <- sd(log(sub$WTKG3/100), na.rm=TRUE)
 
 p4 <- sub %>% ggplot(aes(sample = WTKG3/100, colour=Gender, fill=Gender)) + 
@@ -295,7 +296,7 @@ p4 <- sub %>% ggplot(aes(sample = WTKG3/100, colour=Gender, fill=Gender)) +
   stat_qq_point(distribution="lnorm", dparams=list(meanlog = mlog, sdlog = sdlog)) +
   scale_fill_brewer(palette="Set1") +
   scale_colour_brewer(palette = "Set1") +
-  xlab("Sample quantiles") +
+  xlab("Theoretical quantiles") +
   ylab("Weight (in kg)") +
   theme_bw() + 
   theme(legend.position = c(0.2, 0.8), aspect.ratio=1)
@@ -303,7 +304,7 @@ p4 <- sub %>% ggplot(aes(sample = WTKG3/100, colour=Gender, fill=Gender)) +
 
 layers <- sub %>% nest(-Gender) %>% mutate(
   band = data %>% purrr::map(.f = function(d) {
-    mlog <- median(log(d$WTKG3/100), na.rm=TRUE)
+    mlog <- mean(log(d$WTKG3/100), na.rm=TRUE)
     sdlog <- sd(log(d$WTKG3/100), na.rm=TRUE)
     d$Gender <- c("Male", "Female")[d$SEX[1]]
     geom_qq_band(alpha=0.3, distribution="lnorm",
@@ -311,7 +312,7 @@ layers <- sub %>% nest(-Gender) %>% mutate(
                        aes(colour = Gender, fill = Gender), data = d)
   }),
   line = data %>% purrr::map(.f = function(d) {
-    mlog <- median(log(d$WTKG3/100), na.rm=TRUE)
+    mlog <- mean(log(d$WTKG3/100), na.rm=TRUE)
     sdlog <- sd(log(d$WTKG3/100), na.rm=TRUE)
     d$Gender <- c("Male", "Female")[d$SEX[1]]
     stat_qq_line(distribution="lnorm",
@@ -319,7 +320,7 @@ layers <- sub %>% nest(-Gender) %>% mutate(
                       aes(colour = Gender, sample=WTKG3/100), data = d)
   }),
   points = data %>% purrr::map(.f = function(d) {
-    mlog <- median(log(d$WTKG3/100), na.rm=TRUE)
+    mlog <- mean(log(d$WTKG3/100), na.rm=TRUE)
     sdlog <- sd(log(d$WTKG3/100), na.rm=TRUE)
     d$Gender <- c("Male", "Female")[d$SEX[1]]
     qqplotr::stat_qq_point(alpha=1, distribution="lnorm",
@@ -350,7 +351,8 @@ tabs <- iowa %>% group_by(SEX) %>% summarize(
   mean_wt = mean(WTKG3/100, na.rm=TRUE),
   mean_log_wt = mean(log(WTKG3/100), na.rm=TRUE),
   sd_wt = sd(WTKG3/100, na.rm=TRUE),
-  sd_log_wt = sd(log(WTKG3/100), na.rm=TRUE)
+  sd_log_wt = sd(log(WTKG3/100), na.rm=TRUE)#,
+#  fitdistr = I(list(MASS::fitdistr(na.omit(WTKG3/100), "lognormal")))
 )
 knitr::kable(tabs, format="latex", caption="this table is just for us at the moment")
 ```
