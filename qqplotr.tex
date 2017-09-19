@@ -1,6 +1,6 @@
 % !TeX root = RJwrapper.tex
-\title{Capitalized Title Here}
-\author{by Author One, Author Two, Author Three}
+\title{ggplot2 compatible Quantile-quantile plots in R}
+\author{by Alexander Almeida, Adam Loy, Heike Hofmann}
 
 \maketitle
 
@@ -357,7 +357,7 @@ distribution.
 \begin{Sinput}
 # CDF
 psev <- function(q, mu, sigma) {
-    z <- (x - mu) / sigma
+    z <- (q - mu) / sigma
     1 - exp(-exp(z))
 }
 
@@ -374,7 +374,7 @@ qsev <- function(p, mu, sigma) {
 
 # Simulation function
 rsev <- function(n, mu, sigma) {
-  qsev(runif(n))
+  qsev(runif(n), mu, sigma)
 }
 \end{Sinput}
 \end{Schunk}
@@ -390,23 +390,23 @@ Write this section once the rest of the paper is done.
 Mention GSoC here\ldots{}
 
 \address{%
-Author One\\
+Alexander Almeida\\
 Affiliation\\
 line 1\\ line 2\\
 }
 \href{mailto:author1@work}{\nolinkurl{author1@work}}
 
 \address{%
-Author Two\\
+Adam Loy\\
 Affiliation\\
 line 1\\ line 2\\
 }
 \href{mailto:author2@work}{\nolinkurl{author2@work}}
 
 \address{%
-Author Three\\
-Affiliation\\
-line 1\\ line 2\\
+Heike Hofmann\\
+Iowa State University\\
+Department of Statistics\\ Ames, IA 50011-1210\\
 }
-\href{mailto:author3@work}{\nolinkurl{author3@work}}
+\href{mailto:hofmann@iastate.edu}{\nolinkurl{hofmann@iastate.edu}}
 
