@@ -23,6 +23,7 @@ abstract: >
   An abstract of less than 150 words.
 preamble: >
   % Any extra latex you need in the preamble
+  \usepackage{nameref}
 output: rticles::rjournal_article
 ---
 
@@ -37,16 +38,15 @@ output: rticles::rjournal_article
 * Abstract
 
 ## Introduction
+\label{sec:introduction}
 
 Univariate distributional assessment is a common thread throughout statistical analyses during both the exploratory and confirmatory stages. When we begin exploring a new data set we often consider the distribution of individual variables before moving on to explore multivariate relationships. After a model has been fit to a data set, we must assess whether the distributional assumptions made were reasonable, and if they are not we then must understand the impact this has on the conclusions. Graphics provide arguably the most common way to carry out these univariate assessments. While there are many graphical methods that can be used for distribution exploration and assessment, probability plotting is one of the most common graphical approaches used. 
 
-
-
 Probability plotting refers to a family of methods based on the cumulative distribution function (CDF), most notably quantile (Q-Q) plots and probability (P-P) plots \citep{Wilk1968-ii}. In this paper, we focus on comparing an empirical distribution to a theoretical distribution. Let $Y_1, \ldots, Y_n$ denote a random sample from an unknown population, and let $\widehat{F}_y(q)$ be the empirical cumulative distribution obtained from the sample. Further, let $F(q)$ denote the CDF of a proposed dsitribution for the sample. A Q-Q plot is constructed by plotting the quantiles of the empirical distribution, $q_y(p) = F_y^{-1}(p)$, against the corresponding quantiles of the theoretical distribution, $q(p) = F^{-1}(p)$. This constuction is illustrated in Figure \ref{fig:qq}.
-A P-P plot is constructed by plotting $F(q)$ against $\widehat{F}_y(q)$ for various quantiles, $q$. This constuction is illustrated in Figure \ref{fig:pp}. Regardless of the plot constructed, if the two distributions are identical, then the scattplots will be linear with slope 1 and intercept 0. Additionally, Q-Q plots are invariant to linear transformations, so if two random variables differ by a linear transformation a Q-Q plot showing draws from their distributions will still be linear, but with a different slope and intercept, as seen in Figure \ref{fig:qq}. P-P plots are sensitive to linear transformations.
+A P-P plot is constructed by plotting $F(q)$ against $\widehat{F}_y(q)$ for various quantiles, $q$. This constuction is illustrated in Figure \ref{fig:pp}. Regardless of the plot constructed, if the two distributions are identical, then the scatterplots will be linear with slope 1 and intercept 0. Additionally, Q-Q plots are invariant to linear transformations, so if two random variables differ by a linear transformation a Q-Q plot showing draws from their distributions will still be linear, but with a different slope and intercept, as seen in Figure \ref{fig:qq}. P-P plots, in turn, are sensitive to linear transformations.
 
-```{r, echo=FALSE, out.width='.45\\linewidth', fig.width=3.5, fig.height=3.5, fig.show='hold', fig.align='center', fig.cap="\\label{fig:qq}Illustrating what quantities are being plotted for Q-Q plots."}
-library(ggplot2)
+```{r, message = FALSE, echo = FALSE, out.width = '.45\\linewidth', fig.width = 3.5, fig.height = 3.5, fig.show = 'hold', fig.align = 'center', fig.cap = "\\label{fig:qq}Illustrating what quantities are being plotted for Q-Q plots."}
+require(ggplot2)
 set.seed(4321)
 rand_sample <- rnorm(30, mean = -1, sd = 1)
 Fn <- ecdf(rand_sample)
@@ -64,8 +64,7 @@ ggplot(defn_data, aes(x = q)) +
   ylab("Cumulative distribution function") +
   xlab("Quantiles")
 
-
-library(qqplotr)
+require(qqplotr)
 ggplot(data = defn_data, mapping = aes(sample = rs)) +
   stat_qq_point() +
   theme_minimal() +
@@ -73,7 +72,7 @@ ggplot(data = defn_data, mapping = aes(sample = rs)) +
   xlab(expression(paste("Theoretical quantiles, ", q(p))))
 ```
 
-```{r, echo=FALSE, out.width='.45\\linewidth', fig.width=3.5, fig.height=3.5, fig.show='hold', fig.align='center', fig.cap="\\label{fig:pp}Illustrating what quantities are being plotted for P-P plots."}
+```{r, message = FALSE, echo = FALSE, out.width = '.45\\linewidth', fig.width = 3.5, fig.height = 3.5, fig.show = 'hold', fig.align = 'center', fig.cap = "\\label{fig:pp}Illustrating what quantities are being plotted for P-P plots."}
 ggplot(defn_data, aes(x = q)) +
   stat_function(fun = pnorm, n = 101, args = list(mean = 0, sd = 1)) +
   # stat_function(fun = pnorm, n = 101, args = list(mean = -1, sd = 1), linetype = 2) +
@@ -102,9 +101,9 @@ ggplot(data = defn_data, mapping = aes(sample = rs)) +
 While the basic form of both the Q-Q and P-P plots is a scatterplot, additional graphical elements are often added to aid in distributional assessment. For Q-Q plots, a reference line is often drawn through the points $(q(.25), q_y(.25))$ and $(q(.75), q_y(.75))$. For P-P plots a reference line with slope 1 and intercept 0 is used. In both plots, pointwise or simultaneous confidence bands are often added around the reference line to further aid in the visual assessment. 
 
 
-Innovations to Q-Q and P-P plots have also been proposed. \citet{Loy2016-fg} discuss the creation of detrended Q-Q plots, where the $y$-axis is changed to show the difference betweeh $q_y$ and the reference line. Consequently, the line representing the agreement with the theoretical distribution is the $x$-axis. \citet{Loy2016-fg} find that detrended Q-Q plots are more powerful than other designs, so long at the $y$-axis limits are set so that the aspect ratio is kept the same as in the traditional Q-Q plot. In reliability and survival analysis, probability plots often refer to a hybrid probability plot, there the CDF of the proposed theoretical distribution is plotted against the empirical order statistics, and transformations are applied to each axis to linearize the CDF \citep[cf.][chapter 6]{Meeker1998}. This hybrid probability plot is invariant to linear transformations.
+Innovations to Q-Q and P-P plots have also been proposed. \citet{Loy2016-fg} discuss the creation of detrended Q-Q plots, where the $y$-axis is changed to show the difference between $q_y$ and the reference line. Consequently, the line representing the agreement with the theoretical distribution is the $x$-axis. \citet{Loy2016-fg} find that detrended Q-Q plots are more powerful than other designs, so long at the $y$-axis limits are set so that the aspect ratio is kept the same as in the traditional Q-Q plot. In reliability and survival analysis, probability plots often refer to a hybrid probability plot, there the CDF of the proposed theoretical distribution is plotted against the empirical order statistics, and transformations are applied to each axis to linearize the CDF \citep[cf.][chapter 6]{Meeker1998}. This hybrid probability plot is invariant to linear transformations.
 
-```{r, echo=FALSE, out.width='.31\\linewidth', fig.width=3.5, fig.height=3.5, fig.show='hold', fig.align='center', fig.cap="\\label{fig:pp}Illustrating different designs of probability plots."}
+```{r, echo=FALSE, out.width='.31\\linewidth', fig.width=3.5, fig.height=3.5, fig.show='hold', fig.align='center', fig.cap="\\label{fig:pp-designs}Illustrating different designs of probability plots."}
 ggplot(data = defn_data, mapping = aes(sample = rs)) +
   stat_qq_line() +
   stat_qq_point() +
@@ -133,10 +132,20 @@ ggplot(data = defn_data, mapping = aes(x = sort(rs), y = ppoints)) +
 
 
 
-Q-Q plots have been implemented in various forms in R, but none provide a complete implementation of the probability plotting framework. Normal quantile plots, where a sample is compared to the standard normal distribution, are implemented using the `qqplot` and `qqline` in \pkg{base} graphics \citep{R}. `qqmath` in \pkg{lattice} provides a general framework for Q-Q plots, comparing a sample to any theoretical distribution by specifying the quantile function \citep{lattice}. `qqPlot` in the \pkg{car} package also allows for the assessment of non-normal distribution and adds pointwise confidence bands based on the standard errors of the order statistics or the parametric bootstrap \citep{car}. \pkg{ggplot2} provides `geom_qq` and `geom_qq_line`, enabling the creation of traditional Q-Q plots with a reference line, much like those created using `qqmath`. \pkg{qqplotr} extends \pkg{ggplot2 to provide the most complete implementation of probability plotting.
+Q-Q plots have been implemented in various forms in R, but none provide a complete implementation of
+the probability plotting framework. Normal quantile plots, where a sample is compared to the
+standard normal distribution, are implemented using the `qqplot` and `qqline` in \pkg{base} graphics
+\citep{R}. `qqmath` in \pkg{lattice} provides a general framework for Q-Q plots, comparing a sample
+to any theoretical distribution by specifying the quantile function \citep{lattice}. `qqPlot` in the
+\pkg{car} package also allows for the assessment of non-normal distribution and adds pointwise
+confidence bands based on the standard errors of the order statistics or the parametric bootstrap
+\citep{car}. \pkg{ggplot2} provides `geom_qq` and `geom_qq_line`, enabling the creation of
+traditional Q-Q plots with a reference line, much like those created using `qqmath`. \pkg{qqplotr}
+extends \pkg{ggplot2} to provide the most complete implementation of probability plotting.
 
 
-In the remainder of this paper, we introduce the probability plotting framework provided by \pkg{qqplotr}... FILL THIS IN ONCE OTHER SECTIONS ARE WRITTEN...
+In the remainder of this paper, we introduce the probability plotting framework provided by
+\pkg{qqplotr}... FILL THIS IN ONCE OTHER SECTIONS ARE WRITTEN...
 
 
 TODO: FIGURE OUT WHERE TO INTRODUCE TS BANDS \citep{Aldor-Noiman2013-xw}
@@ -144,51 +153,51 @@ TODO: FIGURE OUT WHERE TO INTRODUCE TS BANDS \citep{Aldor-Noiman2013-xw}
 
 ## Implementing probability plots in the \pkg{ggplot2} framework
 
-The `qqplotr` package extends some `ggplot2` functionalities by permitting the 
-drawing of both quantile-quantile (Q-Q) and probability-probability (P-P) 
-points, lines, and confidence bands. The functions of this package also allow a 
-detrend adjustment of the plots, proposed by Thode (2002) to help reduce visual
-bias when assessing the results.
+With \pkg{qqplotr} we extend some of the original \pkg{ggplot2} probability plot functionatilites by
+permitting the drawing of Q-Q and P-P points, lines, and confidence bands. Our approach was to 
+provide a \pkg{ggplot2} layering mechanism so that for each one of those plot elements we 
+implemented a \pkg{ggplot2} "stat" (statistical transformation). In addition, we also implemented a 
+\pkg{ggplot2} "geom" (geometrical object) specifically for the confidence bands. That geom permits a
+simpler way of handling graphical parameters, which will become clearer in the 
+\nameref{sec:examples} section.
 
-The functions of this package, implemeneted as Stats from `ggplot2`, are divided
-into two groups: (1) Q-Q and (2) P-P plot.
+For simplicity, the Q-Q and P-P functions will be presented separately below.
 
-Both groups are composed of three functions: *point*, *line*, and *band*. Those 
-Stats complement each other when drawn together, but they may also be plotted
-independently.
+### Q-Q
 
-Below we will give an overview of all those Stats and, further in the document,
-we will present some usage examples.
+The Q-Q plot functions are divided into three stats:
 
+* `stat_qq_point`: a modified verion of `stat_qq` from \pkg{ggplot2} that plots the sample quantiles
+versus the theoretical quantiles (as in Figure \ref{fig:qq}). The novelty of this implementation is 
+an option to detrend the plotted points (see \nameref{sec:introduction}). Moreover, all other
+implemented stats from Q-Q and P-P plots also allow the detrend adjustment.
 
-### Q-Q plots
+* `stat_qq_line`: draws a reference line based on the sample data quantiles, defaulting to the first
+and third quartiles.
 
-* `stat_qq_point` This is a modified version of `ggplot2::stat_qq` 
-with some parameters adjustments and a new option to detrend the points.
-* `stat_qq_line` Draws a reference line based on the data quantiles, as in
-`stats::qqline`.
-* `stat_qq_band` Draws confidence bands based on three methods: `"normal"`, 
-`"bs"`, and `"ts"`:
-	+ `"normal"` constructs simultaneous confidence bands based on Normal confidence
-intervals;
-	+ `"bs"` creates pointwise confidence bands based on a parametric boostrap;
-	+ `"ts"` constructs tail-sensitive confidence bands, as proposed by
-	Aldor-Noiman et al. (2013).
-	
-In order to facilitate the visualization of multiple Q-Q band methods at the 
-same time, the `geom_qq_band` Geom was also implemented. Its usage will be 
-illustrated further below.
+* `stat_qq_band`: draws confidence bands based on three methods: *Normal*, *Bootstrap*, and *Tail-sensitive*:
+	+ **Normal**: constructs simultaneous confidence bands based on normal distribution confidence 
+	intervals;
+	+ **Bootstrap**: creates pointwise confidence bands with parametric boostrap;
+	+ **Tail-sensitive**: builds tail-sensitive confidence bands, as proposed by
+	\citet{Aldor-Noiman2013-xw}.
 
-### P-P plots
+### P-P
 
-* `stat_pp_point` Plots cumulative probabilities versus probability points. The 
-cumulative probability function is constructed with the sample data, and then
-evaluated at each probability point.
-* `stat_pp_line` Draws a reference identity line ($x = y$).
-* `stat_pp_band` Draws confidence bands. For now, only the bootstrap version
+The P-P plot functions are also divided into three plot elements:
+
+* `stat_pp_point`: plots cumulative probabilities versus probability points (as in Figure
+\ref{fig:pp}).
+
+* `stat_pp_line`: draws a reference identity line (slope 1 and intercept 0).
+
+* `stat_pp_band`: draws confidence bands. For now, only the bootstrap version
 (`"bs"`) is available.
 
+TODO: TALK MORE IN-DEPTH ABOUT THE FUNCTIONS' PARAMETERS.
+
 ## Examples
+\label{sec:examples}
 
 In this section, we demonstrate the capabilities of the **qqplotr** package.
 
