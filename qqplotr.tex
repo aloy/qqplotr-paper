@@ -1,6 +1,6 @@
 % !TeX root = RJwrapper.tex
-\title{Capitalized Title Here}
-\author{by Author One, Author Two, Author Three}
+\title{ggplot2 compatible Quantile-quantile plots in R}
+\author{by Alexandre Almeida, Adam Loy, Heike Hofmann}
 
 \maketitle
 
@@ -13,12 +13,14 @@ An abstract of less than 150 words.
 \begin{itemize}
 \tightlist
 \item
-  Order of authorship?
+  Abstract
+\item
+  Intro
 \item
   Review Q-Q plots and P-P plots, including other arrangements, and what
   is implemented in other packages
 \item
-  Write about what the package implements
+  Package implementation
 \item
   Give examples
 
@@ -28,17 +30,7 @@ An abstract of less than 150 words.
     Heike: BRFSS example
   \end{itemize}
 \item
-  Intro/conclusion
-\item
-  Abstract
-\item
-  Missing references:
-
-  \begin{itemize}
-  \tightlist
-  \item
-    Figure \ref{fig:pp-designs}
-  \end{itemize}
+  Conclusion
 \end{itemize}
 
 \subsection{Introduction}\label{introduction}
@@ -159,6 +151,7 @@ framework provided by \pkg{qqplotr}\ldots{} FILL THIS IN ONCE OTHER
 SECTIONS ARE WRITTEN\ldots{}
 
 TODO: FIGURE OUT WHERE TO INTRODUCE TS BANDS \citep{Aldor-Noiman2013-xw}
+TODO: FIGURE \ref{fig:pp-designs} HAS NO REFERENCES TO IT
 
 \subsection{\texorpdfstring{Implementing probability plots in the
 \pkg{ggplot2}
@@ -315,7 +308,7 @@ compare against a log-normal distribution with mean 4.389 and standard
 deviation 0.223 (the log-transformed averages of average weight and
 standard deviation in Iowa's population). Again, the fits seem
 reasonable. On the right, parameters for the log-normal distribution are
-fit separately. The fits are slightly different from
+fit separately. The fits are slightly different from XXX
 
 \begin{Schunk}
 \begin{figure}
@@ -324,7 +317,7 @@ fit separately. The fits are slightly different from
 
 }
 
-\caption[Sample (200 men and 200 women) of weights]{Sample (200 men and 200 women) of weights. On the left, the theoretical distribution  is changed to a log normal. On the right, we additionally estimate shift and scale parameters for each of the genders separately before comparing distributions to a log-normal. XXX need to fix alpha}\label{fig:weights-log}
+\caption[Sample (200 men and 200 women) of weights]{Sample (200 men and 200 women) of weights. On the left, the theoretical distribution  is changed to a log normal. On the right, we additionally estimate shift and scale parameters for each of the genders separately before comparing distributions to a log-normal. XXX need to fix alpha for the legend}\label{fig:weights-log}
 \end{figure}
 \end{Schunk}
 
@@ -348,17 +341,17 @@ distribution}\label{using-a-non-standard-distribution}
 
 ADAM: PULL DATA OFF EXTERNAL HARD DRIVE, EXPLAIN THE EXAMPLE\ldots{}
 
-The ``standard'' distributions provided in \texttt{pkg\{stats\}} do not
-include a left-skewed distribution, which is clearly needed to model the
-long jump heights. To handle this type of situation, \pkg{qqplotr} let's
-users create probability plots for all of the distributions defined in
-the \pkg{stats} package as well as other sources, so long as the
+The ``standard'' distributions provided in \pkg{stats} do not include a
+left-skewed distribution, which is clearly needed to model the long jump
+heights. To handle this type of situation, \pkg{qqplotr} let's users
+create probability plots for all of the distributions defined in the
+\pkg{stats} package as well as other sources, so long as the
 distributions are defined following the conventions laid out in the
 \pkg{stats} package. Specfically, for some distribution there must be
 density/mass (\texttt{d} prefix), CDF (\texttt{p} prefix), quantile
 (\texttt{q} prefix), and simulation (\texttt{r} prefix) functions.
 
-To illustrate this process we will consider the smallest exreme value
+To illustrate this process we will consider the Smallest Extreme Value
 (SEV) distribution. This is a left-skewed distribution, which is a key
 feature needed in order to model the long jump results. Below, we define
 the suite of distribution functions needed to utilize the SEV
@@ -401,23 +394,23 @@ Write this section once the rest of the paper is done.
 Mention GSoC here\ldots{}
 
 \address{%
-Author One\\
-Affiliation\\
-line 1\\ line 2\\
+Alexandre Almeida\\
+University of Campinas\\
+Institute of Computing\\ Campinas, Brazil 13083-852\\
 }
-\href{mailto:author1@work}{\nolinkurl{author1@work}}
+\href{mailto:almeida.xan@gmail.com}{\nolinkurl{almeida.xan@gmail.com}}
 
 \address{%
-Author Two\\
+Adam Loy\\
 Affiliation\\
 line 1\\ line 2\\
 }
 \href{mailto:author2@work}{\nolinkurl{author2@work}}
 
 \address{%
-Author Three\\
-Affiliation\\
-line 1\\ line 2\\
+Heike Hofmann\\
+Iowa State University\\
+Department of Statistics\\ Ames, IA 50011-1210\\
 }
-\href{mailto:author3@work}{\nolinkurl{author3@work}}
+\href{mailto:hofmann@iastate.edu}{\nolinkurl{hofmann@iastate.edu}}
 

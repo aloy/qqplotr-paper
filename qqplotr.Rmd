@@ -1,12 +1,12 @@
 ---
 title: ggplot2 compatible Quantile-quantile plots in R
 author:
-  - name: Alexander Almeida
-    affiliation: Affiliation
+  - name: Alexandre Almeida
+    affiliation: University of Campinas
     address:
-    - line 1
-    - line 2
-    email:  author1@work
+    - Institute of Computing
+    - Campinas, Brazil 13083-852
+    email:  almeida.xan@gmail.com
   - name: Adam Loy
     affiliation: Affiliation
     address:
@@ -29,15 +29,13 @@ output: rticles::rjournal_article
 
 ## TODO:
 
-* Order of authorship? 
-* Review Q-Q plots and P-P plots, including other arrangements, and what is implemented in other packages
-* Write about what the package implements
+* Abstract
+* Intro
+  + Review Q-Q plots and P-P plots, including other arrangements, and what is implemented in other packages
+* Package implementation
 * Give examples
     + Heike: BRFSS example
-* Intro/conclusion
-* Abstract
-* Missing references:
-    + Figure \ref{fig:pp-designs}
+* Conclusion
 
 ## Introduction
 \label{sec:introduction}
@@ -152,6 +150,7 @@ In the remainder of this paper, we introduce the probability plotting framework 
 
 
 TODO: FIGURE OUT WHERE TO INTRODUCE TS BANDS \citep{Aldor-Noiman2013-xw}
+TODO: FIGURE \ref{fig:pp-designs} HAS NO REFERENCES TO IT
 
 
 ## Implementing probability plots in the \pkg{ggplot2} framework
