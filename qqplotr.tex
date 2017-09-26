@@ -219,8 +219,14 @@ The P-P plot functions are also divided into three plot elements:
   \emph{Bootstrap} version is available.
 \end{itemize}
 
-TODO: * Talk more in-depth about the functions' parameters. * P-P plot
-type II.
+TODO:
+
+\begin{itemize}
+\item
+  Talk more in-depth about the functions' parameters.
+\item
+  P-P plot type II.
+\end{itemize}
 
 \subsection{Examples}\label{examples}
 
@@ -361,7 +367,7 @@ distribution.
 \begin{Sinput}
 # CDF
 psev <- function(q, mu, sigma) {
-    z <- (x - mu) / sigma
+    z <- (q - mu) / sigma
     1 - exp(-exp(z))
 }
 
@@ -378,7 +384,7 @@ qsev <- function(p, mu, sigma) {
 
 # Simulation function
 rsev <- function(n, mu, sigma) {
-  qsev(runif(n))
+  qsev(runif(n), mu, sigma)
 }
 \end{Sinput}
 \end{Schunk}
