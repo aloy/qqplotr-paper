@@ -231,8 +231,15 @@ sub <- iowa %>% nest(-SEX) %>% mutate(
 ) %>% unnest(data) %>% dplyr::select(SEX, WTKG3, HTIN4) %>%
   mutate(Gender = c("Male", "Female")[SEX])
 
+params <- iowa %>% filter(!is.na(HTIN4)) %>% summarize(
+  m = mean(HTIN4),
+  s = sd(HTIN4)
+)
 p1 <- sub %>% ggplot(aes(sample = HTIN4, colour=Gender, fill=Gender)) + 
-  stat_qq_band(alpha = 0.3) + stat_qq_line() + stat_qq_point() +
+  geom_abline(slope=1, intercept=0, colour = "grey30") +
+  stat_qq_band(alpha = 0.3, dparams=list(mean=params$m, sd=params$s)) + 
+  stat_qq_line( dparams=list(mean=params$m, sd=params$s)) + 
+  stat_qq_point( dparams=list(mean=params$m, sd=params$s)) +
   scale_fill_brewer(palette="Set1") +
   scale_colour_brewer(palette = "Set1") +
   xlab("Theoretical quantiles") +
@@ -244,7 +251,10 @@ p1 <- sub %>% ggplot(aes(sample = HTIN4, colour=Gender, fill=Gender)) +
 p2 <- sub %>% mutate(
   HTIN4.jitter = jitter(HTIN4, factor = 2)
 ) %>% ggplot(aes(sample = HTIN4.jitter, colour=Gender, fill=Gender)) + 
-  stat_qq_band(alpha = 0.3) + stat_qq_line() + stat_qq_point() +
+  geom_abline(slope=1, intercept=0, colour = "grey30") +
+  stat_qq_band(alpha = 0.3, dparams = list(mean=params$m, sd=params$s)) +
+  stat_qq_line(dparams = list(mean=params$m, sd=params$s)) + 
+  stat_qq_point(dparams = list(mean=params$m, sd=params$s)) +
   scale_fill_brewer(palette="Set1") +
   scale_colour_brewer(palette = "Set1") +
   xlab("Theoretical quantiles") +
@@ -259,8 +269,14 @@ grid.arrange(p1, p2, ncol = 2)
 Unlike respondents' heights, their weigths do not seem to be normally distributed. Figure \ref{fig:weights} shows again two Q-Q plots. The Q-Q plot on the left uses raw weights and compares to a normal distribution. From the curved points we see that tails of the observed distribution are heavier than expected under a normal distribution. On the right, weights are log-transformed. We see that a normal distribution for each of the genders shows --with the exceptions of a few extreme outliers-- a reasonable fit.
 
 ```{r weights, echo=FALSE, fig.width = 8, fig.height = 3.5, fig.cap = "Sample (200 men and 200 women) of weights. Unlike people's height, weight seems to be heavily right skewed with some additional outliers on the extreme left (left plot). On the right, weight was log-transfomed before its distribution is compared to a theoretical normal. ", out.width='\\textwidth', fig.align="center", message=FALSE, warning = FALSE}
+params <- iowa %>% filter(!is.na(WTKG3)) %>% summarize(
+  m = mean(WTKG3/100),
+  s = sd(WTKG3/100)
+)
 p3 <- sub %>% ggplot(aes(sample = WTKG3/100, colour=Gender, fill=Gender)) + 
-  stat_qq_band(alpha = 0.3) + stat_qq_line() + stat_qq_point() +
+  stat_qq_band(alpha = 0.3, dparams=list(mean=params$m, sd=params$s)) + 
+  stat_qq_line( dparams=list(mean=params$m, sd=params$s)) + 
+  stat_qq_point( dparams=list(mean=params$m, sd=params$s)) +
   scale_fill_brewer(palette="Set1") +
   scale_colour_brewer(palette = "Set1") +
   xlab("Theoretical quantiles") +
@@ -271,7 +287,9 @@ p3 <- sub %>% ggplot(aes(sample = WTKG3/100, colour=Gender, fill=Gender)) +
 
 p5 <- sub %>% 
   ggplot(aes(sample = log(WTKG3/100), colour=Gender, fill=Gender)) + 
-  stat_qq_band(alpha = 0.3) + stat_qq_line() + stat_qq_point() +
+  stat_qq_band(alpha = 0.3, dparams=list(mean=params$m, sd=params$s)) + 
+  stat_qq_line( dparams=list(mean=params$m, sd=params$s)) + 
+  stat_qq_point( dparams=list(mean=params$m, sd=params$s)) +
   scale_fill_brewer(palette="Set1") +
   scale_colour_brewer(palette = "Set1") +
   xlab("Theoretical quantiles") +
