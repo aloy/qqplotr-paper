@@ -24,8 +24,11 @@ abstract: >
 preamble: >
   % Any extra latex you need in the preamble
   \usepackage{nameref}
+  \usepackage{color}
 output: rticles::rjournal_article
 ---
+
+\newcommand{\hh}[1]{{\textcolor{orange}{#1}}}
 
 ## TODO:
 
@@ -220,6 +223,8 @@ The Center for Disease Control and Prevention runs an annual telephone survey, t
 Close to half a million interviews are conducted each year. Here, we are focussing on the 2012 responses for Iowa. 7166 responses were gathered across 359 questions and derived variables. Among these, are people's height and weight, which we are going to assess in more detail. 
 
 Figure \ref{fig:heights} shows two Q-Q plots side by side. For each of the plots, a sample of 200 men and 200 women is drawn from the overall number of responses. On the left hand side, individuals' heights are plotted in a Q-Q plot comparing raw heights to a normal distribution. We see that the distributions for both men and women (colour) is showing horizontal steps: this indicates that the distributional assessement is heavily dominated by the discreteness in the data, as most survey participants responded to the question of their height to the closest inch. On the right hand side of Figure \ref{fig:heights}, we use jittering; this means  that we add a random number generated from a random uniform distribution on $\pm 0.5$ inch to the reported height. By this mean we extinguish any effect that discreteness might have on the distribution. This brings the observed distribution much closer to a normal distribution. Note that separate normal distributions were fitted for each gender, not surprisingly, the resulting distributions have different means (women are on average 6 inch shorter than men in this dataset). Interestingly, the slope of the two genders is similar, indicating that the same scale parameter fits both genders' distributions (the standard deviation of height in the data set is 2.97 inch for men and 2.91 inch for women).
+
+\hh{XXX put in table with population estimates and corresponding estimates by gender.}
 
 ```{r heights, echo=FALSE, fig.width = 8, fig.height = 3.5, fig.cap = "Sample (200 men and 200 women) of raw heights (left) and jittered heights (right). The distribution on the left is dominated by the discreteness of the data. On the right we see that except for some outliers an assumption of normality for people's height is not completely absurd.", out.width='\\textwidth', fig.align="center", message=FALSE, warning = FALSE}
 library(tidyverse)
@@ -451,9 +456,9 @@ With the `*sev` distribution functions in hand, we can create a Q-Q plot to asse
 
 ```{r sev-qq, fig.cap = "Q-Q plot comparing the long jump distances to the standard SEV distribution. The SEV distribution appear to adequately model the distances.", fig.width = 3.5, fig.height = 3.5, out.width='0.45\\textwidth', fig.align="center", message=FALSE, warning = FALSE}
 ggplot(longjump, aes(sample = distance)) +
-  stat_qq_band(distribution = "sev", alpha = 0.3) +
-  stat_qq_line(distribution = "sev") +
-  stat_qq_point(distribution = "sev") +
+  stat_qq_band(distribution = "sev", dparams=list(mu=0, sigma=1), alpha = 0.3) +
+  stat_qq_line(distribution = "sev", dparams=list(mu=0, sigma=1)) +
+  stat_qq_point(distribution = "sev", dparams=list(mu=0, sigma=1)) +
   xlab("Theoretical quantiles") +
   ylab("Jump distance (in m)") +
   theme_bw()
@@ -468,17 +473,20 @@ For example, Figure \ref{fig:detrend-sev} compares the standard Q-Q plot shown i
 
 ```{r detrend-sev, echo=FALSE, fig.width = 8, fig.height = 3.5, fig.cap = "Q-Q plots assessing the appropriateness of the SEV distribution for the long jump data. On the left, a standard Q-Q plot is shown. On the right, we detrend the Q-Q plot by plotting the differences between the empirical quantiles and reference line on the $y$-axis.", out.width='\\textwidth', fig.align="center", message=FALSE, warning = FALSE}
 p7 <- ggplot(longjump, aes(sample = distance)) +
-  stat_qq_band(distribution = "sev", alpha = 0.3) +
-  stat_qq_line(distribution = "sev") +
-  stat_qq_point(distribution = "sev") +
+  stat_qq_band(distribution = "sev", alpha = 0.3, dparams=c(mu=0, sigma=1)) +
+  stat_qq_line(distribution = "sev", dparams=c(mu=0, sigma=1)) +
+  stat_qq_point(distribution = "sev", dparams=c(mu=0, sigma=1)) +
   xlab("Theoretical quantiles") +
   ylab("Jump distance (in m)") +
   theme_bw()
 
 p8 <- ggplot(longjump, aes(sample = distance)) +
-  stat_qq_band(distribution = "sev", alpha = 0.3, detrend = TRUE) +
-  stat_qq_line(distribution = "sev", detrend = TRUE) +
-  stat_qq_point(distribution = "sev", detrend = TRUE) +
+  stat_qq_band(distribution = "sev", alpha = 0.3, 
+               detrend = TRUE, dparams=c(mu=0, sigma=1)) +
+  stat_qq_line(distribution = "sev", 
+               detrend = TRUE, dparams=c(mu=0, sigma=1)) +
+  stat_qq_point(distribution = "sev", 
+                detrend = TRUE, dparams=c(mu=0, sigma=1)) +
   xlab("Theoretical quantiles") +
   ylab("Differences") +
   theme_bw() +
@@ -489,9 +497,12 @@ grid.arrange(p7, p8, ncol = 2)
 
 ```{r eval=FALSE}
 ggplot(longjump, aes(sample = distance)) +
-  stat_qq_band(distribution = "sev", alpha = 0.3, detrend = TRUE) +
-  stat_qq_line(distribution = "sev", detrend = TRUE) +
-  stat_qq_point(distribution = "sev", detrend = TRUE) +
+  stat_qq_band(distribution = "sev", alpha = 0.3, 
+               detrend = TRUE, dparams=c(mu=0, sigma=1)) +
+  stat_qq_line(distribution = "sev", 
+               detrend = TRUE, dparams=c(mu=0, sigma=1)) +
+  stat_qq_point(distribution = "sev", 
+                detrend = TRUE, dparams=c(mu=0, sigma=1)) +
   xlab("Theoretical quantiles") +
   ylab("Differences") +
   theme_bw() +
@@ -509,6 +520,7 @@ In order to create a so-called *adjusted* detrended Q-Q plot \citep{Loy2016-fg} 
 
 ## Summary
 
+XXX P-P plots here
 Write this section once the rest of the paper is done.
 
 \bibliography{RJreferences}

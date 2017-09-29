@@ -8,6 +8,8 @@
 An abstract of less than 150 words.
 }
 
+\newcommand{\hh}[1]{{\textcolor{orange}{#1}}}
+
 \subsection{TODO:}\label{todo}
 
 \begin{itemize}
@@ -275,6 +277,8 @@ indicating that the same scale parameter fits both genders'
 distributions (the standard deviation of height in the data set is 2.97
 inch for men and 2.91 inch for women).
 
+\hh{XXX put in table with population estimates and corresponding estimates by gender.}
+
 \begin{Schunk}
 \begin{figure}
 
@@ -418,9 +422,9 @@ representation of the distances.
 \begin{Schunk}
 \begin{Sinput}
 ggplot(longjump, aes(sample = distance)) +
-  stat_qq_band(distribution = "sev", alpha = 0.3) +
-  stat_qq_line(distribution = "sev") +
-  stat_qq_point(distribution = "sev") +
+  stat_qq_band(distribution = "sev", dparams=list(mu=0, sigma=1), alpha = 0.3) +
+  stat_qq_line(distribution = "sev", dparams=list(mu=0, sigma=1)) +
+  stat_qq_point(distribution = "sev", dparams=list(mu=0, sigma=1)) +
   xlab("Theoretical quantiles") +
   ylab("Jump distance (in m)") +
   theme_bw()
@@ -465,9 +469,12 @@ argument \texttt{detrend\ =\ TRUE} to the \texttt{stat\_qq\_band},
 \begin{Schunk}
 \begin{Sinput}
 ggplot(longjump, aes(sample = distance)) +
-  stat_qq_band(distribution = "sev", alpha = 0.3, detrend = TRUE) +
-  stat_qq_line(distribution = "sev", detrend = TRUE) +
-  stat_qq_point(distribution = "sev", detrend = TRUE) +
+  stat_qq_band(distribution = "sev", alpha = 0.3, 
+               detrend = TRUE, dparams=c(mu=0, sigma=1)) +
+  stat_qq_line(distribution = "sev", 
+               detrend = TRUE, dparams=c(mu=0, sigma=1)) +
+  stat_qq_point(distribution = "sev", 
+                detrend = TRUE, dparams=c(mu=0, sigma=1)) +
   xlab("Theoretical quantiles") +
   ylab("Differences") +
   theme_bw() +
@@ -483,7 +490,8 @@ plot in some situations \citep{Loy2016-fg}.
 
 \subsection{Summary}\label{summary}
 
-Write this section once the rest of the paper is done.
+XXX P-P plots here Write this section once the rest of the paper is
+done.
 
 \bibliography{RJreferences}
 
