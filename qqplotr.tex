@@ -267,17 +267,37 @@ participants responded to the question of their height to the closest
 inch. On the right hand side of Figure \ref{fig:heights}, we use
 jittering; this means that we add a random number generated from a
 random uniform distribution on \(\pm 0.5\) inch to the reported height.
-By this mean we extinguish any effect that discreteness might have on
-the distribution. This brings the observed distribution much closer to a
+By this mean we diminish the effect that discreteness might have on the
+distribution. This brings the observed distribution much closer to a
 normal distribution. Note that separate normal distributions were fitted
 for each gender, not surprisingly, the resulting distributions have
 different means (women are on average 6 inch shorter than men in this
 dataset). Interestingly, the slope of the two genders is similar,
 indicating that the same scale parameter fits both genders'
 distributions (the standard deviation of height in the data set is 2.97
-inch for men and 2.91 inch for women).
+inch for men and 2.91 inch for women, see Table \ref{tab:heights}). The
+dark line between the two groups is the identity line - indicating the
+theoretical distribution each of these groups are compared to. This
+distribution is based on parameters estimated from the whole population
+(see Table \ref{tab:heights} for numbers) . While the mean is about half
+way between the gender means, we see from the higher slope of the line
+that in comparison to each group, the standard deviation of the height
+based on the whole population is larger.
 
-\hh{XXX put in table with population estimates and corresponding estimates by gender.}
+\begin{table}
+
+\caption{\label{tab:heights-table}Summary of Iowa's residents height and standard deviation (in inch) by gender and total.\label{tab:heights}}
+\centering
+\begin{tabular}[t]{lrr}
+\toprule
+SEX & mean & sd\\
+\midrule
+Male & 70.55 & 2.97\\
+Female & 64.51 & 2.91\\
+Total & 66.99 & 4.18\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{Schunk}
 \begin{figure}
@@ -312,7 +332,7 @@ reasonable fit.
 
 Instead of transforming the observed values, we can change the
 theoretical distribution against which we compare. Figure
-\ref{fig:weights-log} shows two Q-Q plots where a a log-normal
+\ref{fig:weights-log} shows two Q-Q plots where a log-normal
 distribution is chosen as the theoretical distribution. On the left, we
 compare against a log-normal distribution with mean 4.389 and standard
 deviation 0.223 (the log-transformed averages of average weight and
@@ -327,7 +347,7 @@ fit separately. The fits are slightly different from XXX
 
 }
 
-\caption[Sample (200 men and 200 women) of weights]{Sample (200 men and 200 women) of weights. On the left, the theoretical distribution  is changed to a log normal. On the right, we additionally estimate shift and scale parameters for each of the genders separately before comparing distributions to a log-normal. XXX need to fix alpha for the legend}\label{fig:weights-log}
+\caption[Sample (200 men and 200 women) of weights]{Sample (200 men and 200 women) of weights. On the left, the theoretical distribution  is changed to a log normal. On the right, we additionally estimate shift and scale parameters for each of the genders separately before comparing distributions to a log-normal.}\label{fig:weights-log}
 \end{figure}
 \end{Schunk}
 

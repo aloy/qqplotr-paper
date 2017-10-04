@@ -222,11 +222,11 @@ The Center for Disease Control and Prevention runs an annual telephone survey, t
 
 Close to half a million interviews are conducted each year. Here, we are focussing on the 2012 responses for Iowa. 7166 responses were gathered across 359 questions and derived variables. Among these, are people's height and weight, which we are going to assess in more detail. 
 
-Figure \ref{fig:heights} shows two Q-Q plots side by side. For each of the plots, a sample of 200 men and 200 women is drawn from the overall number of responses. On the left hand side, individuals' heights are plotted in a Q-Q plot comparing raw heights to a normal distribution. We see that the distributions for both men and women (colour) is showing horizontal steps: this indicates that the distributional assessement is heavily dominated by the discreteness in the data, as most survey participants responded to the question of their height to the closest inch. On the right hand side of Figure \ref{fig:heights}, we use jittering; this means  that we add a random number generated from a random uniform distribution on $\pm 0.5$ inch to the reported height. By this mean we extinguish any effect that discreteness might have on the distribution. This brings the observed distribution much closer to a normal distribution. Note that separate normal distributions were fitted for each gender, not surprisingly, the resulting distributions have different means (women are on average 6 inch shorter than men in this dataset). Interestingly, the slope of the two genders is similar, indicating that the same scale parameter fits both genders' distributions (the standard deviation of height in the data set is 2.97 inch for men and 2.91 inch for women).
+Figure \ref{fig:heights} shows two Q-Q plots side by side. For each of the plots, a sample of 200 men and 200 women is drawn from the overall number of responses. On the left hand side, individuals' heights are plotted in a Q-Q plot comparing raw heights to a normal distribution. We see that the distributions for both men and women (colour) is showing horizontal steps: this indicates that the distributional assessement is heavily dominated by the discreteness in the data, as most survey participants responded to the question of their height to the closest inch. On the right hand side of Figure \ref{fig:heights}, we use jittering; this means  that we add a random number generated from a random uniform distribution on $\pm 0.5$ inch to the reported height. By this mean we diminish the effect that discreteness might have on the distribution. This brings the observed distribution much closer to a normal distribution. Note that separate normal distributions were fitted for each gender, not surprisingly, the resulting distributions have different means (women are on average 6 inch shorter than men in this dataset). Interestingly, the slope of the two genders is similar, indicating that the same scale parameter fits both genders' distributions (the standard deviation of height in the data set is 2.97 inch for men and 2.91 inch for women, see Table \ref{tab:heights}). 
+The dark line between the two groups is the identity line - indicating the theoretical distribution each of these groups are compared to. This distribution is based on parameters estimated from the whole population (see Table \ref{tab:heights} for numbers) . While the mean is about half way between the gender means, we see from the higher slope of the line that in comparison to each group, the standard deviation of the height based on the whole population is larger.
 
-\hh{XXX put in table with population estimates and corresponding estimates by gender.}
 
-```{r heights, echo=FALSE, fig.width = 8, fig.height = 3.5, fig.cap = "Sample (200 men and 200 women) of raw heights (left) and jittered heights (right). The distribution on the left is dominated by the discreteness of the data. On the right we see that except for some outliers an assumption of normality for people's height is not completely absurd.", out.width='\\textwidth', fig.align="center", message=FALSE, warning = FALSE}
+```{r iowa-read, echo=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
 
 iowa <- readRDS("data/brfss-iowa.rda")
@@ -241,7 +241,7 @@ params <- iowa %>% filter(!is.na(HTIN4)) %>% summarize(
   s = sd(HTIN4)
 )
 p1 <- sub %>% ggplot(aes(sample = HTIN4, colour=Gender, fill=Gender)) + 
-  geom_abline(slope=1, intercept=0, colour = "grey30") +
+#  geom_abline(slope=1, intercept=0, colour = "grey30") +
   stat_qq_band(alpha = 0.3, dparams=list(mean=params$m, sd=params$s)) + 
   stat_qq_line( dparams=list(mean=params$m, sd=params$s)) + 
   stat_qq_point( dparams=list(mean=params$m, sd=params$s)) +
@@ -256,7 +256,7 @@ p1 <- sub %>% ggplot(aes(sample = HTIN4, colour=Gender, fill=Gender)) +
 p2 <- sub %>% mutate(
   HTIN4.jitter = jitter(HTIN4, factor = 2)
 ) %>% ggplot(aes(sample = HTIN4.jitter, colour=Gender, fill=Gender)) + 
-  geom_abline(slope=1, intercept=0, colour = "grey30") +
+  geom_abline(slope=1, intercept=0, colour = "grey40") +
   stat_qq_band(alpha = 0.3, dparams = list(mean=params$m, sd=params$s)) +
   stat_qq_line(dparams = list(mean=params$m, sd=params$s)) + 
   stat_qq_point(dparams = list(mean=params$m, sd=params$s)) +
@@ -266,7 +266,29 @@ p2 <- sub %>% mutate(
   ylab("Jittered Height (in inch)") +
   theme_bw() + 
   theme(legend.position = c(0.8, 0.2), aspect.ratio=1)
-  
+```
+
+```{r heights-table, echo=FALSE, results="asis"}
+bygender <- iowa %>% group_by(SEX) %>%
+  summarize(
+    mean = mean(HTIN4, na.rm=TRUE),
+    sd = sd(HTIN4, na.rm=TRUE)
+  )
+bygender$SEX <- c("Male", "Female")
+
+total <- iowa %>% 
+  summarize(
+    mean = mean(HTIN4, na.rm=TRUE),
+    sd = sd(HTIN4, na.rm=TRUE)
+  )
+
+bygender[3,] <- c("Total", total)
+knitr::kable(bygender, format = "latex",  
+             caption = "Summary of Iowa's residents height and standard deviation (in inch) by gender and total.\\label{tab:heights}", 
+             digits=2, booktabs = TRUE)
+```
+
+```{r heights, echo=FALSE, fig.width = 8, fig.height = 3.5, fig.cap = "Sample (200 men and 200 women) of raw heights (left) and jittered heights (right). The distribution on the left is dominated by the discreteness of the data. On the right we see that except for some outliers an assumption of normality for people's height is not completely absurd.", out.width='\\textwidth', fig.align="center", message=FALSE, warning = FALSE}
 library(gridExtra)  
 grid.arrange(p1, p2, ncol = 2)
 ```
@@ -308,10 +330,10 @@ grid.arrange(p3, p5, ncol = 2)
 ```
 
 Instead of transforming the observed values, we can change the theoretical distribution against which we compare. 
-Figure \ref{fig:weights-log} shows two Q-Q plots where a a log-normal distribution is chosen as the theoretical distribution. On the left, we compare against a  log-normal distribution with mean 4.389 and standard deviation 0.223 (the log-transformed averages of average weight and standard deviation in Iowa's population). Again, the fits seem reasonable. 
+Figure \ref{fig:weights-log} shows two Q-Q plots where a log-normal distribution is chosen as the theoretical distribution. On the left, we compare against a  log-normal distribution with mean 4.389 and standard deviation 0.223 (the log-transformed averages of average weight and standard deviation in Iowa's population). Again, the fits seem reasonable. 
 On the right, parameters for the log-normal distribution are fit separately. The fits are slightly different from XXX
 
-```{r weights-log, echo=FALSE, fig.width = 8, fig.height = 3.5, fig.cap = "Sample (200 men and 200 women) of weights. On the left, the theoretical distribution  is changed to a log normal. On the right, we additionally estimate shift and scale parameters for each of the genders separately before comparing distributions to a log-normal. XXX need to fix alpha for the legend", out.width='\\textwidth', fig.align="center", message=FALSE, warning = FALSE}
+```{r weights-log, echo=FALSE, fig.width = 8, fig.height = 3.5, fig.cap = "Sample (200 men and 200 women) of weights. On the left, the theoretical distribution  is changed to a log normal. On the right, we additionally estimate shift and scale parameters for each of the genders separately before comparing distributions to a log-normal.", out.width='\\textwidth', fig.align="center", message=FALSE, warning = FALSE}
 
 mlog <- mean(log(sub$WTKG3 / 100), na.rm = TRUE)
 sdlog <- sd(log(sub$WTKG3 / 100), na.rm = TRUE)
@@ -337,17 +359,11 @@ p4 <- sub %>% ggplot(aes(sample = WTKG3 / 100, colour = Gender, fill = Gender)) 
   theme_bw() + 
   theme(legend.position = c(0.2, 0.8), aspect.ratio=1)
 
-p6 <- sub %>% ggplot(aes(sample = WTKG3 / 100, colour = Gender, fill = Gender)) +
-  stat_qq_band(
-    distribution = "lnorm",
-    alpha = 0.3
-  ) +
-  stat_qq_line(
-    distribution = "lnorm"
-  ) +
-  stat_qq_point(
-    distribution = "lnorm"
-  ) +
+p6 <- sub %>% ggplot(aes(sample = WTKG3 / 100, 
+                         colour = Gender, fill = Gender)) +
+  stat_qq_band(distribution = "lnorm", alpha = 0.3) +
+  stat_qq_line(distribution = "lnorm") +
+  stat_qq_point(distribution = "lnorm") +
   scale_fill_brewer(palette = "Set1") +
   scale_colour_brewer(palette = "Set1") +
   xlab("Theoretical quantiles") +
@@ -355,45 +371,6 @@ p6 <- sub %>% ggplot(aes(sample = WTKG3 / 100, colour = Gender, fill = Gender)) 
   theme_bw() +
   theme(legend.position = c(0.2, 0.8),
   aspect.ratio = 1)
-
-# layers <- sub %>% nest(-Gender) %>% mutate(
-#   band = data %>% purrr::map(.f = function(d) {
-#     mlog <- mean(log(d$WTKG3/100), na.rm=TRUE)
-#     sdlog <- sd(log(d$WTKG3/100), na.rm=TRUE)
-#     d$Gender <- c("Male", "Female")[d$SEX[1]]
-#     geom_qq_band(alpha=0.4, distribution="lnorm",
-#                        dparams=list(meanlog = mlog, sdlog = sdlog),
-#                        aes(colour = Gender, fill = Gender), data = d)
-#   }),
-#   line = data %>% purrr::map(.f = function(d) {
-#     mlog <- mean(log(d$WTKG3/100), na.rm=TRUE)
-#     sdlog <- sd(log(d$WTKG3/100), na.rm=TRUE)
-#     d$Gender <- c("Male", "Female")[d$SEX[1]]
-#     stat_qq_line(distribution="lnorm",
-#                       dparams=list(meanlog = mlog, sdlog = sdlog),
-#                       aes(colour = Gender, sample=WTKG3/100), data = d)
-#   }),
-#   points = data %>% purrr::map(.f = function(d) {
-#     mlog <- mean(log(d$WTKG3/100), na.rm=TRUE)
-#     sdlog <- sd(log(d$WTKG3/100), na.rm=TRUE)
-#     d$Gender <- c("Male", "Female")[d$SEX[1]]
-#     qqplotr::stat_qq_point(alpha=1, distribution="lnorm",
-#                       dparams=list(meanlog = mlog, sdlog = sdlog),
-#                       aes(colour = Gender, sample=WTKG3/100), data = d)
-#   })
-# )
-# 
-# p6 <- sub %>% ggplot(aes(sample = WTKG3/100, colour = Gender, fill = Gender)) +
-#   layers$band[[1]] + layers$band[[2]] +
-#   layers$line[[1]] + layers$line[[2]] +
-#   layers$points[[1]] + layers$points[[2]] +
-#   theme_bw() +
-#   scale_fill_brewer(palette="Set1") +
-#   scale_colour_brewer(palette = "Set1") +
-#   theme(legend.position=c(0.2, 0.8)) +
-# 	xlab("Theoretical quantiles") +
-# 	ylab("Weight (in kg)") +
-#   guides(fill = guide_legend(override.aes = list(alpha = 0.3)))
 
 grid.arrange(p4, p6, ncol = 2)
 ```
