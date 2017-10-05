@@ -17,11 +17,6 @@ An abstract of less than 150 words.
 \item
   Abstract
 \item
-  Intro
-\item
-  Review Q-Q plots and P-P plots, including other arrangements, and what
-  is implemented in other packages
-\item
   Package implementation
 \item
   Give examples
@@ -478,7 +473,20 @@ ratio is not adjusted in this way, an \emph{ordinary} detrended Q-Q plot
 is created, which is known to lhave lower power than the standard Q-Q
 plot in some situations \citep{Loy2016-fg}.
 
-\subsection{Summary}\label{summary}
+\subsection{Discussion}\label{discussion}
+
+This paper presents the \pkg{qqplotr} package, an extension of
+\pkg{ggplot2} that implements Q-Q plots in both the standard and
+de-trended orientations, reference lines for Q-Q plots, and confidence
+bands for Q-Q plots. The examples illustrate how to create Q-Q plots for
+non-standard distributions found outside of the \pkg{stats}, de-trend
+Q-Q plots, and create Q-Q plots when data are grouped. Further, in the
+BRFSS example, we illustrated how jittering can be used in Q-Q plots to
+better compare discretized data to a continuous distribution.
+
+Q-Q plots are member of the larger probability plotting family, and we
+are working to incorporate additional plots into \pkg{qqplotr}\ldots{}.
+NEED TO DISUCSS P-P PLOTS SOMEHOW
 
 XXX P-P plots here Write this section once the rest of the paper is
 done.
