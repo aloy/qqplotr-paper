@@ -17,21 +17,6 @@ An abstract of less than 150 words.
 \item
   Abstract
 \item
-  Intro
-\item
-  Review Q-Q plots and P-P plots, including other arrangements, and what
-  is implemented in other packages
-\item
-  Package implementation
-\item
-  Give examples
-
-  \begin{itemize}
-  \tightlist
-  \item
-    Heike: BRFSS example
-  \end{itemize}
-\item
   Conclusion
 \end{itemize}
 
@@ -52,7 +37,7 @@ that can be used for distribution exploration and assessment, a
 quantile-quantile (Q-Q) plot \citep{Wilk1968-ii} is one of the most
 common plots used.
 
-Q-Q plots compare two distributions by comparing a commmon set of
+Q-Q plots compare two distributions by matching a commmon set of
 quantiles. To compare a sample, \(y_1, y_2, \ldots, y_n\) to a
 theoretical distribution, a Q-Q plot is simply a scatterplot of the
 sample quantiles, \(y_{(i)}\), against the corresponding quantiles from
@@ -79,15 +64,15 @@ the model.
 \end{Schunk}
 
 Additional graphical elements are often added to Q-Q plots in order to
-aid in distributional assessment including. A reference line is often
-added to a Q-Q plot to assist the detection of departures from
-normality. This line is often drawn by connecting the first and third
-quartiles. Pointwise or simultaneous confidence bands are also
-frequently built around the reference line to display the expected
-degree of sampling error for the proposed model, so that minor
-deviations from the reference line are not over-interpreted. Figure
-\ref{fig:ex-qq2} adds such reference lines and 95\% pointwise confidence
-bands to the Q-Q plots in Figure \ref{fig:ex-qq1}.
+aid in distributional assessment. A reference line is often added to a
+Q-Q plot to assist the detection of departures from normality. This line
+is often drawn by connecting the first and third quartiles. Pointwise or
+simultaneous confidence bands are also frequently built around the
+reference line to display the expected degree of sampling error for the
+proposed model, so that minor deviations from the reference line are not
+over-interpreted. Figure \ref{fig:ex-qq2} adds such reference lines and
+95\% pointwise confidence bands to the Q-Q plots in Figure
+\ref{fig:ex-qq1}.
 
 \begin{Schunk}
 \begin{figure}
@@ -106,10 +91,11 @@ is changed to show the difference between the observed quantile and the
 reference line. Consequently, the line representing the agreement with
 the theoretical distribution is the \(x\)-axis. \citet{Loy2016-fg} find
 that detrended Q-Q plots are more powerful than other designs, so long
-at the \(y\)-axis limits are set so that the aspect ratio is kept the
+as the \(y\)-axis limits are set so that the aspect ratio is kept the
 same as in the traditional Q-Q plot, which they call \emph{adjusted
 de-trended Q-Q plots}. Figure \ref{fig:ex-detrend} displays the normal
-Q-Q plot from Figure \ref{fig:ex-qq2} along with a detrended version.
+Q-Q plot from Figure \ref{fig:ex-qq2} along with its adjusted detrended
+version.
 
 \begin{Schunk}
 \begin{figure}
@@ -118,7 +104,7 @@ Q-Q plot from Figure \ref{fig:ex-qq2} along with a detrended version.
 
 }
 
-\caption[The left plot displays a traditional normal Q-Q plot for data simulated from a lognormal distributin]{The left plot displays a traditional normal Q-Q plot for data simulated from a lognormal distributin. The right plot displays an adjusted detrended Q-Q plot of the same data, created by plotting the differences between the sample quantiles and the proposed model on the $y$-axis.}\label{fig:ex-detrend}
+\caption[The left plot displays a traditional normal Q-Q plot for data simulated from a lognormal distribution]{The left plot displays a traditional normal Q-Q plot for data simulated from a lognormal distribution. The right plot displays an adjusted detrended Q-Q plot of the same data, created by plotting the differences between the sample quantiles and the proposed model on the $y$-axis.}\label{fig:ex-detrend}
 \end{figure}
 \end{Schunk}
 
@@ -127,9 +113,9 @@ a sample is compared to the standard normal distribution, are
 implemented using \texttt{qqplot} and \texttt{qqline} in \pkg{base}
 graphics \citep{R}. \pkg{lattice} provides a general framework for Q-Q
 plots in the \texttt{qqmath} function, allowing one to compare a sample
-to any theoretical distribution by specifying the quantile function
-\citep{lattice}. \texttt{qqPlot} in the \pkg{car} package also allows
-for the assessment of non-normal distributions and adds pointwise
+to any theoretical distribution by specifying the appropriate quantile
+function \citep{lattice}. \texttt{qqPlot} in the \pkg{car} package also
+allows for the assessment of non-normal distributions and adds pointwise
 confidence bands via normal theory or the parametric bootstrap
 \citep{car}. \pkg{ggplot2} provides \texttt{geom\_qq} and
 \texttt{geom\_qq\_line}, enabling the creation of Q-Q plots with a
@@ -139,7 +125,7 @@ construction of de-trended Q-Q plots.
 
 \pkg{qqplotr} extends \pkg{ggplot2} to provide a complete implementation
 of Q-Q plots. The package allows for quick construction of all Q-Q plot
-designs without sacrificng the flexibility of the \pkg{ggplot2}
+designs without sacrificing the flexibility of the \pkg{ggplot2}
 framework. In the remainder of this paper, we will introduce the
 plotting framework provided by \pkg{qqplotr} and provide multiple
 examples of how it can be used.
@@ -148,9 +134,9 @@ examples of how it can be used.
 \pkg{ggplot2}
 framework}{Implementing probability plots in the  framework}}\label{implementing-probability-plots-in-the-framework}
 
-With \pkg{qqplotr} we extend some of the original \pkg{ggplot2} quantile
-plot functionatilites by permitting the drawing of Q-Q points, lines,
-and confidence bands. Our approach provides a \pkg{ggplot2} layering
+With \pkg{qqplotr} we extend some of the original \pkg{ggplot2} Q-Q plot
+functionatilites by permitting the drawing of Q-Q points, lines, and
+confidence bands. Our approach provides a \pkg{ggplot2} layering
 mechanism so that for each one of those plot elements we implemented a
 \pkg{ggplot2} ``stat'' (statistical transformation). In addition, we
 also implemented a \pkg{ggplot2} ``geom'' (geometrical object)
@@ -159,31 +145,151 @@ of handling graphical parameters, which will become clearer in the
 \nameref{sec:examples} section.
 
 The Q-Q plot functions are divided into three statistical
-transformations:
+transformations. Below, we describe each one of those functions and also
+give an overview of its parameters.
+
+\subsubsection{\texorpdfstring{\texttt{stat\_qq\_point}}{stat\_qq\_point}}\label{stat_qq_point}
+
+This is a modified version of \texttt{stat\_qq}/\texttt{geom\_qq} from
+\pkg{ggplot2} that plots the sample quantiles versus the theoretical
+quantiles (as in Figure \ref{fig:ex-qq1}). The novelty of this
+implementation is an option to detrend the plotted points (see
+\nameref{sec:introduction}). Note that all other implemented functions
+in the \pkg{qqplotr} package also allow for this option. Below we
+present a complete call to \texttt{stat\_qq\_point} and highlight its
+default parameters values:
+
+\begin{Schunk}
+\begin{Sinput}
+stat_qq_point(
+  data = NULL,
+  mapping = NULL,
+  geom = "point",
+  position = "identity",
+  na.rm = TRUE,
+  show.legend = NA,
+  inherit.aes = TRUE,
+  distribution = "norm",
+  dparams = list(),
+  detrend = FALSE,
+  qtype = 7,
+  qprobs = c(0.25, 0.75),
+  ...
+  )
+\end{Sinput}
+\end{Schunk}
 
 \begin{itemize}
 \item
-  \texttt{stat\_qq\_point}: a modified version of \texttt{stat\_qq} from
-  \pkg{ggplot2} that plots the sample quantiles versus the theoretical
-  quantiles (as in Figure \ref{fig:qq}). The novelty of this
-  implementation is an option to detrend the plotted points (see
-  \nameref{sec:introduction}). All other implemented functions in this
-  package also allow the detrend adjustment.
+  Parameters such as \texttt{data}, \texttt{mapping}, \texttt{geom},
+  \texttt{position}, \texttt{na.rm}, \texttt{show.legend}, and
+  \texttt{inherit.aes} are specific for \pkg{ggplot2} implementations.
 \item
-  \texttt{stat\_qq\_line}: draws a reference line based on the sample
-  data quantiles, defaulting to the first and third quartiles.
+  \texttt{distribution} is a character string that sets the theoretical
+  probability distribution. Here, we followed the nomenclature from the
+  \pkg{stats} package. You must not provide the full distribution
+  function name (e.g., \texttt{"dnorm"}). Instead, just provide its
+  suffix (e.g., \texttt{"norm"}). If you wish to provide a custom
+  distribution (as we will do in Section \ref{sec:user-dists}), you may
+  do so by first creating the density (PDF), distribution (CDF),
+  quantile, and random functions (also by following \pkg{stats} package
+  nomenclature, i.e., for \texttt{"custom"}, you must first create the
+  \texttt{dcustom}, \texttt{pcustom}, \texttt{qcustom}, and
+  \texttt{rcustom} functions).
 \item
-  \texttt{stat\_qq\_band}: draws confidence bands around the reference
-  line using one of three methods: a normal approximation, the
-  parametric bootstrap, or the tail-sensitive procedure.
+  \texttt{dparams} is a named list to be provided alongside with the
+  previously chosen \texttt{distribution}. By default, MLEs are used for
+  the distributional parameters. By manually providing any of the
+  distributional parameters, the MLE is automatically turned off. Please
+  note that MLEs are currently only supported for common distributions
+  (i.e., those from the \pkg{stats} package); so if you do provide a
+  custom distribution to \texttt{distribution}, be sure to provide
+  \emph{all} of its parameters to \texttt{dparams}.
+\item
+  \texttt{detrend} is a boolean that controls whether the points should
+  be detrended (as shown in Figure \ref{fig:ex-detrend}). More on that
+  in Section \ref{sec:detrending}.
+\item
+  \texttt{qtype} and \texttt{qprobs} are only used when
+  \texttt{detrend\ =\ TRUE}. These parameters are passed on to the
+  \texttt{type} and \texttt{probs} parameters of \texttt{quantile}
+  function from the \pkg{stats} package. The \texttt{quantile} function
+  is used to define the quantiles where the reference line (i.e., the
+  proposed model) shall intercept.
+\end{itemize}
+
+\subsubsection{\texorpdfstring{\texttt{stat\_qq\_line}}{stat\_qq\_line}}\label{stat_qq_line}
+
+This statistical transformation draws a reference line based on the
+sample data quantiles. Note that the \texttt{stat\_qq\_line} call below
+does not present any additional parameters when compared to
+\texttt{stat\_qq\_point}.
+
+\begin{Schunk}
+\begin{Sinput}
+stat_qq_line(
+  data = NULL,
+  mapping = NULL,
+  geom = "path",
+  position = "identity",
+  na.rm = TRUE,
+  show.legend = NA,
+  inherit.aes = TRUE,
+  distribution = "norm",
+  dparams = list(),
+  detrend = FALSE,
+  qtype = 7,
+  qprobs = c(0.25, 0.75),
+  ...
+  )
+\end{Sinput}
+\end{Schunk}
+
+\subsubsection{\texorpdfstring{\texttt{stat\_qq\_band}}{stat\_qq\_band}}\label{stat_qq_band}
+
+Draws confidence bands around the reference line using one of three
+methods: a normal approximation, the parametric bootstrap, or the
+tail-sensitive procedure. Below, we present the call to
+\texttt{stat\_qq\_band} and describe its specific parameters:
+
+\begin{Schunk}
+\begin{Sinput}
+stat_qq_band(
+  data = NULL,
+  mapping = NULL,
+  geom = "qq_band",
+  position = "identity",
+  show.legend = NA,
+  inherit.aes = TRUE,
+  na.rm = TRUE,
+  distribution = "norm",
+  dparams = list(),
+  detrend = FALSE,
+  qtype = 7,
+  qprobs = c(0.25, 0.75),
+  bandType = "normal",
+  B = 1000,
+  conf = 0.95,
+  mu = NULL,
+  sigma = NULL,
+  ...
+  )
+\end{Sinput}
+\end{Schunk}
+
+\begin{itemize}
+\item
+  \texttt{bandType} is a character string that controls the method to be
+  used when constructing the confidence bands:
 
   \begin{itemize}
   \tightlist
   \item
-    \textbf{Normal:} Specifying \texttt{bandType\ =\ "norm"} constructs
-    pointwise confidence bands based on the normal approximation to the
-    distribution of the order statistics. For example, an approximate
-    95\% confidence interval for the \(i\)th order statistic is
+    \textbf{Normal:} Specifying \texttt{bandType\ =\ "normal"}
+    constructs pointwise confidence bands based on the normal
+    approximation to the distribution of the order statistics. For
+    example, an approximate 95\% confidence interval for the \(i\)th
+    order statistic is
     \(\widehat{X}_{(i)}~\pm~\Phi^{-1}(.975)~\cdot~SE(X_{(i)})\), where
     \(\widehat{X}_{(i)}\) denotes the value along the fitted line,
     \(\Phi^{-1}(\cdot)\) denotes the quantile function for the standard
@@ -198,7 +304,24 @@ transformations:
     constructs the simulation-based tail-sensitive simultaneous
     confidence bands proposed by \citet{Aldor-Noiman2013-xw}.
   \end{itemize}
+\item
+  \texttt{B} is an integer that represents the number of bootstrap
+  replicates (if \texttt{bandType\ =\ "bs"}) or the number of simulated
+  samples (if \texttt{bandType\ =\ "ts"}).
+\item
+  \texttt{conf} is a numerical variable that controls the confidence
+  level of the bands, which must be a value between 0 and 1.
+\item
+  \texttt{mu} and \texttt{sigma} are only used when
+  \texttt{bandType\ =\ "ts"}. They represent the center and scale
+  distributional parameters, respectively, which are used used to
+  construct the simulated tail-sensitive confidence bands. If any of the
+  parameters is provided with \texttt{NULL}, then both the center and
+  scale parameters will be estimated using robust estimates via the
+  \texttt{robustbase} package.
 \end{itemize}
+
+\FloatBarrier
 
 \subsection{Examples}\label{examples}
 
@@ -336,8 +459,10 @@ SEX & mean\_wt & mean\_log\_wt & sd\_wt & sd\_log\_wt\\
 \end{tabular}
 \end{table}
 
-\subsubsection{Using a other
-distributions}\label{using-a-other-distributions}
+\subsubsection{Using user-provided
+distributions}\label{using-user-provided-distributions}
+
+\label{sec:user-dists}
 
 Using the capabilities of \pkg{qqplotr} with the distributions
 implemented in the \pkg{stats} package is relatively straightfoward,
@@ -374,7 +499,7 @@ are cleaerly left skewed.
 \end{Schunk}
 
 In order to model the jump distances we must first define a left-skewed
-distribution. Below, we define the suite of distribution functions
+distribution. Below, we define the suite of distributional functions
 necessary to utilize the SEV distribution.
 
 \begin{Schunk}
@@ -412,9 +537,9 @@ representation of the distances.
 \begin{Schunk}
 \begin{Sinput}
 ggplot(longjump, aes(sample = distance)) +
-  stat_qq_band(distribution = "sev", dparams=list(mu=0, sigma=1), alpha = 0.3) +
-  stat_qq_line(distribution = "sev", dparams=list(mu=0, sigma=1)) +
-  stat_qq_point(distribution = "sev", dparams=list(mu=0, sigma=1)) +
+  stat_qq_band(distribution = "sev", dparams = list(mu = 0, sigma = 1), alpha = 0.3) +
+  stat_qq_line(distribution = "sev", dparams = list(mu = 0, sigma = 1)) +
+  stat_qq_point(distribution = "sev", dparams = list(mu = 0, sigma = 1)) +
   xlab("Theoretical quantiles") +
   ylab("Jump distance (in m)") +
   theme_bw()
@@ -431,13 +556,15 @@ ggplot(longjump, aes(sample = distance)) +
 
 \subsubsection{Detrending Q-Q plots}\label{detrending-q-q-plots}
 
+\label{sec:detrending}
+
 \pkg{qqplotr} also allows for Q-Q plots to be \emph{detrended}. In a
 detrended Q-Q plot, the \(y\)-axis shows the difference between the
 empirical quantile and the reference line (i.e.~the theoretical
-distribution). This layout directly plots what we want viewers to
-assess---the difference between the distributions being compared---which
+distribution). This layout directly plots what we want viewers to assess
+--the difference between the distributions being compared-- which
 \citet{Loy2016-fg} found to be more powerful than other designs, so long
-at the \(y\)-axis limits are set so that the aspect ratio is kept the
+as the \(y\)-axis limits are set so that the aspect ratio is kept the
 same as in the traditional Q-Q plot.
 
 For example, Figure \ref{fig:detrend-sev} compares the standard Q-Q plot
@@ -459,12 +586,22 @@ argument \texttt{detrend\ =\ TRUE} to the \texttt{stat\_qq\_band},
 \begin{Schunk}
 \begin{Sinput}
 ggplot(longjump, aes(sample = distance)) +
-  stat_qq_band(distribution = "sev", alpha = 0.3, 
-               detrend = TRUE, dparams=c(mu=0, sigma=1)) +
-  stat_qq_line(distribution = "sev", 
-               detrend = TRUE, dparams=c(mu=0, sigma=1)) +
-  stat_qq_point(distribution = "sev", 
-                detrend = TRUE, dparams=c(mu=0, sigma=1)) +
+  stat_qq_band(
+  distribution = "sev",
+  alpha = 0.3,
+  detrend = TRUE,
+  dparams = c(mu = 0, sigma = 1)
+  ) +
+  stat_qq_line(
+  distribution = "sev",
+  detrend = TRUE,
+  dparams = c(mu = 0, sigma = 1)
+  ) +
+  stat_qq_point(
+  distribution = "sev",
+  detrend = TRUE,
+  dparams = c(mu = 0, sigma = 1)
+  ) +
   xlab("Theoretical quantiles") +
   ylab("Differences") +
   theme_bw() +
@@ -475,7 +612,7 @@ ggplot(longjump, aes(sample = distance)) +
 In order to create a so-called \emph{adjusted} detrended Q-Q plot
 \citep{Loy2016-fg} the aspect ratio must also be set to 1. If the aspect
 ratio is not adjusted in this way, an \emph{ordinary} detrended Q-Q plot
-is created, which is known to lhave lower power than the standard Q-Q
+is created, which is known to have lower power than the standard Q-Q
 plot in some situations \citep{Loy2016-fg}.
 
 \subsection{Summary}\label{summary}
@@ -486,11 +623,11 @@ done.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=.31\linewidth]{qqplotr_files/figure-latex/unnamed-chunk-4-1} 
+{\centering \includegraphics[width=.31\linewidth]{qqplotr_files/figure-latex/unnamed-chunk-7-1} 
 
 }
 
-\caption{\label{fig:pp-designs}Illustrating different designs of probability plots.}\label{fig:unnamed-chunk-4}
+\caption{\label{fig:pp-designs}Illustrating different designs of probability plots.}\label{fig:unnamed-chunk-7}
 \end{figure}
 \end{Schunk}
 
