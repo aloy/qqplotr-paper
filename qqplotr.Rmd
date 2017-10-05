@@ -451,9 +451,9 @@ With the `*sev` distribution functions in hand, we can create a Q-Q plot to asse
 
 ```{r sev-qq, fig.cap = "Q-Q plot comparing the long jump distances to the standard SEV distribution. The SEV distribution appear to adequately model the distances.", fig.width = 3.5, fig.height = 3.5, out.width='0.45\\textwidth', fig.align="center", message=FALSE, warning = FALSE}
 ggplot(longjump, aes(sample = distance)) +
-  stat_qq_band(distribution = "sev", alpha = 0.3) +
-  stat_qq_line(distribution = "sev") +
-  stat_qq_point(distribution = "sev") +
+  stat_qq_band(distribution = "sev", alpha = 0.3, dparams = list(mu = 0, sigma = 1)) +
+  stat_qq_line(distribution = "sev", dparams = list(mu = 0, sigma = 1)) +
+  stat_qq_point(distribution = "sev", dparams = list(mu = 0, sigma = 1)) +
   xlab("Theoretical quantiles") +
   ylab("Jump distance (in m)") +
   theme_bw()
@@ -468,17 +468,17 @@ For example, Figure \ref{fig:detrend-sev} compares the standard Q-Q plot shown i
 
 ```{r detrend-sev, echo=FALSE, fig.width = 8, fig.height = 3.5, fig.cap = "Q-Q plots assessing the appropriateness of the SEV distribution for the long jump data. On the left, a standard Q-Q plot is shown. On the right, we detrend the Q-Q plot by plotting the differences between the empirical quantiles and reference line on the $y$-axis.", out.width='\\textwidth', fig.align="center", message=FALSE, warning = FALSE}
 p7 <- ggplot(longjump, aes(sample = distance)) +
-  stat_qq_band(distribution = "sev", alpha = 0.3) +
-  stat_qq_line(distribution = "sev") +
-  stat_qq_point(distribution = "sev") +
+  stat_qq_band(distribution = "sev", alpha = 0.3, dparams = list(mu = 0, sigma = 1)) +
+  stat_qq_line(distribution = "sev", dparams = list(mu = 0, sigma = 1)) +
+  stat_qq_point(distribution = "sev", dparams = list(mu = 0, sigma = 1)) +
   xlab("Theoretical quantiles") +
   ylab("Jump distance (in m)") +
   theme_bw()
 
 p8 <- ggplot(longjump, aes(sample = distance)) +
-  stat_qq_band(distribution = "sev", alpha = 0.3, detrend = TRUE) +
-  stat_qq_line(distribution = "sev", detrend = TRUE) +
-  stat_qq_point(distribution = "sev", detrend = TRUE) +
+  stat_qq_band(distribution = "sev", alpha = 0.3, detrend = TRUE, dparams = list(mu = 0, sigma = 1)) +
+  stat_qq_line(distribution = "sev", detrend = TRUE, dparams = list(mu = 0, sigma = 1)) +
+  stat_qq_point(distribution = "sev", detrend = TRUE, dparams = list(mu = 0, sigma = 1)) +
   xlab("Theoretical quantiles") +
   ylab("Differences") +
   theme_bw() +
