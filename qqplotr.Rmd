@@ -43,117 +43,110 @@ output: rticles::rjournal_article
 ## Introduction
 \label{sec:introduction}
 
-Univariate distributional assessment is a common thread throughout statistical analyses during both the exploratory and confirmatory stages. When we begin exploring a new data set we often consider the distribution of individual variables before moving on to explore multivariate relationships. After a model has been fit to a data set, we must assess whether the distributional assumptions made were reasonable, and if they are not we then must understand the impact this has on the conclusions. Graphics provide arguably the most common way to carry out these univariate assessments. While there are many graphical methods that can be used for distribution exploration and assessment, probability plotting is one of the most common graphical approaches used. 
+Univariate distributional assessment is a common thread throughout statistical analyses during both the exploratory and confirmatory stages. When we begin exploring a new data set we often consider the distribution of individual variables before moving on to explore multivariate relationships. After a model has been fit to a data set, we must assess whether the distributional assumptions made are reasonable, and if they are not, then we must understand the impact this has on the conclusions of the model. Graphics provide arguably the most common way to carry out these univariate assessments. While there are many plots that can be used for distribution exploration and assessment, a quantile-quantile (Q-Q) plot \citep{Wilk1968-ii} is one of the most common plots used. 
 
-Probability plotting refers to a family of methods based on the cumulative distribution function (CDF), most notably quantile (Q-Q) plots and probability (P-P) plots \citep{Wilk1968-ii}. In this paper, we focus on comparing an empirical distribution to a theoretical distribution. Let $Y_1, \ldots, Y_n$ denote a random sample from an unknown population, and let $\widehat{F}_y(q)$ be the empirical cumulative distribution obtained from the sample. Further, let $F(q)$ denote the CDF of a proposed dsitribution for the sample. A Q-Q plot is constructed by plotting the quantiles of the empirical distribution, $q_y(p) = F_y^{-1}(p)$, against the corresponding quantiles of the theoretical distribution, $q(p) = F^{-1}(p)$. This constuction is illustrated in Figure \ref{fig:qq}.
-A P-P plot is constructed by plotting $F(q)$ against $\widehat{F}_y(q)$ for various quantiles, $q$. This constuction is illustrated in Figure \ref{fig:pp}. Regardless of the plot constructed, if the two distributions are identical, then the scatterplots will be linear with slope 1 and intercept 0. Additionally, Q-Q plots are invariant to linear transformations, so if two random variables differ by a linear transformation a Q-Q plot showing draws from their distributions will still be linear, but with a different slope and intercept, as seen in Figure \ref{fig:qq}. P-P plots, in turn, are sensitive to linear transformations.
-
-```{r, message = FALSE, echo = FALSE, out.width = '.45\\linewidth', fig.width = 3.5, fig.height = 3.5, fig.show = 'hold', fig.align = 'center', fig.cap = "\\label{fig:qq}Illustrating what quantities are being plotted for Q-Q plots."}
-require(ggplot2)
-set.seed(3145)
-rand_sample <- rnorm(30, mean = -1, sd = 1)
-Fn <- ecdf(rand_sample)
-defn_data <- data.frame(q = c(-5,4), rs = rand_sample)
-ggplot(defn_data, aes(x = q)) +
-  stat_function(fun = pnorm, n = 101, args = list(mean = 0, sd = 1)) +
-  # stat_function(fun = pnorm, n = 101, args = list(mean = -1, sd = 1), linetype = 2) +
-  stat_ecdf(mapping = aes(x = rs), geom = "step", linetype = 2) +
-  geom_segment(aes(x = -5, y = .5, xend = qnorm(.5), yend = .5)) +
-  geom_segment(aes(x = qnorm(.5), y = .5, xend = qnorm(.5), yend = 0)) +
-  geom_segment(aes(x = quantile(Fn, .5), y = .5, xend = quantile(Fn, .5), yend = 0)) +
-  scale_x_continuous(breaks = c(quantile(Fn, .5), qnorm(.5)), minor_breaks = NULL, labels = c(expression(q[y](p)), expression(q(p)))) +
-  scale_y_continuous(breaks = c(0, .5, 1), minor_breaks = NULL, labels = c("0", "p", "1")) +
-  theme_minimal() +
-  ylab("Cumulative distribution function") +
-  xlab("Quantiles")
-
-require(qqplotr)
-ggplot(data = defn_data, mapping = aes(sample = rs)) +
-  stat_qq_point(dparams = list(mean = 0, sd = 1)) +
-  theme_minimal() +
-  ylab(expression(paste("Sample quantiles, ", q[y](p)))) +
-  xlab(expression(paste("Theoretical quantiles, ", q(p))))
-```
-
-```{r, message = FALSE, echo = FALSE, out.width = '.45\\linewidth', fig.width = 3.5, fig.height = 3.5, fig.show = 'hold', fig.align = 'center', fig.cap = "\\label{fig:pp}Illustrating what quantities are being plotted for P-P plots."}
-ggplot(defn_data, aes(x = q)) +
-  stat_function(fun = pnorm, n = 101, args = list(mean = 0, sd = 1)) +
-  # stat_function(fun = pnorm, n = 101, args = list(mean = -1, sd = 1), linetype = 2) +
-  stat_ecdf(mapping = aes(x = rs), geom = "step", linetype = 2) +
-  geom_segment(aes(x = -5, y = pnorm(-.5), xend = -.5, yend = pnorm(-.5))) +
-  geom_segment(aes(x = -5, y = Fn(-.5), xend = -.5, yend = Fn(-.5))) +
-  geom_segment(aes(x = -.5, y = 0, xend = -.5, yend = Fn(-.5))) +
-  scale_x_continuous(breaks = -.5, minor_breaks = NULL, labels = "q") +
-  scale_y_continuous(breaks = c(0, pnorm(-.5), Fn(-.5), 1), minor_breaks = NULL, labels = c("0", expression(F(q)), expression(hat(F)[y](q)), "1")) +
-  theme_minimal() +
-  ylab("Cumulative distribution function") +
-  xlab("Quantiles")
+Q-Q plots compare two distributions by comparing a commmon set of quantiles. 
+<!-- For two samples of size $n$, $X_1, X_2, \ldots, X_n$ and $Y_1, Y_2, \ldots, Y_n$, a Q-Q plot is a scatterplot comparing the sample quantiles.  -->
+To compare a sample, $y_1, y_2, \ldots, y_n$ to a theoretical distribution, a Q-Q plot is simply a scatterplot of the sample quantiles, $y_{(i)}$, against the corresponding quantiles from the theoretical distribution, $F^{-1}\left( F_n(y_i) \right)$. If the empirical distribution is consistent with the theoretical distribution, then the Q-Q plot will be linear. For example, Figure \ref{fig:ex-qq1} shows two Q-Q plots: the left plot compares a sample drawn from the lognormal distribution to the lognormal distribution, while the right plot compares a sample drawn from the lognormal distribution to the normal distribution. As expected, the lognormal Q-Q plot is approximately linear as the data and model are in agreement, while the normal Q-Q plot is curved, indicating disagreement between the data and the model.
 
 
-ggplot(data = defn_data, mapping = aes(sample = rs)) +
-  stat_pp_point(dparams = list(mean = 0, sd = 1)) +
-  theme_minimal() +
-  ylab(expression(paste("Cumulative probabilities, ", F(q)))) +
-  xlab(expression(paste("Probability points, ", hat(F)[y](q))))
+```{r ex-qq1, echo=FALSE, out.width='.4\\linewidth', fig.width=3.5, fig.height=3.5, fig.show='hold', fig.align='center', fig.cap="The left plot compares a sample drawn from the lognormal distribution to the lognormal distribution, while the right plot compares a sample drawn from the lognormal distribution to the normal distribution. The curvature in the normal Q-Q plot highlights the disagreement betweeen the data and the model.", message = FALSE}
+library(qqplotr)
+set.seed(952017)
+rand_sample <- data.frame(rs = rlnorm(20, meanlog = 0, sdlog = 1))
 
-```
-
-<!-- Figure \ref{fig:cdfs} displays two CDFs to illustrate the definition of Q-Q and P-P plots. Let $F_x(q)$ and $F_y(q)$ denote the two CDFs, and let $q_x(p) = F_x^{-1}(p)$ and $q_y(p) = F_y^{-1}(p)$ denote the quantile functions for each distribution. A Q-Q plot is constructed by plotting the $q_y(p)$ against $q_x(p)$ for various $p$. A P-P plot is constructed by plotting $F_x(q)$ against $F_y(q)$ for various quantiles, $q$. In practice, the distribution of a sample is often compared to a theoretical distribution. Here, the empirical CDF, $\widehat{F}_y$ is used in place of $F_y$. Regardless of the plot constructed, if the two distributions are the same, then the scattplots will be linear with slope 1 and intercept 0. Additionally, Q-Q plots are invariant to linear transformations, so if two random variables differ by a linear transformation a Q-Q plot showing draws from their distributions will still be linear, but with a different slope and intercept. P-P plots are sensitive to linear transformations. -->
-
-
-While the basic form of both the Q-Q and P-P plots is a scatterplot, additional graphical elements are often added to aid in distributional assessment. For Q-Q plots, a reference line is often drawn through the points $(q(.25), q_y(.25))$ and $(q(.75), q_y(.75))$. For P-P plots a reference line with slope 1 and intercept 0 is used. In both plots, pointwise or simultaneous confidence bands are often added around the reference line to further aid in the visual assessment. 
-
-
-Innovations to Q-Q and P-P plots have also been proposed. \citet{Loy2016-fg} discuss the creation of detrended Q-Q plots, where the $y$-axis is changed to show the difference between $q_y$ and the reference line. Consequently, the line representing the agreement with the theoretical distribution is the $x$-axis. \citet{Loy2016-fg} find that detrended Q-Q plots are more powerful than other designs, so long at the $y$-axis limits are set so that the aspect ratio is kept the same as in the traditional Q-Q plot. In reliability and survival analysis, probability plots often refer to a hybrid probability plot, there the CDF of the proposed theoretical distribution is plotted against the empirical order statistics, and transformations are applied to each axis to linearize the CDF \citep[cf.][chapter 6]{Meeker1998}. This hybrid probability plot is invariant to linear transformations.
-
-```{r, echo=FALSE, out.width='.31\\linewidth', fig.width=3.5, fig.height=3.5, fig.show='hold', fig.align='center', fig.cap="\\label{fig:pp-designs}Illustrating different designs of probability plots."}
-ggplot(data = defn_data, mapping = aes(sample = rs)) +
-  stat_qq_line(dparams = list(mean = 0, sd = 1)) +
-  stat_qq_point(dparams = list(mean = 0, sd = 1)) +
+ggplot(data = rand_sample, mapping = aes(sample = rs)) +
+  stat_qq_point(distribution = "lnorm") +
   ylab("Sample quantiles") +
   xlab("Theoretical quantiles") +
-  ggtitle("Standard Q-Q plot") +
+  ggtitle("Lognormal Q-Q plot") +
   theme_minimal()
 
-ggplot(data = defn_data, mapping = aes(sample = rs)) +
-  stat_qq_line(dparams = list(mean = 0, sd = 1), detrend = TRUE) +
-  stat_qq_point(dparams = list(mean = 0, sd = 1), detrend = TRUE) +
-  ylim(-diff(range(defn_data$rs))/2, diff(range(defn_data$rs))/2) +
-  ylab("Differences") +
+ggplot(data = rand_sample, mapping = aes(sample = rs)) +
+  stat_qq_point() +
+  ylab("Sample quantiles") +
   xlab("Theoretical quantiles") +
-  ggtitle("Adjusted detrended Q-Q plot") +
+  ggtitle("Normal Q-Q plot") +
+  theme_minimal()
+```
+
+
+Additional graphical elements are often added to Q-Q plots in order to aid in distributional assessment including. A reference line is often added to a Q-Q plot to assist the detection of departures from normality.  This line is often drawn by connecting the first and third quartiles. Pointwise or simultaneous confidence bands are also frequently built around the reference line to display the expected degree of sampling error for the proposed model, so that minor deviations from the reference line are not over-interpreted. Figure \ref{fig:ex-qq2} adds such reference lines and 95% pointwise confidence bands to the Q-Q plots in Figure \ref{fig:ex-qq1}.
+
+
+
+```{r ex-qq2, echo=FALSE, out.width='.4\\linewidth', fig.width=3.5, fig.height=3.5, fig.show='hold', fig.align='center', fig.cap="Adding reference lines and $95\\%$ pointwise confidence bands to the Q-Q plots in Figure 1.", message = FALSE}
+library(qqplotr)
+set.seed(952017)
+rand_sample <- data.frame(rs = rlnorm(20, meanlog = 0, sdlog = 1))
+
+ggplot(data = rand_sample, mapping = aes(sample = rs)) +
+  stat_qq_point(distribution = "lnorm") +
+  stat_qq_line(distribution = "lnorm", color = "blue") +
+  stat_qq_band(distribution = "lnorm", alpha = 0.5) +
+  ylab("Sample quantiles") +
+  xlab("Theoretical quantiles") +
+  ggtitle("Lognormal Q-Q plot") +
   theme_minimal()
 
-defn_data$ppoints <- ppoints(defn_data$rs)
-ggplot(data = defn_data, mapping = aes(x = sort(rs), y = ppoints)) +
-  geom_point() +
-  xlab("Sample quantiles") +
-  ylab("Cumulative probabilty") +
-  theme_minimal() +
-  ggtitle("Hybrid probability plot")
+ggplot(data = rand_sample, mapping = aes(sample = rs)) +
+  stat_qq_point() +
+  stat_qq_line(color = "blue") +
+  stat_qq_band(alpha = 0.5) +
+  ylab("Sample quantiles") +
+  xlab("Theoretical quantiles") +
+  ggtitle("Normal Q-Q plot") +
+  theme_minimal()
 ```
 
 
 
-Q-Q plots have been implemented in various forms in R, but none provide a complete implementation of
-the probability plotting framework. Normal quantile plots, where a sample is compared to the
-standard normal distribution, are implemented using the `qqplot` and `qqline` in \pkg{base} graphics
-\citep{R}. `qqmath` in \pkg{lattice} provides a general framework for Q-Q plots, comparing a sample
-to any theoretical distribution by specifying the quantile function \citep{lattice}. `qqPlot` in the
-\pkg{car} package also allows for the assessment of non-normal distribution and adds pointwise
-confidence bands based on the standard errors of the order statistics or the parametric bootstrap
-\citep{car}. \pkg{ggplot2} provides `geom_qq` and `geom_qq_line`, enabling the creation of
-traditional Q-Q plots with a reference line, much like those created using `qqmath`. \pkg{qqplotr}
-extends \pkg{ggplot2} to provide the most complete implementation of probability plotting.
-
-XXX `qualityTools` \cite{qualityTools}
-
-In the remainder of this paper, we introduce the probability plotting framework provided by
-\pkg{qqplotr}... FILL THIS IN ONCE OTHER SECTIONS ARE WRITTEN...
+Different orientations of Q-Q plots have also been proposed, most notably the de-trended Q-Q plot. To detrend a Q-Q plot, the $y$-axis is changed to show the difference between the observed quantile and the reference line. Consequently, the line representing the agreement with the theoretical distribution is the $x$-axis. \citet{Loy2016-fg} find that detrended Q-Q plots are more powerful than other designs, so long at the $y$-axis limits are set so that the aspect ratio is kept the same as in the traditional Q-Q plot, which they call *adjusted de-trended Q-Q plots*. Figure \ref{fig:ex-detrend} displays the normal Q-Q plot from Figure \ref{fig:ex-qq2} along with a detrended version.
 
 
-TODO: FIGURE OUT WHERE TO INTRODUCE TS BANDS \citep{Aldor-Noiman2013-xw}
-TODO: FIGURE \ref{fig:pp-designs} HAS NO REFERENCES TO IT
+```{r ex-detrend, echo=FALSE, out.width='.4\\linewidth', fig.width=3.5, fig.height=3.5, fig.show='hold', fig.align='center', fig.cap="The left plot displays a traditional normal Q-Q plot for data simulated from a lognormal distributin. The right plot displays an adjusted detrended Q-Q plot of the same data, created by plotting the differences between the sample quantiles and the proposed model on the $y$-axis.", message = FALSE}
+library(qqplotr)
+set.seed(952017)
+rand_sample <- data.frame(rs = rlnorm(20, meanlog = 0, sdlog = 1))
+
+ggplot(data = rand_sample, mapping = aes(sample = rs)) +
+  stat_qq_point() +
+  stat_qq_line(color = "blue") +
+  stat_qq_band(alpha = 0.5) +
+  ylab("Sample quantiles") +
+  xlab("Theoretical quantiles") +
+  ggtitle("Normal Q-Q plot") +
+  theme_minimal()
+
+ggplot(data = rand_sample, mapping = aes(sample = rs)) +
+  stat_qq_point(detrend = TRUE) +
+  stat_qq_line(detrend = TRUE, color = "blue") +
+  stat_qq_band(detrend = TRUE, alpha = 0.5) +
+  ylab("Differences") +
+  xlab("Theoretical quantiles") +
+  ggtitle("Adjusted detrended version") +
+  theme_minimal() +
+  theme(aspect.ratio = 1)
+```
+
+<!-- For Q-Q plots, a reference line is often drawn through the points $(q(.25), q_y(.25))$ and $(q(.75), q_y(.75))$. -->
+
+<!-- If the two distributions are identical, then this scatterplot will be linear with slope 1 and intercept 0. If the two distributions differ only by a linear transformation---such as $N(0, 1)$ and $N(10, 5)$---a Q-Q plot comparing the distributions will be linear, but with a different slope and intercept. -->
+
+<!-- Probability plotting refers to a family of methods based on the cumulative distribution function (CDF), most notably quantile (Q-Q) plots and probability (P-P) plots \citep{Wilk1968-ii}. In this paper, we focus on comparing an empirical distribution to a theoretical distribution. Let $Y_1, \ldots, Y_n$ denote a random sample from an unknown population, and let $\widehat{F}_y(q)$ be the empirical cumulative distribution obtained from the sample. Further, let $F(q)$ denote the CDF of a proposed dsitribution for the sample. A Q-Q plot is constructed by plotting the quantiles of the empirical distribution, $q_y(p) = F_y^{-1}(p)$, against the corresponding quantiles of the theoretical distribution, $q(p) = F^{-1}(p)$. This constuction is illustrated in Figure \ref{fig:qq}. -->
+<!-- A P-P plot is constructed by plotting $F(q)$ against $\widehat{F}_y(q)$ for various quantiles, $q$. This constuction is illustrated in Figure \ref{fig:pp}. Regardless of the plot constructed, if the two distributions are identical, then the scatterplots will be linear with slope 1 and intercept 0. Additionally, Q-Q plots are invariant to linear transformations, so if two random variables differ by a linear transformation a Q-Q plot showing draws from their distributions will still be linear, but with a different slope and intercept, as seen in Figure \ref{fig:qq}. P-P plots, in turn, are sensitive to linear transformations. -->
+
+
+<!-- Innovations to Q-Q and P-P plots have also been proposed. \citet{Loy2016-fg} discuss the creation of detrended Q-Q plots, where the $y$-axis is changed to show the difference between $q_y$ and the reference line. Consequently, the line representing the agreement with the theoretical distribution is the $x$-axis. \citet{Loy2016-fg} find that detrended Q-Q plots are more powerful than other designs, so long at the $y$-axis limits are set so that the aspect ratio is kept the same as in the traditional Q-Q plot. In reliability and survival analysis, probability plots often refer to a hybrid probability plot, there the CDF of the proposed theoretical distribution is plotted against the empirical order statistics, and transformations are applied to each axis to linearize the CDF \citep[cf.][chapter 6]{Meeker1998}. This hybrid probability plot is invariant to linear transformations. -->
+
+
+
+Various implementations of Q-Q plots exist in R. Normal Q-Q plots, where a sample is compared to the standard normal distribution, are implemented using `qqplot` and `qqline` in \pkg{base} graphics \citep{R}. \pkg{lattice} provides a general framework for Q-Q plots in the `qqmath` function, allowing one to compare a sample to any theoretical distribution by specifying the quantile function \citep{lattice}. `qqPlot` in the \pkg{car} package also allows for the assessment of non-normal distributions and adds pointwise confidence bands via normal theory or the parametric bootstrap \citep{car}. \pkg{ggplot2} provides `geom_qq` and `geom_qq_line`, enabling the creation of Q-Q plots with a reference line, much like those created using `qqmath` \citep{ggplot2}. None of these general use packages allow for easy construction of de-trended Q-Q plots.
+
+\pkg{qqplotr} extends \pkg{ggplot2} to provide a complete implementation of Q-Q plots. The package allows for quick construction of all Q-Q plot designs without sacrificng the flexibility of the \pkg{ggplot2} framework. In the remainder of this paper, we will introduce the plotting framework provided by \pkg{qqplotr} and provide multiple examples of how it can be used. 
+
+<!-- XXX `qualityTools` \cite{qualityTools} -->
+
 
 
 ## Implementing probability plots in the \pkg{ggplot2} framework
@@ -474,6 +467,18 @@ In order to create a so-called *adjusted* detrended Q-Q plot \citep{Loy2016-fg} 
 
 XXX P-P plots here
 Write this section once the rest of the paper is done.
+
+
+```{r, echo=FALSE, out.width='.31\\linewidth', fig.width=3.5, fig.height=3.5, fig.show='hold', fig.align='center', fig.cap="\\label{fig:pp-designs}Illustrating different designs of probability plots."}
+rand_sample$ppoints <- ppoints(rand_sample$rs)
+ggplot(data = rand_sample, mapping = aes(x = sort(rs), y = ppoints)) +
+  geom_point() +
+  xlab("Sample quantiles") +
+  ylab("Cumulative probabilty") +
+  theme_minimal() +
+  ggtitle("Hybrid probability plot")
+```
+
 
 \bibliography{RJreferences}
 
