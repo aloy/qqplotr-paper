@@ -8,6 +8,8 @@
 An abstract of less than 150 words.
 }
 
+\newcommand{\hh}[1]{{\textcolor{orange}{#1}}}
+
 \subsection{TODO:}\label{todo}
 
 \begin{itemize}
@@ -157,26 +159,22 @@ TODO: FIGURE \ref{fig:pp-designs} HAS NO REFERENCES TO IT
 \pkg{ggplot2}
 framework}{Implementing probability plots in the  framework}}\label{implementing-probability-plots-in-the-framework}
 
-With \pkg{qqplotr} we extend some of the original \pkg{ggplot2}
-probability plot functionatilites by permitting the drawing of Q-Q and
-P-P points, lines, and confidence bands. Our approach was to provide a
-\pkg{ggplot2} layering mechanism so that for each one of those plot
-elements we implemented a \pkg{ggplot2} ``stat'' (statistical
-transformation). In addition, we also implemented a \pkg{ggplot2}
-``geom'' (geometrical object) specifically for the confidence bands.
-That geom permits a simpler way of handling graphical parameters, which
-will become clearer in the \nameref{sec:examples} section.
+With \pkg{qqplotr} we extend some of the original \pkg{ggplot2} quantile
+plot functionatilites by permitting the drawing of Q-Q points, lines,
+and confidence bands. Our approach provides a \pkg{ggplot2} layering
+mechanism so that for each one of those plot elements we implemented a
+\pkg{ggplot2} ``stat'' (statistical transformation). In addition, we
+also implemented a \pkg{ggplot2} ``geom'' (geometrical object)
+specifically for the confidence bands. That geom permits a simpler way
+of handling graphical parameters, which will become clearer in the
+\nameref{sec:examples} section.
 
-For simplicity, the Q-Q and P-P functions will be presented separately
-below.
-
-\subsubsection{Q-Q}\label{q-q}
-
-The Q-Q plot functions are divided into three stats:
+The Q-Q plot functions are divided into three statistical
+transformations:
 
 \begin{itemize}
 \item
-  \texttt{stat\_qq\_point}: a modified verion of \texttt{stat\_qq} from
+  \texttt{stat\_qq\_point}: a modified version of \texttt{stat\_qq} from
   \pkg{ggplot2} that plots the sample quantiles versus the theoretical
   quantiles (as in Figure \ref{fig:qq}). The novelty of this
   implementation is an option to detrend the plotted points (see
@@ -187,46 +185,47 @@ The Q-Q plot functions are divided into three stats:
   data quantiles, defaulting to the first and third quartiles.
 \item
   \texttt{stat\_qq\_band}: draws confidence bands based on three
-  methods: \emph{Normal}, \emph{Bootstrap}, and \emph{Tail-sensitive}:
+  methods: \emph{Normal} theory, \emph{Bootstrap} resampling, and
+  \emph{Tail-sensitive} simultaneous bands.
 
   \begin{itemize}
   \tightlist
   \item
-    \textbf{Normal}: constructs simultaneous confidence bands based on
-    normal distribution confidence intervals;
+    \textbf{Normal:} Specifying \texttt{bandType\ =\ "norm"} constructs
+    pointwise confidence bands based on the normal approximation to the
+    distribution of the order statistics. For example, an approximate
+    95\% confidence interval for the \(i\)th order statistic is
+    \(\widehat{X}_{(i)}~\pm~\Phi^{-1}(.975)~\cdot~SE(X_{(i)})\), where
+    \(\widehat{X}_{(i)}\) denotes the value along the fitted line,
+    \(\Phi^{-1}(\cdot)\) denotes the quantile function for the standard
+    normal distribution, and \(SE(X_{(i)})\) is the standard error of
+    the \(i\)th order statistic.
   \item
-    \textbf{Bootstrap}: creates pointwise confidence bands using
-    parametric boostrap;
+    \textbf{Bootstrap:} Specifying \texttt{bandType\ =\ "bs"} constructs
+    pointwise confidence bands using percentile confidence intervals
+    from the parametric bootstrap.
   \item
-    \textbf{Tail-sensitive}: builds tail-sensitive confidence bands, as
-    proposed by \citet{Aldor-Noiman2013-xw}.
+    \textbf{Tail-sensitive:} Specifying \texttt{bandType\ =\ "ts"}
+    constructs the simulation-based tail-sensitive simultaneous
+    confidence bands proposed by \citet{Aldor-Noiman2013-xw}.
   \end{itemize}
 \end{itemize}
 
-\subsubsection{P-P}\label{p-p}
+\subsubsection{Adding confidence bands}\label{adding-confidence-bands}
 
-The P-P plot functions are also divided into three plot elements:
+In this section we elaborate on the construction of each type of
+confidence band allowed in \texttt{stat\_qq\_band}.
 
-\begin{itemize}
-\item
-  \texttt{stat\_pp\_point}: plots cumulative probabilities versus
-  probability points (as in Figure \ref{fig:pp}).
-\item
-  \texttt{stat\_pp\_line}: draws a reference identity line (slope 1 and
-  intercept 0).
-\item
-  \texttt{stat\_pp\_band}: draws confidence bands. For now, only the
-  \emph{Bootstrap} version is available.
-\end{itemize}
+\textbf{Normal} Specifying \texttt{bandType\ =\ "norm"} constructs
+pointwise confidence bands based on
 
-TODO:
-
-\begin{itemize}
-\item
-  Talk more in-depth about the functions' parameters.
-\item
-  P-P plot type II.
-\end{itemize}
+\begin{verbatim}
++ **Normal**: constructs simultaneous confidence bands based on normal distribution confidence 
+intervals;
++ **Bootstrap**: creates pointwise confidence bands using parametric boostrap;
++ **Tail-sensitive**: builds tail-sensitive confidence bands, as proposed by
+\citet{Aldor-Noiman2013-xw}.
+\end{verbatim}
 
 \subsection{Examples}\label{examples}
 
@@ -265,15 +264,37 @@ participants responded to the question of their height to the closest
 inch. On the right hand side of Figure \ref{fig:heights}, we use
 jittering; this means that we add a random number generated from a
 random uniform distribution on \(\pm 0.5\) inch to the reported height.
-By this mean we extinguish any effect that discreteness might have on
-the distribution. This brings the observed distribution much closer to a
+By this mean we diminish the effect that discreteness might have on the
+distribution. This brings the observed distribution much closer to a
 normal distribution. Note that separate normal distributions were fitted
 for each gender, not surprisingly, the resulting distributions have
 different means (women are on average 6 inch shorter than men in this
 dataset). Interestingly, the slope of the two genders is similar,
 indicating that the same scale parameter fits both genders'
 distributions (the standard deviation of height in the data set is 2.97
-inch for men and 2.91 inch for women).
+inch for men and 2.91 inch for women, see Table \ref{tab:heights}). The
+dark line between the two groups is the identity line - indicating the
+theoretical distribution each of these groups are compared to. This
+distribution is based on parameters estimated from the whole population
+(see Table \ref{tab:heights} for numbers) . While the mean is about half
+way between the gender means, we see from the higher slope of the line
+that in comparison to each group, the standard deviation of the height
+based on the whole population is larger.
+
+\begin{table}
+
+\caption{\label{tab:heights-table}Summary of Iowa's residents height and standard deviation (in inch) by gender and total.\label{tab:heights}}
+\centering
+\begin{tabular}[t]{lrr}
+\toprule
+SEX & mean & sd\\
+\midrule
+Male & 70.55 & 2.97\\
+Female & 64.51 & 2.91\\
+Total & 66.99 & 4.18\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{Schunk}
 \begin{figure}
@@ -308,7 +329,7 @@ reasonable fit.
 
 Instead of transforming the observed values, we can change the
 theoretical distribution against which we compare. Figure
-\ref{fig:weights-log} shows two Q-Q plots where a a log-normal
+\ref{fig:weights-log} shows two Q-Q plots where a log-normal
 distribution is chosen as the theoretical distribution. On the left, we
 compare against a log-normal distribution with mean 4.389 and standard
 deviation 0.223 (the log-transformed averages of average weight and
@@ -323,7 +344,7 @@ fit separately. The fits are slightly different from XXX
 
 }
 
-\caption[Sample (200 men and 200 women) of weights]{Sample (200 men and 200 women) of weights. On the left, the theoretical distribution  is changed to a log normal. On the right, we additionally estimate shift and scale parameters for each of the genders separately before comparing distributions to a log-normal. XXX need to fix alpha for the legend}\label{fig:weights-log}
+\caption[Sample (200 men and 200 women) of weights]{Sample (200 men and 200 women) of weights. On the left, the theoretical distribution  is changed to a log normal. On the right, we additionally estimate shift and scale parameters for each of the genders separately before comparing distributions to a log-normal.}\label{fig:weights-log}
 \end{figure}
 \end{Schunk}
 
@@ -418,9 +439,9 @@ representation of the distances.
 \begin{Schunk}
 \begin{Sinput}
 ggplot(longjump, aes(sample = distance)) +
-  stat_qq_band(distribution = "sev", alpha = 0.3) +
-  stat_qq_line(distribution = "sev") +
-  stat_qq_point(distribution = "sev") +
+  stat_qq_band(distribution = "sev", dparams=list(mu=0, sigma=1), alpha = 0.3) +
+  stat_qq_line(distribution = "sev", dparams=list(mu=0, sigma=1)) +
+  stat_qq_point(distribution = "sev", dparams=list(mu=0, sigma=1)) +
   xlab("Theoretical quantiles") +
   ylab("Jump distance (in m)") +
   theme_bw()
@@ -465,9 +486,12 @@ argument \texttt{detrend\ =\ TRUE} to the \texttt{stat\_qq\_band},
 \begin{Schunk}
 \begin{Sinput}
 ggplot(longjump, aes(sample = distance)) +
-  stat_qq_band(distribution = "sev", alpha = 0.3, detrend = TRUE) +
-  stat_qq_line(distribution = "sev", detrend = TRUE) +
-  stat_qq_point(distribution = "sev", detrend = TRUE) +
+  stat_qq_band(distribution = "sev", alpha = 0.3, 
+               detrend = TRUE, dparams=c(mu=0, sigma=1)) +
+  stat_qq_line(distribution = "sev", 
+               detrend = TRUE, dparams=c(mu=0, sigma=1)) +
+  stat_qq_point(distribution = "sev", 
+                detrend = TRUE, dparams=c(mu=0, sigma=1)) +
   xlab("Theoretical quantiles") +
   ylab("Differences") +
   theme_bw() +
@@ -483,7 +507,8 @@ plot in some situations \citep{Loy2016-fg}.
 
 \subsection{Summary}\label{summary}
 
-Write this section once the rest of the paper is done.
+XXX P-P plots here Write this section once the rest of the paper is
+done.
 
 \bibliography{RJreferences}
 
