@@ -297,10 +297,10 @@ library(qqplotr)
 
 The Center for Disease Control and Prevention runs an annual telephone survey, the Behavioral Risk Factor Surveillance System (BRFSS), to keep track of the US populations' 'health-related risk behaviors, chronic health conditions, and use of preventive services'.  
 
-Close to half a million interviews are conducted each year. Here, we are focussing on the 2012 responses for Iowa. 7166 responses were gathered across 359 questions and derived variables. Among these, are people's height and weight, which we are going to assess in more detail. 
+Close to half a million interviews are conducted each year. Here, we are focussing on the 2012 responses for Iowa. 7166 responses were gathered across 359 questions and derived variables. Among these, are participants' heights and weights, which we are going to assess in more detail. 
 
-Figure \ref{fig:heights} shows two Q-Q plots side by side. For each of the plots, a sample of 200 men and 200 women is drawn from the overall number of responses. On the left hand side, individuals' heights are plotted in a Q-Q plot comparing raw heights to a normal distribution. We see that the distributions for both men and women (colour) is showing horizontal steps: this indicates that the distributional assessement is heavily dominated by the discreteness in the data, as most survey participants responded to the question of their height to the closest inch. On the right hand side of Figure \ref{fig:heights}, we use jittering; this means  that we add a random number generated from a random uniform distribution on $\pm 0.5$ inch to the reported height. By this mean we diminish the effect that discreteness might have on the distribution. This brings the observed distribution much closer to a normal distribution. Note that separate normal distributions were fitted for each gender, not surprisingly, the resulting distributions have different means (women are on average 6 inch shorter than men in this dataset). Interestingly, the slope of the two genders is similar, indicating that the same scale parameter fits both genders' distributions (the standard deviation of height in the data set is 2.97 inch for men and 2.91 inch for women, see Table \ref{tab:heights}). 
-The dark line between the two groups is the identity line - indicating the theoretical distribution each of these groups are compared to. This distribution is based on parameters estimated from the whole population (see Table \ref{tab:heights} for numbers) . While the mean is about half way between the gender means, we see from the higher slope of the line that in comparison to each group, the standard deviation of the height based on the whole population is larger.
+Figure \ref{fig:heights} shows two Q-Q plots side by side. For each of the plots, a sample of 200 men and 200 women is drawn from the overall number of responses. On the left hand side, individuals' heights are plotted in a Q-Q plot comparing raw heights to a normal distribution. We see that the distributions for both men and women (colour) is showing horizontal steps: this indicates that the distributional assessement is heavily dominated by the discreteness in the data, as most survey participants responded to the question of their height only up to the closest inch. On the right hand side of Figure \ref{fig:heights}, we use jittering; this means  that we add a random number generated from a random uniform distribution on $\pm 0.5$ inch to the reported height. By this mean we diminish the effect that discreteness might have on the distribution and brings the observed distribution much closer to a normal distribution. Note that separate normal distributions were fitted for each gender. Not surprisingly, the resulting distributions have different means (women are on average 6 inch shorter than men in this dataset). Interestingly, the slope of the two genders is similar, indicating that the same scale parameter fits both genders' distributions (the standard deviation of height in the data set is 2.97 inch for men and 2.91 inch for women, see Table \ref{tab:heights}). 
+The dark line between the two groups is the identity line -- representing the theoretical distribution each of these groups are compared to. This distribution is based on parameters estimated from the whole population (see Table \ref{tab:heights} for numbers) . While the mean is about half way between the gender means, we see from the higher slope of the line that in comparison to each group, the standard deviation of the height based on the whole population is larger.
 
 
 ```{r iowa-read, echo=FALSE, message=FALSE, warning=FALSE}
@@ -348,20 +348,25 @@ p2 <- sub %>% mutate(
 ```{r heights-table, echo=FALSE, results="asis"}
 bygender <- iowa %>% group_by(SEX) %>%
   summarize(
-    mean = mean(HTIN4, na.rm=TRUE),
-    sd = sd(HTIN4, na.rm=TRUE)
+    mean.height = mean(HTIN4, na.rm=TRUE),
+    sd.height = sd(HTIN4, na.rm=TRUE),
+    mean.weight = mean(log(WTKG3), na.rm=TRUE),
+    sd.weight = sd(log(WTKG3), na.rm=TRUE)
   )
 bygender$SEX <- c("Male", "Female")
 
 total <- iowa %>% 
   summarize(
-    mean = mean(HTIN4, na.rm=TRUE),
-    sd = sd(HTIN4, na.rm=TRUE)
+    mean.height = mean(HTIN4, na.rm=TRUE),
+    sd.height = sd(HTIN4, na.rm=TRUE),
+    mean.weight = mean(log(WTKG3), na.rm=TRUE),
+    sd.weight = sd(log(WTKG3), na.rm=TRUE)
   )
 
 bygender[3,] <- c("Total", total)
+names(bygender) <- c("SEX", "mean height (in inch)", "sd (in inch)", "mean log weight (in log kg)", "sd (in log kg)")
 knitr::kable(bygender, format = "latex",  
-             caption = "Summary of Iowa's residents height and standard deviation (in inch) by gender and total.\\label{tab:heights}", 
+             caption = "Summary of Iowa's residents' heights and weights with corresponding standard deviations by gender and for the total population.\\label{tab:heights}", 
              digits=2, booktabs = TRUE)
 ```
 
@@ -370,7 +375,7 @@ library(gridExtra)
 grid.arrange(p1, p2, ncol = 2)
 ```
 
-Unlike respondents' heights, their weigths do not seem to be normally distributed. Figure \ref{fig:weights} shows again two Q-Q plots. The Q-Q plot on the left uses raw weights and compares to a normal distribution. From the curved points we see that tails of the observed distribution are heavier than expected under a normal distribution. On the right, weights are log-transformed. We see that a normal distribution for each of the genders shows --with the exceptions of a few extreme outliers-- a reasonable fit.
+Unlike respondents' heights, their weights do not seem to be normally distributed. Figure \ref{fig:weights} shows again two Q-Q plots. The Q-Q plot on the left uses raw weights and compares to a normal distribution. From the deviation in the extremes we see that tails of the observed distribution are heavier than expected under a normal distribution. On the right, weights are log-transformed. We see that a normal distribution for each of the genders shows --with the exceptions of a few extreme outliers-- a reasonable fit.
 
 ```{r weights, echo=FALSE, fig.width = 8, fig.height = 3.5, fig.cap = "Sample (200 men and 200 women) of weights. Unlike people's height, weight seems to be heavily right skewed with some additional outliers on the extreme left (left plot). On the right, weight was log-transfomed before its distribution is compared to a theoretical normal. ", out.width='\\textwidth', fig.align="center", message=FALSE, warning = FALSE}
 params <- iowa %>% filter(!is.na(WTKG3)) %>% summarize(
@@ -407,15 +412,15 @@ grid.arrange(p3, p5, ncol = 2)
 ```
 
 Instead of transforming the observed values, we can change the theoretical distribution against which we compare. 
-Figure \ref{fig:weights-log} shows two Q-Q plots where a log-normal distribution is chosen as the theoretical distribution. On the left, we compare against a  log-normal distribution with mean 4.389 and standard deviation 0.223 (the log-transformed averages of average weight and standard deviation in Iowa's population). Again, the fits seem reasonable. 
-On the right, parameters for the log-normal distribution are fit separately. The fits are slightly different from XXX
+Figure \ref{fig:weights-log} shows two Q-Q plots where a log-normal distribution is chosen as the theoretical distribution. On the left, we compare against a  log-normal distribution with a population based mean of 4.389 and a standard deviation of 0.223. Again, the fits seem reasonable. 
+On the right, parameters for the log-normal distribution are fit separately for the genders. 
 
 ```{r weights-log, echo=FALSE, fig.width = 8, fig.height = 3.5, fig.cap = "Sample (200 men and 200 women) of weights. On the left, the theoretical distribution  is changed to a log normal. On the right, we additionally estimate shift and scale parameters for each of the genders separately before comparing distributions to a log-normal.", out.width='\\textwidth', fig.align="center", message=FALSE, warning = FALSE}
 
 mlog <- mean(log(sub$WTKG3 / 100), na.rm = TRUE)
 sdlog <- sd(log(sub$WTKG3 / 100), na.rm = TRUE)
 
-p4 <- sub %>% ggplot(aes(sample = WTKG3 / 100, colour = Gender, fill = Gender)) +
+p4 <- sub %>% ggplot(aes(sample = WTKG3 / 100, colour = Gender, fill = Gender)) + geom_abline(colour="grey60") +
   stat_qq_band(
     distribution = "lnorm",
     dparams = list(meanlog = mlog, sdlog = sdlog),
@@ -432,9 +437,9 @@ p4 <- sub %>% ggplot(aes(sample = WTKG3 / 100, colour = Gender, fill = Gender)) 
   scale_fill_brewer(palette = "Set1") +
   scale_colour_brewer(palette = "Set1") +
   xlab("Theoretical quantiles") +
-  ylab("Weight (in kg)") +
+  ylab("log Weight (in kg)") +
   theme_bw() + 
-  theme(legend.position = c(0.2, 0.8), aspect.ratio=1)
+  theme(legend.position = c(0.2, 0.8), aspect.ratio=1) 
 
 p6 <- sub %>% ggplot(aes(sample = WTKG3 / 100, 
                          colour = Gender, fill = Gender)) +
@@ -452,17 +457,6 @@ p6 <- sub %>% ggplot(aes(sample = WTKG3 / 100,
 grid.arrange(p4, p6, ncol = 2)
 ```
 
-```{r table, echo=FALSE, results = 'asis'} 
-tabs <- iowa %>% group_by(SEX) %>% summarize(
-  mean_wt = mean(WTKG3 / 100, na.rm = TRUE),
-  mean_log_wt = mean(log(WTKG3 / 100), na.rm = TRUE),
-  sd_wt = sd(WTKG3 / 100, na.rm = TRUE),
-  sd_log_wt = sd(log(WTKG3 / 100), na.rm = TRUE)#,
-  # fitdistr = I(list(MASS::fitdistr(na.omit(WTKG3/100), "lognormal")))
-  )
-
-knitr::kable(tabs, format = "latex", caption = "this table is just for us at the moment")
-```
 
 ### Using user-provided distributions
 \label{sec:user-dists}
@@ -507,7 +501,7 @@ rsev <- function(n, mu = 0, sigma = 1) {
 
 With the `*sev` distribution functions in hand, we can create a Q-Q plot to assess the appropriateness of the SEV model (Figure \ref{fig:sev-qq}). The Q-Q plot show that the distances do not substantially deviate from the SEV model, so we have found an adequate representation of the distances.
 
-```{r sev-qq, fig.cap = "Q-Q plot comparing the long jump distances to the standard SEV distribution. The SEV distribution appear to adequately model the distances.", fig.width = 3.5, fig.height = 3.5, out.width='0.45\\textwidth', fig.align="center", message=FALSE, warning = FALSE}
+```{r sev-qq, fig.cap = "Q-Q plot comparing the long jump distances to the standard SEV distribution. The SEV distribution appears to adequately model the distances.", fig.width = 3.5, fig.height = 3.5, out.width='0.45\\textwidth', fig.align="center", message=FALSE, warning = FALSE}
 ggplot(longjump, aes(sample = distance)) +
   stat_qq_band(distribution = "sev", dparams = list(mu = 0, sigma = 1), alpha = 0.3) +
   stat_qq_line(distribution = "sev", dparams = list(mu = 0, sigma = 1)) +
@@ -569,7 +563,7 @@ ggplot(longjump, aes(sample = distance)) +
   theme(aspect.ratio = 1)
 ```
 
-In order to create a so-called *adjusted* detrended Q-Q plot \citep{Loy2016-fg} the aspect ratio must also be set to 1. If the aspect ratio is not adjusted in this way, an *ordinary* detrended Q-Q plot is created, which is known to have lower power than the standard Q-Q plot in some situations \citep{Loy2016-fg}.
+In order to create a so-called *adjusted* detrended Q-Q plot \citep{Loy2016-fg} the aspect ratio must also be set to 1. If the aspect ratio is not adjusted in this way, an *ordinary* detrended Q-Q plot is created, which was found to have lower power than the standard Q-Q plot in some situations \citep{Loy2016-fg}.
 
 
 

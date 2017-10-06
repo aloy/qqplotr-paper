@@ -354,8 +354,9 @@ health conditions, and use of preventive services'.
 
 Close to half a million interviews are conducted each year. Here, we are
 focussing on the 2012 responses for Iowa. 7166 responses were gathered
-across 359 questions and derived variables. Among these, are people's
-height and weight, which we are going to assess in more detail.
+across 359 questions and derived variables. Among these, are
+participants' heights and weights, which we are going to assess in more
+detail.
 
 Figure \ref{fig:heights} shows two Q-Q plots side by side. For each of
 the plots, a sample of 200 men and 200 women is drawn from the overall
@@ -364,21 +365,21 @@ plotted in a Q-Q plot comparing raw heights to a normal distribution. We
 see that the distributions for both men and women (colour) is showing
 horizontal steps: this indicates that the distributional assessement is
 heavily dominated by the discreteness in the data, as most survey
-participants responded to the question of their height to the closest
-inch. On the right hand side of Figure \ref{fig:heights}, we use
+participants responded to the question of their height only up to the
+closest inch. On the right hand side of Figure \ref{fig:heights}, we use
 jittering; this means that we add a random number generated from a
 random uniform distribution on \(\pm 0.5\) inch to the reported height.
 By this mean we diminish the effect that discreteness might have on the
-distribution. This brings the observed distribution much closer to a
+distribution and brings the observed distribution much closer to a
 normal distribution. Note that separate normal distributions were fitted
-for each gender, not surprisingly, the resulting distributions have
+for each gender. Not surprisingly, the resulting distributions have
 different means (women are on average 6 inch shorter than men in this
 dataset). Interestingly, the slope of the two genders is similar,
 indicating that the same scale parameter fits both genders'
 distributions (the standard deviation of height in the data set is 2.97
 inch for men and 2.91 inch for women, see Table \ref{tab:heights}). The
-dark line between the two groups is the identity line - indicating the
-theoretical distribution each of these groups are compared to. This
+dark line between the two groups is the identity line -- representing
+the theoretical distribution each of these groups are compared to. This
 distribution is based on parameters estimated from the whole population
 (see Table \ref{tab:heights} for numbers) . While the mean is about half
 way between the gender means, we see from the higher slope of the line
@@ -387,15 +388,15 @@ based on the whole population is larger.
 
 \begin{table}
 
-\caption{\label{tab:heights-table}Summary of Iowa's residents height and standard deviation (in inch) by gender and total.\label{tab:heights}}
+\caption{\label{tab:heights-table}Summary of Iowa's residents' heights and weights with corresponding standard deviations by gender and for the total population.\label{tab:heights}}
 \centering
-\begin{tabular}[t]{lrr}
+\begin{tabular}[t]{lrrrr}
 \toprule
-SEX & mean & sd\\
+SEX & mean height (in inch) & sd (in inch) & mean log weight (in log kg) & sd (in log kg)\\
 \midrule
-Male & 70.55 & 2.97\\
-Female & 64.51 & 2.91\\
-Total & 66.99 & 4.18\\
+Male & 70.55 & 2.97 & 9.10 & 0.20\\
+Female & 64.51 & 2.91 & 8.89 & 0.23\\
+Total & 66.99 & 4.18 & 8.98 & 0.24\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -411,14 +412,14 @@ Total & 66.99 & 4.18\\
 \end{figure}
 \end{Schunk}
 
-Unlike respondents' heights, their weigths do not seem to be normally
+Unlike respondents' heights, their weights do not seem to be normally
 distributed. Figure \ref{fig:weights} shows again two Q-Q plots. The Q-Q
 plot on the left uses raw weights and compares to a normal distribution.
-From the curved points we see that tails of the observed distribution
-are heavier than expected under a normal distribution. On the right,
-weights are log-transformed. We see that a normal distribution for each
-of the genders shows --with the exceptions of a few extreme outliers-- a
-reasonable fit.
+From the deviation in the extremes we see that tails of the observed
+distribution are heavier than expected under a normal distribution. On
+the right, weights are log-transformed. We see that a normal
+distribution for each of the genders shows --with the exceptions of a
+few extreme outliers-- a reasonable fit.
 
 \begin{Schunk}
 \begin{figure}
@@ -435,11 +436,10 @@ Instead of transforming the observed values, we can change the
 theoretical distribution against which we compare. Figure
 \ref{fig:weights-log} shows two Q-Q plots where a log-normal
 distribution is chosen as the theoretical distribution. On the left, we
-compare against a log-normal distribution with mean 4.389 and standard
-deviation 0.223 (the log-transformed averages of average weight and
-standard deviation in Iowa's population). Again, the fits seem
+compare against a log-normal distribution with a population based mean
+of 4.389 and a standard deviation of 0.223. Again, the fits seem
 reasonable. On the right, parameters for the log-normal distribution are
-fit separately. The fits are slightly different from XXX
+fit separately for the genders.
 
 \begin{Schunk}
 \begin{figure}
@@ -558,7 +558,7 @@ ggplot(longjump, aes(sample = distance)) +
 
 }
 
-\caption[Q-Q plot comparing the long jump distances to the standard SEV distribution]{Q-Q plot comparing the long jump distances to the standard SEV distribution. The SEV distribution appear to adequately model the distances.}\label{fig:sev-qq}
+\caption[Q-Q plot comparing the long jump distances to the standard SEV distribution]{Q-Q plot comparing the long jump distances to the standard SEV distribution. The SEV distribution appears to adequately model the distances.}\label{fig:sev-qq}
 \end{figure}
 \end{Schunk}
 
@@ -620,7 +620,7 @@ ggplot(longjump, aes(sample = distance)) +
 In order to create a so-called \emph{adjusted} detrended Q-Q plot
 \citep{Loy2016-fg} the aspect ratio must also be set to 1. If the aspect
 ratio is not adjusted in this way, an \emph{ordinary} detrended Q-Q plot
-is created, which is known to have lower power than the standard Q-Q
+is created, which was found to have lower power than the standard Q-Q
 plot in some situations \citep{Loy2016-fg}.
 
 \subsection{Discussion}\label{discussion}
