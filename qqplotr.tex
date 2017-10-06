@@ -138,9 +138,8 @@ framework. In the remainder of this paper, we will introduce the
 plotting framework provided by \pkg{qqplotr} and provide multiple
 examples of how it can be used.
 
-\subsection{\texorpdfstring{Implementing probability plots in the
-\pkg{ggplot2}
-framework}{Implementing probability plots in the  framework}}\label{implementing-probability-plots-in-the-framework}
+\subsection{\texorpdfstring{Implementing Q-Q plots in the \pkg{ggplot2}
+framework}{Implementing Q-Q plots in the  framework}}\label{implementing-q-q-plots-in-the-framework}
 
 With \pkg{qqplotr} we extend some of the original \pkg{ggplot2} Q-Q plot
 functionatilites by permitting the drawing of Q-Q points, lines, and
@@ -201,7 +200,7 @@ stat_qq_point(
   distribution (as we will do in Section \ref{sec:user-dists}), you may
   do so by first creating the density (PDF), distribution (CDF),
   quantile, and random functions (also by following \pkg{stats} package
-  nomenclature, i.e., for \texttt{"custom"}, you must first create the
+  nomenclature, i.e., for \texttt{"custom"}, you must provide the
   \texttt{dcustom}, \texttt{pcustom}, \texttt{qcustom}, and
   \texttt{rcustom} functions).
 \item
@@ -209,10 +208,10 @@ stat_qq_point(
   previously chosen \texttt{distribution}. By default, MLEs are used for
   the distributional parameters. By manually providing any of the
   distributional parameters, the MLE is automatically turned off. Please
-  note that MLEs are currently only supported for common distributions
-  (i.e., those from the \pkg{stats} package); so if you do provide a
-  custom distribution to \texttt{distribution}, be sure to provide
-  \emph{all} of its parameters to \texttt{dparams}.
+  note that MLEs are currently only supported for distributions
+  available in the \pkg{stats} package; if a custom distribution is used
+  in \texttt{distribution} \emph{all} of its parameters have to be
+  provided in \texttt{dparams}.
 \item
   \texttt{detrend} is a boolean that controls whether the points should
   be detrended (as shown in Figure \ref{fig:ex-detrend}). More on that
@@ -252,6 +251,8 @@ stat_qq_line(
   )
 \end{Sinput}
 \end{Schunk}
+
+\hh{By default this line is drawn through two points, corresponding to the 25 and 75 percentile of the distributions on $x$ (theoretical distribution) and $y$ (empirical distribution).  While we are using MLE to identify the exact distribution to compare against, these estimates are only used in determining the $x$-coordinates of these points. For the $y$ coordinates 1st and 3rd quartile are used by default for a more robust estimation. The difference between observed and theoretical distribution therefore presents itself in the difference between the Q-Q line and the identity line. Using robust estimates for the Q-Q line is of particular advantage for small samples \citep{Loy2016-fg}.}
 
 \subsubsection{\texorpdfstring{\texttt{stat\_qq\_band}}{stat\_qq\_band}}\label{stat_qq_band}
 
@@ -329,6 +330,11 @@ stat_qq_band(
   \texttt{robustbase} package.
 \end{itemize}
 
+\subsubsection{\texorpdfstring{facetting and
+\texttt{qqplotr}}{facetting and qqplotr}}\label{facetting-and-qqplotr}
+
+\hh{placeholder for now: discuss groups and facets }
+
 \FloatBarrier
 
 \subsection{Examples}\label{examples}
@@ -368,8 +374,25 @@ heavily dominated by the discreteness in the data, as most survey
 participants responded to the question of their height only up to the
 closest inch. On the right hand side of Figure \ref{fig:heights}, we use
 jittering; this means that we add a random number generated from a
-random uniform distribution on \(\pm 0.5\) inch to the reported height.
-By this mean we diminish the effect that discreteness might have on the
+random uniform distribution on \(\pm 0.5\) inch to the reported height,
+as shown in the code below:
+
+\begin{Schunk}
+\begin{Sinput}
+p2 <- sample_ia %>% mutate(
+    HTIN4.jitter = jitter(HTIN4, factor = 2)
+    ) %>% 
+  ggplot(aes(sample = HTIN4.jitter, colour=Gender, fill=Gender)) + 
+  geom_abline(slope=1, intercept=0, colour = "grey40") +
+  stat_qq_band(alpha = 0.3, dparams = list(mean=params$m, sd=params$s)) +
+  stat_qq_line(dparams = list(mean=params$m, sd=params$s)) + 
+  stat_qq_point(dparams = list(mean=params$m, sd=params$s)) +
+  customization +
+  ylab("Jittered Height (in inch)") 
+\end{Sinput}
+\end{Schunk}
+
+By using jittering we diminish the effect that discreteness has on the
 distribution and brings the observed distribution much closer to a
 normal distribution. Note that separate normal distributions were fitted
 for each gender. Not surprisingly, the resulting distributions have
@@ -392,7 +415,7 @@ based on the whole population is larger.
 \centering
 \begin{tabular}[t]{lrrrr}
 \toprule
-SEX & mean height (in inch) & sd (in inch) & mean log weight (in log kg) & sd (in log kg)\\
+SEX & mean height (in inch) & sd (in inch) & mean log weight (in kg) & sd (in kg)\\
 \midrule
 Male & 70.55 & 2.97 & 9.10 & 0.20\\
 Female & 64.51 & 2.91 & 8.89 & 0.23\\
@@ -434,38 +457,31 @@ few extreme outliers-- a reasonable fit.
 
 Instead of transforming the observed values, we can change the
 theoretical distribution against which we compare. Figure
-\ref{fig:weights-log} shows two Q-Q plots where a log-normal
-distribution is chosen as the theoretical distribution. On the left, we
-compare against a log-normal distribution with a population based mean
-of 4.389 and a standard deviation of 0.223. Again, the fits seem
-reasonable. On the right, parameters for the log-normal distribution are
-fit separately for the genders.
+\ref{fig:weights-log} shows two Q-Q plots, one for each of the genders.
+A log-normal distribution is chosen as the theoretical distribution. By
+default, for each of the groups ML estimates are used:
 
 \begin{Schunk}
+\begin{Sinput}
+p6 <- sample_ia %>% 
+  ggplot(aes(sample = WTKG3 / 100, colour = Gender, fill = Gender)) +
+  geom_abline(colour="grey60") +
+  stat_qq_band(distribution = "lnorm", alpha = 0.3) +
+  stat_qq_line(distribution = "lnorm") +
+  stat_qq_point(distribution = "lnorm") +
+  scale_fill_brewer(palette = "Set1") +
+  scale_colour_brewer(palette = "Set1") +
+  customization + facet_grid(.~Gender)
+\end{Sinput}
 \begin{figure}
 
-{\centering \includegraphics[width=\textwidth]{qqplotr_files/figure-latex/weights-log-1} 
+{\centering \includegraphics[width=.9\textwidth]{qqplotr_files/figure-latex/weights-log-1} 
 
 }
 
-\caption[Sample (200 men and 200 women) of weights]{Sample (200 men and 200 women) of weights. On the left, the theoretical distribution  is changed to a log normal. On the right, we additionally estimate shift and scale parameters for each of the genders separately before comparing distributions to a log-normal.}\label{fig:weights-log}
+\caption[Sample (200 men and 200 women) of weights, the theoretical distribution  is changed to a log normal]{Sample (200 men and 200 women) of weights, the theoretical distribution  is changed to a log normal. Shift and scale parameters are estimated separately for each of the genders before comparing distributions to a log-normal.}\label{fig:weights-log}
 \end{figure}
 \end{Schunk}
-
-\begin{table}
-
-\caption{\label{tab:table}this table is just for us at the moment}
-\centering
-\begin{tabular}[t]{r|r|r|r|r}
-\hline
-SEX & mean\_wt & mean\_log\_wt & sd\_wt & sd\_log\_wt\\
-\hline
-1 & 91.50342 & 4.495766 & 19.22981 & 0.2011216\\
-\hline
-2 & 74.37085 & 4.282780 & 17.90126 & 0.2254663\\
-\hline
-\end{tabular}
-\end{table}
 
 \subsubsection{Using user-provided
 distributions}\label{using-user-provided-distributions}
