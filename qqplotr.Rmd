@@ -489,18 +489,18 @@ psev <- function(q, mu = 0, sigma = 1) {
 }
 
 # PDF
-dsev <- function(x,  mu = 0, sigma = 1) {
+dsev <- function(x, mu = 0, sigma = 1) {
   z <- (x - mu) / sigma
   (1 / sigma) * exp(z - exp(z))
 }
 
 # Quantile function
-qsev <- function(p,  mu = 0, sigma = 1) {
+qsev <- function(p, mu = 0, sigma = 1) {
   mu + log(-log(1 - p)) * sigma
 }
 
 # Simulation function
-rsev <- function(n,  mu = 0, sigma = 1) {
+rsev <- function(n, mu = 0, sigma = 1) {
   qsev(runif(n), mu, sigma)
 }
 ```
