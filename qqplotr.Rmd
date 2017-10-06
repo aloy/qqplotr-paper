@@ -33,6 +33,8 @@ output: rticles::rjournal_article
 ## TODO:
 
 * Abstract
+* Give examples
+    + Heike: BRFSS example
 * Conclusion
 
 ## Introduction
@@ -116,15 +118,6 @@ ggplot(data = rand_sample, mapping = aes(sample = rs)) +
   theme_minimal() +
   theme(aspect.ratio = 1) 
 ```
-
-<!-- For Q-Q plots, a reference line is often drawn through the points $(q(.25), q_y(.25))$ and $(q(.75), q_y(.75))$. -->
-
-<!-- If the two distributions are identical, then this scatterplot will be linear with slope 1 and intercept 0. If the two distributions differ only by a linear transformation---such as $N(0, 1)$ and $N(10, 5)$---a Q-Q plot comparing the distributions will be linear, but with a different slope and intercept. -->
-
-<!-- Probability plotting refers to a family of methods based on the cumulative distribution function (CDF), most notably quantile (Q-Q) plots and probability (P-P) plots \citep{Wilk1968-ii}. In this paper, we focus on comparing an empirical distribution to a theoretical distribution. Let $Y_1, \ldots, Y_n$ denote a random sample from an unknown population, and let $\widehat{F}_y(q)$ be the empirical cumulative distribution obtained from the sample. Further, let $F(q)$ denote the CDF of a proposed dsitribution for the sample. A Q-Q plot is constructed by plotting the quantiles of the empirical distribution, $q_y(p) = F_y^{-1}(p)$, against the corresponding quantiles of the theoretical distribution, $q(p) = F^{-1}(p)$. This constuction is illustrated in Figure \ref{fig:qq}. -->
-<!-- A P-P plot is constructed by plotting $F(q)$ against $\widehat{F}_y(q)$ for various quantiles, $q$. This constuction is illustrated in Figure \ref{fig:pp}. Regardless of the plot constructed, if the two distributions are identical, then the scatterplots will be linear with slope 1 and intercept 0. Additionally, Q-Q plots are invariant to linear transformations, so if two random variables differ by a linear transformation a Q-Q plot showing draws from their distributions will still be linear, but with a different slope and intercept, as seen in Figure \ref{fig:qq}. P-P plots, in turn, are sensitive to linear transformations. -->
-
-<!-- Innovations to Q-Q and P-P plots have also been proposed. \citet{Loy2016-fg} discuss the creation of detrended Q-Q plots, where the $y$-axis is changed to show the difference between $q_y$ and the reference line. Consequently, the line representing the agreement with the theoretical distribution is the $x$-axis. \citet{Loy2016-fg} find that detrended Q-Q plots are more powerful than other designs, so long at the $y$-axis limits are set so that the aspect ratio is kept the same as in the traditional Q-Q plot. In reliability and survival analysis, probability plots often refer to a hybrid probability plot, there the CDF of the proposed theoretical distribution is plotted against the empirical order statistics, and transformations are applied to each axis to linearize the CDF \citep[cf.][chapter 6]{Meeker1998}. This hybrid probability plot is invariant to linear transformations. -->
 
 Various implementations of Q-Q plots exist in R. Normal Q-Q plots, where a sample is compared to the standard normal distribution, are implemented using `qqplot` and `qqline` in \pkg{base} graphics \citep{R}. \pkg{lattice} provides a general framework for Q-Q plots in the `qqmath` function, allowing one to compare a sample to any theoretical distribution by specifying the appropriate quantile function \citep{lattice}. `qqPlot` in the \pkg{car} package also allows for the assessment of non-normal distributions and adds pointwise confidence bands via normal theory or the parametric bootstrap \citep{car}. \pkg{ggplot2} provides `geom_qq` and `geom_qq_line`, enabling the creation of Q-Q plots with a reference line, much like those created using `qqmath` \citep{ggplot2}. None of these general use packages allow for easy construction of de-trended Q-Q plots.
 
@@ -580,7 +573,24 @@ In order to create a so-called *adjusted* detrended Q-Q plot \citep{Loy2016-fg} 
 
 
 
-## Summary
+## Discussion
+
+This paper presents the \pkg{qqplotr} package, an extension of \pkg{ggplot2} that implements Q-Q plots in both the standard and de-trended orientations, reference lines for Q-Q plots, and confidence bands for Q-Q plots. The examples illustrate how to create Q-Q plots for non-standard distributions found outside of the \pkg{stats}, de-trend Q-Q plots, and create Q-Q plots when data are grouped. Further, in the BRFSS example, we illustrated how jittering can be used in Q-Q plots to better compare discretized data to a continuous distribution.
+
+
+Q-Q plots are member of the larger probability plotting family, and we are working to incorporate additional plots into \pkg{qqplotr}.... NEED TO DISUCSS P-P PLOTS SOMEHOW
+
+
+<!-- For Q-Q plots, a reference line is often drawn through the points $(q(.25), q_y(.25))$ and $(q(.75), q_y(.75))$. -->
+
+<!-- If the two distributions are identical, then this scatterplot will be linear with slope 1 and intercept 0. If the two distributions differ only by a linear transformation---such as $N(0, 1)$ and $N(10, 5)$---a Q-Q plot comparing the distributions will be linear, but with a different slope and intercept. -->
+
+<!-- Probability plotting refers to a family of methods based on the cumulative distribution function (CDF), most notably quantile (Q-Q) plots and probability (P-P) plots \citep{Wilk1968-ii}. In this paper, we focus on comparing an empirical distribution to a theoretical distribution. Let $Y_1, \ldots, Y_n$ denote a random sample from an unknown population, and let $\widehat{F}_y(q)$ be the empirical cumulative distribution obtained from the sample. Further, let $F(q)$ denote the CDF of a proposed dsitribution for the sample. A Q-Q plot is constructed by plotting the quantiles of the empirical distribution, $q_y(p) = F_y^{-1}(p)$, against the corresponding quantiles of the theoretical distribution, $q(p) = F^{-1}(p)$. This constuction is illustrated in Figure \ref{fig:qq}. -->
+<!-- A P-P plot is constructed by plotting $F(q)$ against $\widehat{F}_y(q)$ for various quantiles, $q$. This constuction is illustrated in Figure \ref{fig:pp}. Regardless of the plot constructed, if the two distributions are identical, then the scatterplots will be linear with slope 1 and intercept 0. Additionally, Q-Q plots are invariant to linear transformations, so if two random variables differ by a linear transformation a Q-Q plot showing draws from their distributions will still be linear, but with a different slope and intercept, as seen in Figure \ref{fig:qq}. P-P plots, in turn, are sensitive to linear transformations. -->
+
+
+<!-- Innovations to Q-Q and P-P plots have also been proposed. \citet{Loy2016-fg} discuss the creation of detrended Q-Q plots, where the $y$-axis is changed to show the difference between $q_y$ and the reference line. Consequently, the line representing the agreement with the theoretical distribution is the $x$-axis. \citet{Loy2016-fg} find that detrended Q-Q plots are more powerful than other designs, so long at the $y$-axis limits are set so that the aspect ratio is kept the same as in the traditional Q-Q plot. In reliability and survival analysis, probability plots often refer to a hybrid probability plot, there the CDF of the proposed theoretical distribution is plotted against the empirical order statistics, and transformations are applied to each axis to linearize the CDF \citep[cf.][chapter 6]{Meeker1998}. This hybrid probability plot is invariant to linear transformations. -->
+
 
 XXX P-P plots here
 Write this section once the rest of the paper is done.
