@@ -9,6 +9,7 @@ An abstract of less than 150 words.
 }
 
 \newcommand{\hh}[1]{{\textcolor{orange}{#1}}}
+\newcommand{\al}[1]{{\textcolor{violet}{#1}}}
 
 \subsection{TODO:}\label{todo}
 
@@ -28,7 +29,7 @@ An abstract of less than 150 words.
   Conclusion
 \end{itemize}
 
-\subsection{Introduction}\label{introduction}
+\subsection{Background}\label{background}
 
 \label{sec:introduction}
 
@@ -98,12 +99,10 @@ notably the de-trended Q-Q plot. To detrend a Q-Q plot, the \(y\)-axis
 is changed to show the difference between the observed quantile and the
 reference line. Consequently, the line representing the agreement with
 the theoretical distribution is the \(x\)-axis. \citet{Loy2016-fg} find
-that detrended Q-Q plots are more powerful than other designs, so long
-as the \(y\)-axis limits are set so that the aspect ratio is kept the
-same as in the traditional Q-Q plot, which they call \emph{adjusted
-de-trended Q-Q plots}. Figure \ref{fig:ex-detrend} displays the normal
-Q-Q plot from Figure \ref{fig:ex-qq2} along with its adjusted detrended
-version.
+that detrended Q-Q plots are more powerful than other designs,
+\al{so long as $x$- and $y$-axes to show the same range. Adjusting the aspect ratio in this way ensures that distances in the $x$- and $y$-directions are on the same scale. This Q-Q plot design is called an *adjusted-detrended Q-Q plot*.  If the range of the axes are not adjusted, then this results an ordinary detrended Q-Q plot, which which was found to have lower power than the standard Q-Q plot in some situations \citep{Loy2016-fg}.}
+Figure \ref{fig:ex-detrend} displays the normal Q-Q plot from Figure
+\ref{fig:ex-qq2} along with its adjusted detrended version.
 
 \begin{Schunk}
 \begin{figure}
@@ -138,9 +137,8 @@ framework. In the remainder of this paper, we will introduce the
 plotting framework provided by \pkg{qqplotr} and provide multiple
 examples of how it can be used.
 
-\subsection{\texorpdfstring{Implementing probability plots in the
-\pkg{ggplot2}
-framework}{Implementing probability plots in the  framework}}\label{implementing-probability-plots-in-the-framework}
+\subsection{\texorpdfstring{Implementing Q-Q plots in the \pkg{ggplot2}
+framework}{Implementing Q-Q plots in the  framework}}\label{implementing-q-q-plots-in-the-framework}
 
 With \pkg{qqplotr} we extend some of the original \pkg{ggplot2} Q-Q plot
 functionatilites by permitting the drawing of Q-Q points, lines, and
@@ -201,7 +199,7 @@ stat_qq_point(
   distribution (as we will do in Section \ref{sec:user-dists}), you may
   do so by first creating the density (PDF), distribution (CDF),
   quantile, and random functions (also by following \pkg{stats} package
-  nomenclature, i.e., for \texttt{"custom"}, you must first create the
+  nomenclature, i.e., for \texttt{"custom"}, you must provide the
   \texttt{dcustom}, \texttt{pcustom}, \texttt{qcustom}, and
   \texttt{rcustom} functions).
 \item
@@ -209,10 +207,10 @@ stat_qq_point(
   previously chosen \texttt{distribution}. By default, MLEs are used for
   the distributional parameters. By manually providing any of the
   distributional parameters, the MLE is automatically turned off. Please
-  note that MLEs are currently only supported for common distributions
-  (i.e., those from the \pkg{stats} package); so if you do provide a
-  custom distribution to \texttt{distribution}, be sure to provide
-  \emph{all} of its parameters to \texttt{dparams}.
+  note that MLEs are currently only supported for distributions
+  available in the \pkg{stats} package; if a custom distribution is used
+  in \texttt{distribution} \emph{all} of its parameters have to be
+  provided in \texttt{dparams}.
 \item
   \texttt{detrend} is a boolean that controls whether the points should
   be detrended (as shown in Figure \ref{fig:ex-detrend}). More on that
@@ -252,6 +250,8 @@ stat_qq_line(
   )
 \end{Sinput}
 \end{Schunk}
+
+\hh{By default this line is drawn through two points, corresponding to the 25 and 75 percentile of the distributions on $x$ (theoretical distribution) and $y$ (empirical distribution).  While we are using MLE to identify the exact distribution to compare against, these estimates are only used in determining the $x$-coordinates of these points. For the $y$ coordinates 1st and 3rd quartile are used by default for a more robust estimation. The difference between observed and theoretical distribution therefore presents itself in the difference between the Q-Q line and the identity line. Using robust estimates for the Q-Q line is of particular advantage for small samples \citep{Loy2016-fg}.}
 
 \subsubsection{\texorpdfstring{\texttt{stat\_qq\_band}}{stat\_qq\_band}}\label{stat_qq_band}
 
@@ -329,6 +329,11 @@ stat_qq_band(
   \texttt{robustbase} package.
 \end{itemize}
 
+\subsubsection{\texorpdfstring{facetting and
+\texttt{qqplotr}}{facetting and qqplotr}}\label{facetting-and-qqplotr}
+
+\hh{placeholder for now: discuss groups and facets }
+
 \FloatBarrier
 
 \subsection{Examples}\label{examples}
@@ -354,8 +359,9 @@ health conditions, and use of preventive services'.
 
 Close to half a million interviews are conducted each year. Here, we are
 focussing on the 2012 responses for Iowa. 7166 responses were gathered
-across 359 questions and derived variables. Among these, are people's
-height and weight, which we are going to assess in more detail.
+across 359 questions and derived variables. Among these, are
+participants' heights and weights, which we are going to assess in more
+detail.
 
 Figure \ref{fig:heights} shows two Q-Q plots side by side. For each of
 the plots, a sample of 200 men and 200 women is drawn from the overall
@@ -364,21 +370,38 @@ plotted in a Q-Q plot comparing raw heights to a normal distribution. We
 see that the distributions for both men and women (colour) is showing
 horizontal steps: this indicates that the distributional assessement is
 heavily dominated by the discreteness in the data, as most survey
-participants responded to the question of their height to the closest
-inch. On the right hand side of Figure \ref{fig:heights}, we use
+participants responded to the question of their height only up to the
+closest inch. On the right hand side of Figure \ref{fig:heights}, we use
 jittering; this means that we add a random number generated from a
-random uniform distribution on \(\pm 0.5\) inch to the reported height.
-By this mean we diminish the effect that discreteness might have on the
-distribution. This brings the observed distribution much closer to a
+random uniform distribution on \(\pm 0.5\) inch to the reported height,
+as shown in the code below:
+
+\begin{Schunk}
+\begin{Sinput}
+p2 <- sample_ia %>% mutate(
+    HTIN4.jitter = jitter(HTIN4, factor = 2)
+    ) %>% 
+  ggplot(aes(sample = HTIN4.jitter, colour=Gender, fill=Gender)) + 
+  geom_abline(slope=1, intercept=0, colour = "grey40") +
+  stat_qq_band(alpha = 0.3, dparams = list(mean=params$m, sd=params$s)) +
+  stat_qq_line(dparams = list(mean=params$m, sd=params$s)) + 
+  stat_qq_point(dparams = list(mean=params$m, sd=params$s)) +
+  customization +
+  ylab("Jittered Height (in inch)") 
+\end{Sinput}
+\end{Schunk}
+
+By using jittering we diminish the effect that discreteness has on the
+distribution and brings the observed distribution much closer to a
 normal distribution. Note that separate normal distributions were fitted
-for each gender, not surprisingly, the resulting distributions have
+for each gender. Not surprisingly, the resulting distributions have
 different means (women are on average 6 inch shorter than men in this
 dataset). Interestingly, the slope of the two genders is similar,
 indicating that the same scale parameter fits both genders'
 distributions (the standard deviation of height in the data set is 2.97
 inch for men and 2.91 inch for women, see Table \ref{tab:heights}). The
-dark line between the two groups is the identity line - indicating the
-theoretical distribution each of these groups are compared to. This
+dark line between the two groups is the identity line -- representing
+the theoretical distribution each of these groups are compared to. This
 distribution is based on parameters estimated from the whole population
 (see Table \ref{tab:heights} for numbers) . While the mean is about half
 way between the gender means, we see from the higher slope of the line
@@ -387,15 +410,15 @@ based on the whole population is larger.
 
 \begin{table}
 
-\caption{\label{tab:heights-table}Summary of Iowa's residents height and standard deviation (in inch) by gender and total.\label{tab:heights}}
+\caption{\label{tab:heights-table}Summary of Iowa's residents' heights and weights with corresponding standard deviations by gender and for the total population.\label{tab:heights}}
 \centering
-\begin{tabular}[t]{lrr}
+\begin{tabular}[t]{lrrrr}
 \toprule
-SEX & mean & sd\\
+SEX & mean height (in inch) & sd (in inch) & mean log weight (in kg) & sd (in kg)\\
 \midrule
-Male & 70.55 & 2.97\\
-Female & 64.51 & 2.91\\
-Total & 66.99 & 4.18\\
+Male & 70.55 & 2.97 & 9.10 & 0.20\\
+Female & 64.51 & 2.91 & 8.89 & 0.23\\
+Total & 66.99 & 4.18 & 8.98 & 0.24\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -411,14 +434,14 @@ Total & 66.99 & 4.18\\
 \end{figure}
 \end{Schunk}
 
-Unlike respondents' heights, their weigths do not seem to be normally
+Unlike respondents' heights, their weights do not seem to be normally
 distributed. Figure \ref{fig:weights} shows again two Q-Q plots. The Q-Q
 plot on the left uses raw weights and compares to a normal distribution.
-From the curved points we see that tails of the observed distribution
-are heavier than expected under a normal distribution. On the right,
-weights are log-transformed. We see that a normal distribution for each
-of the genders shows --with the exceptions of a few extreme outliers-- a
-reasonable fit.
+From the deviation in the extremes we see that tails of the observed
+distribution are heavier than expected under a normal distribution. On
+the right, weights are log-transformed. We see that a normal
+distribution for each of the genders shows --with the exceptions of a
+few extreme outliers-- a reasonable fit.
 
 \begin{Schunk}
 \begin{figure}
@@ -433,44 +456,38 @@ reasonable fit.
 
 Instead of transforming the observed values, we can change the
 theoretical distribution against which we compare. Figure
-\ref{fig:weights-log} shows two Q-Q plots where a log-normal
-distribution is chosen as the theoretical distribution. On the left, we
-compare against a log-normal distribution with mean 4.389 and standard
-deviation 0.223 (the log-transformed averages of average weight and
-standard deviation in Iowa's population). Again, the fits seem
-reasonable. On the right, parameters for the log-normal distribution are
-fit separately. The fits are slightly different from XXX
+\ref{fig:weights-log} shows two Q-Q plots, one for each of the genders.
+A log-normal distribution is chosen as the theoretical distribution. By
+default, for each of the groups ML estimates are used:
 
 \begin{Schunk}
+\begin{Sinput}
+p6 <- sample_ia %>% 
+  ggplot(aes(sample = WTKG3 / 100, colour = Gender, fill = Gender)) +
+  geom_abline(colour="grey60") +
+  stat_qq_band(distribution = "lnorm", alpha = 0.3) +
+  stat_qq_line(distribution = "lnorm") +
+  stat_qq_point(distribution = "lnorm") +
+  scale_fill_brewer(palette = "Set1") +
+  scale_colour_brewer(palette = "Set1") +
+  customization + facet_grid(.~Gender)
+\end{Sinput}
 \begin{figure}
 
-{\centering \includegraphics[width=\textwidth]{qqplotr_files/figure-latex/weights-log-1} 
+{\centering \includegraphics[width=.9\textwidth]{qqplotr_files/figure-latex/weights-log-1} 
 
 }
 
-\caption[Sample (200 men and 200 women) of weights]{Sample (200 men and 200 women) of weights. On the left, the theoretical distribution  is changed to a log normal. On the right, we additionally estimate shift and scale parameters for each of the genders separately before comparing distributions to a log-normal.}\label{fig:weights-log}
+\caption[Sample (200 men and 200 women) of weights, the theoretical distribution  is changed to a log normal]{Sample (200 men and 200 women) of weights, the theoretical distribution  is changed to a log normal. Shift and scale parameters are estimated separately for each of the genders before comparing distributions to a log-normal.}\label{fig:weights-log}
 \end{figure}
 \end{Schunk}
-
-\begin{table}
-
-\caption{\label{tab:table}this table is just for us at the moment}
-\centering
-\begin{tabular}[t]{r|r|r|r|r}
-\hline
-SEX & mean\_wt & mean\_log\_wt & sd\_wt & sd\_log\_wt\\
-\hline
-1 & 91.50342 & 4.495766 & 19.22981 & 0.2011216\\
-\hline
-2 & 74.37085 & 4.282780 & 17.90126 & 0.2254663\\
-\hline
-\end{tabular}
-\end{table}
 
 \subsubsection{Using user-provided
 distributions}\label{using-user-provided-distributions}
 
 \label{sec:user-dists}
+
+\al{Question: Should we move these sections above the BRFSS section, since they are a bit more straightforward?}
 
 Using the capabilities of \pkg{qqplotr} with the distributions
 implemented in the \pkg{stats} package is relatively straightfoward,
@@ -558,7 +575,7 @@ ggplot(longjump, aes(sample = distance)) +
 
 }
 
-\caption[Q-Q plot comparing the long jump distances to the standard SEV distribution]{Q-Q plot comparing the long jump distances to the standard SEV distribution. The SEV distribution appear to adequately model the distances.}\label{fig:sev-qq}
+\caption[Q-Q plot comparing the long jump distances to the standard SEV distribution]{Q-Q plot comparing the long jump distances to the standard SEV distribution. The SEV distribution appears to adequately model the distances.}\label{fig:sev-qq}
 \end{figure}
 \end{Schunk}
 
@@ -566,50 +583,34 @@ ggplot(longjump, aes(sample = distance)) +
 
 \label{sec:detrending}
 
-\pkg{qqplotr} also allows for Q-Q plots to be \emph{detrended}. In a
-detrended Q-Q plot, the \(y\)-axis shows the difference between the
-empirical quantile and the reference line (i.e.~the theoretical
-distribution). This layout directly plots what we want viewers to assess
---the difference between the distributions being compared-- which
-\citet{Loy2016-fg} found to be more powerful than other designs, so long
-as the \(y\)-axis limits are set so that the aspect ratio is kept the
-same as in the traditional Q-Q plot.
+\al{AL: It seems natural to have a subsection here, even if we continue the example, to allow people to skim the paper and find the topic they are most interested in. I tried to eliminate the techinical discussion of the plot since it is in the background section, instead describing the code. What do you think?}
 
-For example, Figure \ref{fig:detrend-sev} compares the standard Q-Q plot
-shown in Figure \ref{fig:sev-qq} with a detrended version by adding the
-argument \texttt{detrend\ =\ TRUE} to the \texttt{stat\_qq\_band},
-\texttt{stat\_qq\_line}, and \texttt{stat\_qq\_point} calls.
+To illustrate how to construct an adjusted detrended Q-Q plot using
+\pkg{qqplotr}, consider detrending the Q-Q plot in Figure
+\ref{fig:sev-qq}. To obtain a detrended version of Figure
+\ref{fig:sev-qq}, we must add the argument \texttt{detrend\ =\ TRUE} to
+\texttt{stat\_qq\_point}, \texttt{stat\_qq\_line}, and
+\texttt{stat\_qq\_band}. To adjust the aspect ratio to ensure that
+vertical and horizontal distances are on the same scale we further add
+\texttt{theme(aspect.ratio\ =\ 1)}.
 
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=\textwidth]{qqplotr_files/figure-latex/detrend-sev-1} 
+{\centering \includegraphics[width=0.45\textwidth]{qqplotr_files/figure-latex/detrend-sev-1} 
 
 }
 
-\caption[Q-Q plots assessing the appropriateness of the SEV distribution for the long jump data]{Q-Q plots assessing the appropriateness of the SEV distribution for the long jump data. On the left, a standard Q-Q plot is shown. On the right, we detrend the Q-Q plot by plotting the differences between the empirical quantiles and reference line on the $y$-axis.}\label{fig:detrend-sev}
+\caption[An adjusted detrended Q-Q plot assessing the appropriateness of the SEV distribution for the long jump data]{An adjusted detrended Q-Q plot assessing the appropriateness of the SEV distribution for the long jump data.}\label{fig:detrend-sev}
 \end{figure}
 \end{Schunk}
 
 \begin{Schunk}
 \begin{Sinput}
 ggplot(longjump, aes(sample = distance)) +
-  stat_qq_band(
-  distribution = "sev",
-  alpha = 0.3,
-  detrend = TRUE,
-  dparams = c(mu = 0, sigma = 1)
-  ) +
-  stat_qq_line(
-  distribution = "sev",
-  detrend = TRUE,
-  dparams = c(mu = 0, sigma = 1)
-  ) +
-  stat_qq_point(
-  distribution = "sev",
-  detrend = TRUE,
-  dparams = c(mu = 0, sigma = 1)
-  ) +
+  stat_qq_band(distribution = "sev", alpha = 0.3, detrend = TRUE, dparams = c(mu = 0, sigma = 1)) +
+  stat_qq_line(distribution = "sev", detrend = TRUE, dparams = c(mu = 0, sigma = 1)) +
+  stat_qq_point(distribution = "sev", detrend = TRUE, dparams = c(mu = 0, sigma = 1)) +
   xlab("Theoretical quantiles") +
   ylab("Differences") +
   theme_bw() +
@@ -617,11 +618,10 @@ ggplot(longjump, aes(sample = distance)) +
 \end{Sinput}
 \end{Schunk}
 
-In order to create a so-called \emph{adjusted} detrended Q-Q plot
-\citep{Loy2016-fg} the aspect ratio must also be set to 1. If the aspect
-ratio is not adjusted in this way, an \emph{ordinary} detrended Q-Q plot
-is created, which is known to have lower power than the standard Q-Q
-plot in some situations \citep{Loy2016-fg}.
+\subsubsection{Q-Q plots with robust
+estimators}\label{q-q-plots-with-robust-estimators}
+
+\al{Add text}
 
 \subsection{Discussion}\label{discussion}
 
