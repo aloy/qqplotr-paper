@@ -621,7 +621,16 @@ ggplot(longjump, aes(sample = distance)) +
 \subsubsection{Q-Q plots with robust
 estimators}\label{q-q-plots-with-robust-estimators}
 
-\al{Add text}
+\al{What do we really want to highlight with robust estimators? I am ready to write this section, but am unsure what to highlight: the different lines? the dparams?}
+
+\begin{Schunk}
+\begin{Sinput}
+set.seed(798534)
+t_data <- rt(20, df = 2)
+norm_data <- rnorm(20)
+chisq1 <- rchisq(20, df = 1)
+\end{Sinput}
+\end{Schunk}
 
 \subsection{Discussion}\label{discussion}
 
@@ -634,9 +643,44 @@ Q-Q plots, and create Q-Q plots when data are grouped. Further, in the
 BRFSS example, we illustrated how jittering can be used in Q-Q plots to
 better compare discretized data to a continuous distribution.
 
-Q-Q plots are member of the larger probability plotting family, and we
-are working to incorporate additional plots into \pkg{qqplotr}\ldots{}.
-NEED TO DISUCSS P-P PLOTS SOMEHOW
+Q-Q plots are member of the larger probability plotting family, and
+future versions of the package will incorporate additional plots into
+\pkg{qqplotr}. Specifically, two types of probability plots will be
+included:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  A standardarized P-P plot is constructed for location-scale
+  distributions by plotting \(F(z_{(i)})\) against \(p_i\), where
+  \(z_{(i)}\) denotes the ordered and standardized observations and
+  \(p_i\) is denotes the plotting position \citep{Gan1991-yk}. As
+  \citet{Gan1991-yk} point out, the probability plotting positions are
+  equally spaced on the \(x\)-x axis, whereas points on the \(x\)-axis
+  of a Q-Q plot are more concentrated in the higher-density regions of
+  the reference distribution. This leads to Q-Q plots being more
+  sensitive to discrepencies in the tail of the distribution and
+  standardized P-P plots being more sensitive to discrepencies in the
+  middle of the proposed distribution.
+\item
+  In engineering applications, probability plots refer to a linearized
+  plot of \(F(x_i)\) against \(x_i\). This linearizing transformation of
+  the hypothesized CDF is found by first finding a transformations that
+  linearize the quantile function---i.e.~linearizing the plot of
+  \(F^{-1}(p)\) vs \(x_p\)---and then mapping \(F^{-1}(p)\) back to the
+  probability scale \citep[cf.][Chapter 6]{Meeker1998}.
+\end{enumerate}
+
+It is important to note that all of the probability plotting methods
+discussed----Q-Q plots, standardized P-P plots, and probability
+plots---are invariant to linear transformations. Consequently, each type
+of plot will exhibit a linear relationship between the sample and
+hypothesized distribution for location-scale families, even if the
+location and/or scale parameters in the sample differ from the
+hypothesized distribution. This is not the case with unstandardized P-P
+plots \citep{Wilk1968-ii}, so they will not be included in
+\pkg{qqplotr}.
 
 XXX P-P plots here Write this section once the rest of the paper is
 done.
@@ -644,11 +688,11 @@ done.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=.31\linewidth]{qqplotr_files/figure-latex/unnamed-chunk-7-1} 
+{\centering \includegraphics[width=.31\linewidth]{qqplotr_files/figure-latex/unnamed-chunk-9-1} 
 
 }
 
-\caption{\label{fig:pp-designs}Illustrating different designs of probability plots.}\label{fig:unnamed-chunk-7}
+\caption{\label{fig:pp-designs}Illustrating different designs of probability plots.}\label{fig:unnamed-chunk-9}
 \end{figure}
 \end{Schunk}
 

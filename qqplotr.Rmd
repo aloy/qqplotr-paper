@@ -575,20 +575,67 @@ ggplot(longjump, aes(sample = distance)) +
 
 ### Q-Q plots with robust estimators
 
-\al{By default, the reference line is drawn through the first and third quartiles}, but different reference lines are possible.
+\al{What do we really want to highlight with robust estimators? I am ready to write this section, but am unsure what to highlight: the different lines? the dparams?}
 
 
 ```{r}
 set.seed(798534)
-t_data <- rt(20, df = 2) 
+t_data <- rt(20, df = 2)
+norm_data <- rnorm(20)
+chisq1 <- rchisq(20, df = 1)
 ```
+
+
+
+```{r include=FALSE}
+ggplot(data.frame(x = t_data), aes(sample = x)) +
+  # stat_qq_band(distribution = "norm", alpha = 0.3) +
+  stat_qq_line(distribution = "norm") +
+  stat_qq_point(distribution = "norm") +
+  geom_abline(intercept = mean(t_data), slope = sd(t_data), color = "orange") +
+  geom_abline(intercept = median(t_data), slope = mad(t_data), color = "blue") +
+  geom_abline(intercept = median(t_data), slope = robustbase::Qn(t_data), color = "green") +
+  geom_abline(intercept = median(t_data), slope = robustbase::Sn(t_data), color = "red") +
+  xlab("Theoretical quantiles") +
+  xlab("Sample quantiles")
+
+ggplot(data.frame(x = norm_data), aes(sample = x)) +
+  # stat_qq_band(distribution = "norm", alpha = 0.3) +
+  stat_qq_line(distribution = "norm") +
+  stat_qq_point(distribution = "norm") +
+  geom_abline(intercept = mean(norm_data), slope = sd(t_data), color = "orange") +
+  geom_abline(intercept = median(norm_data), slope = mad(t_data), color = "blue") +
+  geom_abline(intercept = median(norm_data), slope = robustbase::Qn(t_data), color = "green") +
+  geom_abline(intercept = median(norm_data), slope = robustbase::Sn(t_data), color = "red") +
+  xlab("Theoretical quantiles") +
+  xlab("Sample quantiles")
+
+ggplot(data.frame(x = chisq1), aes(sample = x)) +
+  # stat_qq_band(distribution = "norm", alpha = 0.3) +
+  stat_qq_line(distribution = "norm") +
+  stat_qq_point(distribution = "norm") +
+  geom_abline(intercept = mean(chisq1), slope = sd(chisq1), color = "orange") +
+  geom_abline(intercept = median(chisq1), slope = mad(chisq1), color = "blue") +
+  geom_abline(intercept = median(chisq1), slope = robustbase::Qn(chisq1), color = "green") +
+  geom_abline(intercept = median(chisq1), slope = robustbase::Sn(chisq1), color = "red") +
+  xlab("Theoretical quantiles") +
+  xlab("Sample quantiles")
+```
+
+
+
 
 ## Discussion
 
 This paper presents the \pkg{qqplotr} package, an extension of \pkg{ggplot2} that implements Q-Q plots in both the standard and de-trended orientations, reference lines for Q-Q plots, and confidence bands for Q-Q plots. The examples illustrate how to create Q-Q plots for non-standard distributions found outside of the \pkg{stats}, de-trend Q-Q plots, and create Q-Q plots when data are grouped. Further, in the BRFSS example, we illustrated how jittering can be used in Q-Q plots to better compare discretized data to a continuous distribution.
 
 
-Q-Q plots are member of the larger probability plotting family, and we are working to incorporate additional plots into \pkg{qqplotr}.... NEED TO DISUCSS P-P PLOTS SOMEHOW
+Q-Q plots are member of the larger probability plotting family, and future versions of the package will incorporate additional plots into \pkg{qqplotr}. Specifically, two types of probability plots will be included:
+
+1. A standardarized P-P plot is constructed for location-scale distributions by plotting $F(z_{(i)})$ against $p_i$, where $z_{(i)}$ denotes the ordered and standardized observations and $p_i$ is denotes the plotting position \citep{Gan1991-yk}. As \citet{Gan1991-yk} point out, the probability plotting positions are equally spaced on the $x$-x axis, whereas points on the $x$-axis of a Q-Q plot are more concentrated in the higher-density regions of the reference distribution. This leads to Q-Q plots being more sensitive to discrepencies in the tail of the distribution and standardized P-P plots being more sensitive to discrepencies in the middle of the proposed distribution. 
+2. In engineering applications, probability plots refer to a linearized plot of $F(x_i)$ against $x_i$. This linearizing transformation of the hypothesized CDF is found by first finding a transformations that linearize the quantile function---i.e. linearizing the plot of $F^{-1}(p)$ vs $x_p$---and then mapping $F^{-1}(p)$ back to the probability scale \citep[cf.][Chapter 6]{Meeker1998}.
+
+It is important to note that all of the probability plotting methods discussed----Q-Q plots, standardized P-P plots, and probability plots---are invariant to linear transformations. Consequently, each type of plot will exhibit a linear relationship between the sample and hypothesized distribution for location-scale families, even if the location and/or scale parameters in the sample differ from the hypothesized distribution. This is not the case with unstandardized P-P plots \citep{Wilk1968-ii}, so they will not be included in \pkg{qqplotr}.
 
 
 <!-- For Q-Q plots, a reference line is often drawn through the points $(q(.25), q_y(.25))$ and $(q(.75), q_y(.75))$. -->
@@ -602,18 +649,15 @@ Q-Q plots are member of the larger probability plotting family, and we are worki
 <!-- Innovations to Q-Q and P-P plots have also been proposed. \citet{Loy2016-fg} discuss the creation of detrended Q-Q plots, where the $y$-axis is changed to show the difference between $q_y$ and the reference line. Consequently, the line representing the agreement with the theoretical distribution is the $x$-axis. \citet{Loy2016-fg} find that detrended Q-Q plots are more powerful than other designs, so long at the $y$-axis limits are set so that the aspect ratio is kept the same as in the traditional Q-Q plot. In reliability and survival analysis, probability plots often refer to a hybrid probability plot, there the CDF of the proposed theoretical distribution is plotted against the empirical order statistics, and transformations are applied to each axis to linearize the CDF \citep[cf.][chapter 6]{Meeker1998}. This hybrid probability plot is invariant to linear transformations. -->
 
 
-XXX P-P plots here
-Write this section once the rest of the paper is done.
-
-```{r, echo=FALSE, out.width='.31\\linewidth', fig.width=3.5, fig.height=3.5, fig.show='hold', fig.align='center', fig.cap="\\label{fig:pp-designs}Illustrating different designs of probability plots."}
-rand_sample$ppoints <- ppoints(rand_sample$rs)
-ggplot(data = rand_sample, mapping = aes(x = sort(rs), y = ppoints)) +
-  geom_point() +
-  xlab("Sample quantiles") +
-  ylab("Cumulative probabilty") +
-  theme_minimal() +
-  ggtitle("Hybrid probability plot")
-```
+<!-- ```{r, echo=FALSE, out.width='.31\\linewidth', fig.width=3.5, fig.height=3.5, fig.show='hold', fig.align='center', fig.cap="\\label{fig:pp-designs}Illustrating different designs of probability plots."} -->
+<!-- rand_sample$ppoints <- ppoints(rand_sample$rs) -->
+<!-- ggplot(data = rand_sample, mapping = aes(x = sort(rs), y = ppoints)) + -->
+<!--   geom_point() + -->
+<!--   xlab("Sample quantiles") + -->
+<!--   ylab("Cumulative probabilty") + -->
+<!--   theme_minimal() + -->
+<!--   ggtitle("Hybrid probability plot") -->
+<!-- ``` -->
 
 \bibliography{RJreferences}
 
