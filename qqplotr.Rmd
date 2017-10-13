@@ -30,6 +30,7 @@ output: rticles::rjournal_article
 
 \newcommand{\hh}[1]{{\textcolor{orange}{#1}}}
 \newcommand{\al}[1]{{\textcolor{violet}{#1}}}
+\newcommand{\alex}[1]{{\textcolor{green}{#1}}}
 
 ## TODO:
 
@@ -289,7 +290,6 @@ will be estimated using robust estimates via the `robustbase` package.
 
 \hh{placeholder for now: discuss groups and facets }
 
-
 \FloatBarrier
 
 ## Examples
@@ -299,8 +299,32 @@ In this section, we demonstrate the capabilities of the \pkg{qqplotr} package. W
 the package:
 
 ```{r message=FALSE}
-# also loads ggplot2
 library(qqplotr)
+```
+
+```{r message=FALSE, echo=FALSE}
+library(tidyverse)
+```
+
+### Constructing Q-Q plots with `qqplotr`
+
+\alex{Placeholder subsection name}
+
+To give a brief introduction on how to use \pkg{qqplotr} and its functions, let us use as example the `urine` dataset of the \pkg{boot} package. This small dataset presents 79 urine specimens that were analyzed in order to determine if certain physical characteristics of the urine (e.g. pH, urea concentration) might be related to the formation of calcium oxalate crystals. Here, we will focus on distributional assessment of the urine samples pH measurements.
+
+\alex{The idea of this subsection is to briefly exemplify the usage of the implemented functions of qqplotr, while also showcasing the three methods for constructing the confidence bands. Hence, I've included this dataset because of the distinct conclusions that can be made based on the visual inference of the pH measurement QQ-plots when using the three confidence bands methods, which justifies their implementation.}
+
+\alex{TODO: Still need to display essential code chunks in the paper, add a Figure with the 3 band types side-by-side, and discuss all the Figures.}
+
+```{r tooth-qq, echo = FALSE, message = FALSE, warning = FALSE, fig.width = 3.5, fig.height = 3.5, fig.cap = "Placeholder caption.", out.width='0.45\\textwidth', fig.align="center"}
+require(boot)
+urine %>% ggplot(aes(sample = ph)) + 
+  stat_qq_band(alpha = 0.3, bandType = "ts") + 
+  stat_qq_line() + 
+  stat_qq_point() +
+  xlab("Theoretical quantiles") +
+  ylab("Tooth length (microns)") +
+  theme_bw()
 ```
 
 ### BRFSS example
@@ -312,7 +336,6 @@ Close to half a million interviews are conducted each year. Here, we are focussi
 Figure \ref{fig:heights} shows two Q-Q plots side by side. For each of the plots, a sample of 200 men and 200 women is drawn from the overall number of responses. On the left hand side, individuals' heights are plotted in a Q-Q plot comparing raw heights to a normal distribution. We see that the distributions for both men and women (colour) is showing horizontal steps: this indicates that the distributional assessement is heavily dominated by the discreteness in the data, as most survey participants responded to the question of their height only up to the closest inch. On the right hand side of Figure \ref{fig:heights}, we use jittering; this means  that we add a random number generated from a random uniform distribution on $\pm 0.5$ inch to the reported height, as shown in the code below: 
 
 ```{r iowa-read, echo=12:14, message=FALSE, warning=FALSE}
-library(tidyverse)
 iowa <- readRDS("data/brfss-iowa.rda")
 set.seed(3145)
 
@@ -353,9 +376,6 @@ p2 <- sample_ia %>% mutate(
 
 By using jittering we diminish the effect that discreteness has on the distribution and brings the observed distribution much closer to a normal distribution. Note that separate normal distributions were fitted for each gender. Not surprisingly, the resulting distributions have different means (women are on average 6 inch shorter than men in this dataset). Interestingly, the slope of the two genders is similar, indicating that the same scale parameter fits both genders' distributions (the standard deviation of height in the data set is 2.97 inch for men and 2.91 inch for women, see Table \ref{tab:heights}). 
 The dark line between the two groups is the identity line -- representing the theoretical distribution each of these groups are compared to. This distribution is based on parameters estimated from the whole population (see Table \ref{tab:heights} for numbers) . While the mean is about half way between the gender means, we see from the higher slope of the line that in comparison to each group, the standard deviation of the height based on the whole population is larger.
-
-
-
 
 ```{r heights-table, echo=FALSE, results="asis"}
 bygender <- iowa %>% group_by(SEX) %>%
