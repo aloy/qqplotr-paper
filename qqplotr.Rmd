@@ -638,6 +638,8 @@ Q-Q plots are member of the larger probability plotting family, and future versi
 It is important to note that all of the probability plotting methods discussed----Q-Q plots, standardized P-P plots, and probability plots---are invariant to linear transformations. Consequently, each type of plot will exhibit a linear relationship between the sample and hypothesized distribution for location-scale families, even if the location and/or scale parameters in the sample differ from the hypothesized distribution. This is not the case with unstandardized P-P plots \citep{Wilk1968-ii}, so they will not be included in \pkg{qqplotr}.
 
 
+
+
 <!-- For Q-Q plots, a reference line is often drawn through the points $(q(.25), q_y(.25))$ and $(q(.75), q_y(.75))$. -->
 
 <!-- If the two distributions are identical, then this scatterplot will be linear with slope 1 and intercept 0. If the two distributions differ only by a linear transformation---such as $N(0, 1)$ and $N(10, 5)$---a Q-Q plot comparing the distributions will be linear, but with a different slope and intercept. -->
