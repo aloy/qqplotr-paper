@@ -10,6 +10,7 @@ An abstract of less than 150 words.
 
 \newcommand{\hh}[1]{{\textcolor{orange}{#1}}}
 \newcommand{\al}[1]{{\textcolor{violet}{#1}}}
+\newcommand{\alex}[1]{{\textcolor{green}{#1}}}
 
 \subsection{TODO:}\label{todo}
 
@@ -345,9 +346,36 @@ package. We start by loading the package:
 
 \begin{Schunk}
 \begin{Sinput}
-# also loads ggplot2
 library(qqplotr)
 \end{Sinput}
+\end{Schunk}
+
+\subsubsection{\texorpdfstring{Constructing Q-Q plots with
+\texttt{qqplotr}}{Constructing Q-Q plots with qqplotr}}\label{constructing-q-q-plots-with-qqplotr}
+
+\alex{Placeholder subsection name}
+
+To give a brief introduction on how to use \pkg{qqplotr} and its
+functions, let us use as example the \texttt{urine} dataset of the
+\pkg{boot} package. This small dataset presents 79 urine specimens that
+were analyzed in order to determine if certain physical characteristics
+of the urine (e.g.~pH, urea concentration) might be related to the
+formation of calcium oxalate crystals. Here, we will focus on
+distributional assessment of the urine samples pH measurements.
+
+\alex{The idea of this subsection is to briefly exemplify the usage of the implemented functions of qqplotr, while also showcasing the three methods for constructing the confidence bands. Hence, I've included this dataset because of the distinct conclusions that can be made based on the visual inference of the pH measurement QQ-plots when using the three confidence bands methods, which justifies their implementation.}
+
+\alex{TODO: Still need to display essential code chunks in the paper, add a Figure with the 3 band types side-by-side, and discuss all the Figures.}
+
+\begin{Schunk}
+\begin{figure}
+
+{\centering \includegraphics[width=0.45\textwidth]{qqplotr_files/figure-latex/tooth-qq-1} 
+
+}
+
+\caption[Placeholder caption]{Placeholder caption.}\label{fig:tooth-qq}
+\end{figure}
 \end{Schunk}
 
 \subsubsection{BRFSS example}\label{brfss-example}
@@ -375,21 +403,6 @@ closest inch. On the right hand side of Figure \ref{fig:heights}, we use
 jittering; this means that we add a random number generated from a
 random uniform distribution on \(\pm 0.5\) inch to the reported height,
 as shown in the code below:
-
-\begin{Schunk}
-\begin{Sinput}
-p2 <- sample_ia %>% mutate(
-    HTIN4.jitter = jitter(HTIN4, factor = 2)
-    ) %>% 
-  ggplot(aes(sample = HTIN4.jitter, colour=Gender, fill=Gender)) + 
-  geom_abline(slope=1, intercept=0, colour = "grey40") +
-  stat_qq_band(alpha = 0.3, dparams = list(mean=params$m, sd=params$s)) +
-  stat_qq_line(dparams = list(mean=params$m, sd=params$s)) + 
-  stat_qq_point(dparams = list(mean=params$m, sd=params$s)) +
-  customization +
-  ylab("Jittered Height (in inch)") 
-\end{Sinput}
-\end{Schunk}
 
 By using jittering we diminish the effect that discreteness has on the
 distribution and brings the observed distribution much closer to a
@@ -681,20 +694,6 @@ location and/or scale parameters in the sample differ from the
 hypothesized distribution. This is not the case with unstandardized P-P
 plots \citep{Wilk1968-ii}, so they will not be included in
 \pkg{qqplotr}.
-
-XXX P-P plots here Write this section once the rest of the paper is
-done.
-
-\begin{Schunk}
-\begin{figure}
-
-{\centering \includegraphics[width=.31\linewidth]{qqplotr_files/figure-latex/unnamed-chunk-9-1} 
-
-}
-
-\caption{\label{fig:pp-designs}Illustrating different designs of probability plots.}\label{fig:unnamed-chunk-9}
-\end{figure}
-\end{Schunk}
 
 \bibliography{RJreferences}
 
