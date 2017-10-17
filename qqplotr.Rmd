@@ -390,8 +390,8 @@ Figure \ref{fig:urine-qq-bands} presents three plots with the distinct confidenc
 
 ```{r urine-qq-bands, echo = FALSE, message = FALSE, warning = FALSE, fig.width = 9.5, fig.height = 3.5, fig.cap = "Normal Q-Q plots of pH measurements of urine samles with different confidence bands constructions. Different conclusiong can be made depending on the confidence bands method used.", out.width='1.0\\textwidth', fig.align="center"}
 p9 <- urine %>% ggplot(aes(sample = ph)) + 
-  stat_qq_band(alpha = 0.5, bandType = "normal", fill = "red") + 
-  stat_qq_line(col = "darkred") + 
+  stat_qq_band(alpha = 0.5, bandType = "normal", fill = "#999999") + 
+  stat_qq_line(col = "gray40") + 
   stat_qq_point() +
   ggtitle("Normal") +
   xlab("Theoretical quantiles") +
@@ -400,8 +400,8 @@ p9 <- urine %>% ggplot(aes(sample = ph)) +
   coord_cartesian(ylim = c(3.2, 8.7))
 
 p10 <- urine %>% ggplot(aes(sample = ph)) + 
-  stat_qq_band(alpha = 0.5, bandType = "bs", fill = "green") + 
-  stat_qq_line(col = "darkgreen") + 
+  stat_qq_band(alpha = 0.5, bandType = "bs", fill = "#E69F00") + 
+  stat_qq_line(col = "orange2") + 
   stat_qq_point() +
   ggtitle("Bootstrap") +
   xlab("Theoretical quantiles") +
@@ -415,8 +415,8 @@ p10 <- urine %>% ggplot(aes(sample = ph)) +
   coord_cartesian(ylim = c(3.2, 8.7))
 
 p11 <- urine %>% ggplot(aes(sample = ph)) + 
-  stat_qq_band(alpha = 0.5, bandType = "ts", fill = "blue") + 
-  stat_qq_line(col = "darkblue") + 
+  stat_qq_band(alpha = 0.5, bandType = "ts", fill = "#56B4E9") + 
+  stat_qq_line(col = "steelblue") + 
   stat_qq_point() +
   ggtitle("Tail-sensitive") +
   xlab("Theoretical quantiles") +
