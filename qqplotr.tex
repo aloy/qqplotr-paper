@@ -361,12 +361,6 @@ library(qqplotr)
 \end{Sinput}
 \end{Schunk}
 
-\begin{Schunk}
-\begin{Soutput}
-#> Warning: package 'dplyr' was built under R version 3.4.2
-\end{Soutput}
-\end{Schunk}
-
 \subsubsection{\texorpdfstring{Constructing Q-Q plots with
 \texttt{qqplotr}}{Constructing Q-Q plots with qqplotr}}\label{constructing-q-q-plots-with-qqplotr}
 
@@ -393,6 +387,138 @@ distributional assessment of the urine samples pH measurements.
 
 \caption[Placeholder caption]{Placeholder caption.}\label{fig:tooth-qq}
 \end{figure}
+\end{Schunk}
+
+\subsubsection{Using user-provided
+distributions}\label{using-user-provided-distributions}
+
+\label{sec:user-dists}
+
+Using the capabilities of \pkg{qqplotr} with the distributions
+implemented in the \pkg{stats} package is relatively straightfoward,
+since the implementation allows you to specify the suffix
+(i.e.~distribution and or abbreviation) via the \texttt{distribution}
+argument and the parameter estimates via \texttt{dparams} argument.
+However, there are times when the distributions in \pkg{stats} are not
+sufficient for the demands of the analysis. For example, there is no
+left-skewed distribution listed. User-coded distributions or
+distributions from other packages can be used with \pkg{qqplotr} as long
+as the distributions are defined following the conventions laid out in
+the \pkg{stats} package. Specfically, for some distribution there must
+be density/mass (\texttt{d} prefix), CDF (\texttt{p} prefix), quantile
+(\texttt{q} prefix), and simulation (\texttt{r} prefix) functions. In
+this section we illustrate the use of the smallest extreme value
+distribution (SEV).
+
+To qualify for the Olympics in the men's long jump in 2012, athletes had
+to either meet/exceed the 8.1 meter standard or place in the top twelve.
+During the qualification events, each athlete was able to jump three
+times, and their best (i.e.~longest) jump is treated as the result.
+Figure \ref{fig:jump-density} shows a density plot of the results, which
+are cleaerly left skewed.
+
+\begin{Schunk}
+\begin{figure}
+
+{\centering \includegraphics[width=0.45\textwidth]{qqplotr_files/figure-latex/jump-density-1} 
+
+}
+
+\caption[Density plot of the 2012 men's long jump qualifying round]{Density plot of the 2012 men's long jump qualifying round. The distances are clearly left skewed.}\label{fig:jump-density}
+\end{figure}
+\end{Schunk}
+
+In order to model the jump distances we must first define a left-skewed
+distribution. Below, we define the suite of distributional functions
+necessary to utilize the SEV distribution.
+
+\begin{Schunk}
+\begin{Sinput}
+# CDF
+psev <- function(q, mu = 0, sigma = 1) {
+    z <- (q - mu) / sigma
+    1 - exp(-exp(z))
+}
+
+# PDF
+dsev <- function(x, mu = 0, sigma = 1) {
+  z <- (x - mu) / sigma
+  (1 / sigma) * exp(z - exp(z))
+}
+
+# Quantile function
+qsev <- function(p, mu = 0, sigma = 1) {
+  mu + log(-log(1 - p)) * sigma
+}
+
+# Simulation function
+rsev <- function(n, mu = 0, sigma = 1) {
+  qsev(runif(n), mu, sigma)
+}
+\end{Sinput}
+\end{Schunk}
+
+With the \texttt{*sev} distribution functions in hand, we can create a
+Q-Q plot to assess the appropriateness of the SEV model (Figure
+\ref{fig:sev-qq}). The Q-Q plot show that the distances do not
+substantially deviate from the SEV model, so we have found an adequate
+representation of the distances.
+
+\begin{Schunk}
+\begin{Sinput}
+ggplot(longjump, aes(sample = distance)) +
+  stat_qq_band(distribution = "sev", dparams = list(mu = 0, sigma = 1), alpha = 0.3) +
+  stat_qq_line(distribution = "sev", dparams = list(mu = 0, sigma = 1)) +
+  stat_qq_point(distribution = "sev", dparams = list(mu = 0, sigma = 1)) +
+  xlab("Theoretical quantiles") +
+  ylab("Jump distance (in m)") +
+  theme_bw()
+\end{Sinput}
+\begin{figure}
+
+{\centering \includegraphics[width=0.45\textwidth]{qqplotr_files/figure-latex/sev-qq-1} 
+
+}
+
+\caption[Q-Q plot comparing the long jump distances to the standard SEV distribution]{Q-Q plot comparing the long jump distances to the standard SEV distribution. The SEV distribution appears to adequately model the distances.}\label{fig:sev-qq}
+\end{figure}
+\end{Schunk}
+
+\subsubsection{Detrending Q-Q plots}\label{detrending-q-q-plots}
+
+\label{sec:detrending}
+
+To illustrate how to construct an adjusted detrended Q-Q plot using
+\pkg{qqplotr}, consider detrending the Q-Q plot in Figure
+\ref{fig:sev-qq}. To obtain a detrended version of Figure
+\ref{fig:sev-qq}, we must add the argument \texttt{detrend\ =\ TRUE} to
+\texttt{stat\_qq\_point}, \texttt{stat\_qq\_line}, and
+\texttt{stat\_qq\_band}. To adjust the aspect ratio to ensure that
+vertical and horizontal distances are on the same scale we further add
+\texttt{coord\_fixed(ratio=1)}.
+
+\begin{Schunk}
+\begin{figure}
+
+{\centering \includegraphics[width=0.45\textwidth]{qqplotr_files/figure-latex/detrend-sev-1} 
+
+}
+
+\caption[An adjusted detrended Q-Q plot assessing the appropriateness of the SEV distribution for the long jump data]{An adjusted detrended Q-Q plot assessing the appropriateness of the SEV distribution for the long jump data.}\label{fig:detrend-sev}
+\end{figure}
+\end{Schunk}
+
+\begin{Schunk}
+\begin{Sinput}
+ggplot(longjump, aes(sample = distance)) +
+  stat_qq_band(distribution = "sev", alpha = 0.3, detrend = TRUE, dparams = c(mu = 0, sigma = 1)) +
+  stat_qq_line(distribution = "sev", detrend = TRUE, dparams = c(mu = 0, sigma = 1)) +
+  stat_qq_point(distribution = "sev", detrend = TRUE, dparams = c(mu = 0, sigma = 1)) +
+  xlab("Theoretical quantiles") +
+  ylab("Differences") +
+  theme_bw() +
+  coord_fixed(ratio=1)
+\end{Sinput}
 \end{Schunk}
 
 \subsubsection{BRFSS example}\label{brfss-example}
@@ -512,156 +638,6 @@ p6 <- sample_ia %>%
 \end{figure}
 \end{Schunk}
 
-\subsubsection{Using user-provided
-distributions}\label{using-user-provided-distributions}
-
-\label{sec:user-dists}
-
-\al{Question: Should we move these sections above the BRFSS section, since they are a bit more straightforward?}
-
-Using the capabilities of \pkg{qqplotr} with the distributions
-implemented in the \pkg{stats} package is relatively straightfoward,
-since the implementation allows you to specify the suffix
-(i.e.~distribution and or abbreviation) via the \texttt{distribution}
-argument and the parameter estimates via \texttt{dparams} argument.
-However, there are times when the distributions in \pkg{stats} are not
-sufficient for the demands of the analysis. For example, there is no
-left-skewed distribution listed. User-coded distributions or
-distributions from other packages can be used with \pkg{qqplotr} as long
-as the distributions are defined following the conventions laid out in
-the \pkg{stats} package. Specfically, for some distribution there must
-be density/mass (\texttt{d} prefix), CDF (\texttt{p} prefix), quantile
-(\texttt{q} prefix), and simulation (\texttt{r} prefix) functions. In
-this section we illustrate the use of the smallest extreme value
-distribution (SEV).
-
-To qualify for the Olympics in the men's long jump in 2012, athletes had
-to either meet/exceed the 8.1 meter standard or place in the top twelve.
-During the qualification events, each athlete was able to jump three
-times, and their best (i.e.~longest) jump is treated as the result.
-Figure \ref{fig:jump-density} shows a density plot of the results, which
-are cleaerly left skewed.
-
-\begin{Schunk}
-\begin{figure}
-
-{\centering \includegraphics[width=0.45\textwidth]{qqplotr_files/figure-latex/jump-density-1} 
-
-}
-
-\caption[Density plot of the 2012 men's long jump qualifying round]{Density plot of the 2012 men's long jump qualifying round. The distances are clearly left skewed.}\label{fig:jump-density}
-\end{figure}
-\end{Schunk}
-
-In order to model the jump distances we must first define a left-skewed
-distribution. Below, we define the suite of distributional functions
-necessary to utilize the SEV distribution.
-
-\begin{Schunk}
-\begin{Sinput}
-# CDF
-psev <- function(q, mu = 0, sigma = 1) {
-    z <- (q - mu) / sigma
-    1 - exp(-exp(z))
-}
-
-# PDF
-dsev <- function(x, mu = 0, sigma = 1) {
-  z <- (x - mu) / sigma
-  (1 / sigma) * exp(z - exp(z))
-}
-
-# Quantile function
-qsev <- function(p, mu = 0, sigma = 1) {
-  mu + log(-log(1 - p)) * sigma
-}
-
-# Simulation function
-rsev <- function(n, mu = 0, sigma = 1) {
-  qsev(runif(n), mu, sigma)
-}
-\end{Sinput}
-\end{Schunk}
-
-With the \texttt{*sev} distribution functions in hand, we can create a
-Q-Q plot to assess the appropriateness of the SEV model (Figure
-\ref{fig:sev-qq}). The Q-Q plot show that the distances do not
-substantially deviate from the SEV model, so we have found an adequate
-representation of the distances.
-
-\begin{Schunk}
-\begin{Sinput}
-ggplot(longjump, aes(sample = distance)) +
-  stat_qq_band(distribution = "sev", dparams = list(mu = 0, sigma = 1), alpha = 0.3) +
-  stat_qq_line(distribution = "sev", dparams = list(mu = 0, sigma = 1)) +
-  stat_qq_point(distribution = "sev", dparams = list(mu = 0, sigma = 1)) +
-  xlab("Theoretical quantiles") +
-  ylab("Jump distance (in m)") +
-  theme_bw()
-\end{Sinput}
-\begin{figure}
-
-{\centering \includegraphics[width=0.45\textwidth]{qqplotr_files/figure-latex/sev-qq-1} 
-
-}
-
-\caption[Q-Q plot comparing the long jump distances to the standard SEV distribution]{Q-Q plot comparing the long jump distances to the standard SEV distribution. The SEV distribution appears to adequately model the distances.}\label{fig:sev-qq}
-\end{figure}
-\end{Schunk}
-
-\subsubsection{Detrending Q-Q plots}\label{detrending-q-q-plots}
-
-\label{sec:detrending}
-
-\al{AL: It seems natural to have a subsection here, even if we continue the example, to allow people to skim the paper and find the topic they are most interested in. I tried to eliminate the techinical discussion of the plot since it is in the background section, instead describing the code. What do you think?}
-
-To illustrate how to construct an adjusted detrended Q-Q plot using
-\pkg{qqplotr}, consider detrending the Q-Q plot in Figure
-\ref{fig:sev-qq}. To obtain a detrended version of Figure
-\ref{fig:sev-qq}, we must add the argument \texttt{detrend\ =\ TRUE} to
-\texttt{stat\_qq\_point}, \texttt{stat\_qq\_line}, and
-\texttt{stat\_qq\_band}. To adjust the aspect ratio to ensure that
-vertical and horizontal distances are on the same scale we further add
-\texttt{theme(aspect.ratio\ =\ 1)}.
-
-\begin{Schunk}
-\begin{figure}
-
-{\centering \includegraphics[width=0.45\textwidth]{qqplotr_files/figure-latex/detrend-sev-1} 
-
-}
-
-\caption[An adjusted detrended Q-Q plot assessing the appropriateness of the SEV distribution for the long jump data]{An adjusted detrended Q-Q plot assessing the appropriateness of the SEV distribution for the long jump data.}\label{fig:detrend-sev}
-\end{figure}
-\end{Schunk}
-
-\begin{Schunk}
-\begin{Sinput}
-ggplot(longjump, aes(sample = distance)) +
-  stat_qq_band(distribution = "sev", alpha = 0.3, detrend = TRUE, dparams = c(mu = 0, sigma = 1)) +
-  stat_qq_line(distribution = "sev", detrend = TRUE, dparams = c(mu = 0, sigma = 1)) +
-  stat_qq_point(distribution = "sev", detrend = TRUE, dparams = c(mu = 0, sigma = 1)) +
-  xlab("Theoretical quantiles") +
-  ylab("Differences") +
-  theme_bw() +
-  theme(aspect.ratio = 1)
-\end{Sinput}
-\end{Schunk}
-
-\subsubsection{Q-Q plots with robust
-estimators}\label{q-q-plots-with-robust-estimators}
-
-\al{What do we really want to highlight with robust estimators? I am ready to write this section, but am unsure what to highlight: the different lines? the dparams?}
-
-\begin{Schunk}
-\begin{Sinput}
-set.seed(798534)
-t_data <- rt(20, df = 2)
-norm_data <- rnorm(20)
-chisq1 <- rchisq(20, df = 1)
-\end{Sinput}
-\end{Schunk}
-
 \subsection{Discussion}\label{discussion}
 
 This paper presents the \pkg{qqplotr} package, an extension of
@@ -711,6 +687,23 @@ location and/or scale parameters in the sample differ from the
 hypothesized distribution. This is not the case with unstandardized P-P
 plots \citep{Wilk1968-ii}, so they will not be included in
 \pkg{qqplotr}.
+
+We have made design choices in \pkg{qqplotr} that we believe are in line
+with best practices for distributional assessment, but the
+implementation is flexible enough to allow for easy customization. For
+example, maximum likelihood estimation is used to estimate the
+parameters of the proposed model, but if outliers are present robust
+estimators may be desirable, such as if you are comparing the empirical
+distribution to the normal distribution. In this scenario, robust
+estimates of the location and scale can be obtained using the
+\pkg{robustbase} \citep{robustbase} package, and specified using the
+\texttt{dparams} argument directly. This is especially useful if you
+wish to use the parametric bootstrap to build confidence bands.
+Similarly, \texttt{stat\_qq\_line} only implements a reference line that
+passes through the first and third quartiles of the distributions. While
+this is the most commonly used reference line, alternative reference
+lines can be quickly implemented using \texttt{ggplot2::geom\_abline} by
+specifying the slope and intercept.
 
 \bibliography{RJreferences}
 

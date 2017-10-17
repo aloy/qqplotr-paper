@@ -164,3 +164,46 @@ Theory Group (Formerly: E1071), TU Wien},
     note = {R package version 1.55 http://www.r-qualitytools.org},
     url = {http://www.r-qualitytools.org},
   }
+  
+@Manual{robustbase,
+  title = {{robustbase}: Basic Robust Statistics},
+  author = {Martin Maechler and Peter Rousseeuw and Christophe Croux and Valentin Todorov and Andreas Ruckstuhl and Matias Salibian-Barrera and Tobias Verbeke and Manuel Koller and Eduardo L. T. Conceicao and Maria {Anna di Palma}},
+  year = {2016},
+  note = {R package version 0.92-7},
+  url = {http://robustbase.r-forge.r-project.org/},
+  url = {http://robustbase.r-forge.r-project.org/},
+}
+
+
+@ARTICLE{Rousseeuw1993-zd,
+  title     = "Alternatives to the Median Absolute Deviation",
+  author    = "Rousseeuw, Peter J and Croux, Christophe",
+  abstract  = "Abstract In robust estimation one frequently needs an initial or
+               auxiliary estimate of scale. For this one usually takes the
+               median absolute deviation MAD n = 1.4826 med, \{|xi ? med j x j
+               |\}, because it has a simple explicit formula, needs little
+               computation time, and is very robust as witnessed by its bounded
+               influence function and its 50\% breakdown point. But there is
+               still room for improvement in two areas: the fact that MAD n is
+               aimed at symmetric distributions and its low (37\%) Gaussian
+               efficiency. In this article we set out to construct explicit and
+               50\% breakdown scale estimators that are more efficient. We
+               consider the estimator Sn = 1.1926 med, \{med j | xi ? xj |\}
+               and the estimator Qn given by the .25 quantile of the distances
+               \{|xi ? x j |; i < j\}. Note that Sn and Qn do not need any
+               location estimate. Both Sn and Qn can be computed using O(n log
+               n) time and O(n) storage. The Gaussian efficiency of Sn is 58\%,
+               whereas Qn attains 82\%. We study Sn and Qn by means of their
+               influence functions, their bias curves (for implosion as well as
+               explosion), and their finite-sample performance. Their behavior
+               is also compared at non-Gaussian models, including the negative
+               exponential model where Sn has a lower gross-error sensitivity
+               than the MAD.",
+  journal   = "Journal of the American Statistical Association",
+  publisher = "Taylor \& Francis",
+  volume    =  88,
+  number    =  424,
+  pages     = "1273--1283",
+  month     =  dec,
+  year      =  1993
+}
