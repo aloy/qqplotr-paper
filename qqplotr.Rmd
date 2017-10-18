@@ -35,16 +35,16 @@ output: rticles::rjournal_article
 ## TODO:
 
 * Abstract
-* Give examples
-    + Heike: BRFSS example
 * Conclusion
 
 * Be consistent with colors/themes/sizes for the plots.
 
 <!-- Loading supplementary packages to correctly draw the plots -->
-```{r message=FALSE, echo=FALSE}
+```{r message=FALSE, warning=FALSE, echo=FALSE}
 library(gridExtra)
 library(tidyverse)
+library(knitr)
+knitr::opts_current$set(tidy=FALSE)
 ```
 
 ## Background
@@ -341,15 +341,13 @@ construct the simulated tail-sensitive confidence bands. If any of the
 parameters is provided with `NULL`, then both the center and scale parameters
 will be estimated using robust estimates via the `robustbase` package.
 
-### Grouping and `qqplotr`
+### Groups in `qqplotr`
 
-\alex{I've renamed this subsection to 'Grouping' instead of 'Facetting' because it seems more appropriate to explain how everything works when separating our sample in *groups*. @heike: Did you had something else in mind specifically regading facetting?}
+`qqplotr` is implemented in accordance with the `ggplot2` concept of groups. When the user maps values to aesthetics that explicitly (by using `group`) or implicitly (such as `shape` or discrete values of `colour, size`, etc) introduce groups, the corresponding calculations respect the grouping in the data. All the groups are compared to the same distributional family specified, but the parameters are *separately* estimated for each of the groups (that is, given that `dparams = NULL`).
 
-The implemented statistical transformations also allow for grouping. When providing any type of grouping summarization to a `ggplot` call, all the groups will be compared to the same provided theoretical distribution. The MLEs (in turn) will be *separately* computed for each one of the groups (that is, given that `dparams = NULL`).
+In the case that the user wants to fix a particular distribution or set of distributions. This can be achieved by manually setting/calculating  estimators beforehand, storing them into a list, and providing this list to `dparams` of the appropriate \pkg{qqplotr} functions.
 
-In some other cases, the user might be interested in comparing each one of the groups to a fixed, specific set of estimators (e.g., the MLEs of the entire sample). This can be done by manually calculating the appropriate estimators beforehand, storing them into a list, and providing this list to `dparams` of the desired \pkg{qqplotr} functions.
-
-The use of groups will be better illustrated in \nameref{sec:brfss}.
+The use of groups will be illustrated in more detail in the \nameref{sec:brfss}.
 
 \FloatBarrier
 
@@ -378,7 +376,7 @@ urine %>% ggplot(aes(sample = ph)) +
   stat_qq_line() + 
   stat_qq_point() +
   xlab("Theoretical quantiles") +
-  ylab("pH") +
+  ylab("Observed quantiles of pH") +
   theme_bw()
 ```
 
@@ -386,26 +384,26 @@ urine %>% ggplot(aes(sample = ph)) +
 
 Three distinct approaches to construct the confidence bands are availble in \pkg{qqplotr}, as presented in \nameref{sec:implementing}. For instance, \citet{Aldor-Noiman2013-xw} discuss that their proposed tail-sensitive simultaneous confidence bands offers more statistical power, especially when distinguishing normal distributions from mildy or heavy-tailed distributions.
 
-Figure \ref{fig:urine-qq-bands} presents three plots with the distinct confidence bands on top of the same normal Q-Q points and reference lines. Notice that the normal confidence bands (in red, left) are the same as in Figure \ref{fig:urine-qq}. When assessing the bootstrap (in green, center) and tail-sensitive confidence bands (in blue, right), we can see that more points are inside the confidence bands than with the normal confidence bands method. Hence, one could conclude by looking at the tail-sensitive plot at the right hand side that, even though the normal distribution seems like a rough approximation, the assumption of normality is reasonable for the urine pH measurements.
+Figure \ref{fig:urine-qq-bands} presents three plots with the distinct confidence bands on top of the same normal Q-Q points and reference lines. Notice that the normal confidence bands (on the left) are the same as in Figure \ref{fig:urine-qq}. When assessing the bootstrap (center) and tail-sensitive confidence bands (on the right), we can see that more points are inside the confidence bands than with the normal confidence bands method. Hence, one could conclude by looking at the tail-sensitive plot at the right hand side that, even though the normal distribution seems like a rough approximation, the assumption of normality is reasonable for the urine pH measurements.
 
-```{r urine-qq-bands, echo = FALSE, message = FALSE, warning = FALSE, fig.width = 9.5, fig.height = 3.5, fig.cap = "Normal Q-Q plots of pH measurements of urine samles with different confidence bands constructions. Different conclusiong can be made depending on the confidence bands method used.", out.width='1.0\\textwidth', fig.align="center"}
+```{r urine-qq-bands, echo = FALSE, message = FALSE, warning = FALSE, fig.width = 9.5, fig.height = 3.5, fig.cap = "Normal Q-Q plots of pH measurements from urine samples using different confidence bands. Depending on the confidence band, we come to different conclusion.", out.width='1.0\\textwidth', fig.align="center"}
 p9 <- urine %>% ggplot(aes(sample = ph)) + 
-  stat_qq_band(alpha = 0.5, bandType = "normal", fill = "#999999") + 
-  stat_qq_line(col = "gray40") + 
+  stat_qq_band(alpha = 0.5, bandType = "normal", fill = "#66C2A5") + 
+  stat_qq_line(col = "#66C2A5") + #"gray40") + 
   stat_qq_point() +
   ggtitle("Normal") +
   xlab("Theoretical quantiles") +
-  ylab("pH") +
+  ylab("Observed quantiles of pH") +
   theme_bw() +
   coord_cartesian(ylim = c(3.2, 8.7))
 
 p10 <- urine %>% ggplot(aes(sample = ph)) + 
-  stat_qq_band(alpha = 0.5, bandType = "bs", fill = "#E69F00") + 
-  stat_qq_line(col = "orange2") + 
+  stat_qq_band(alpha = 0.5, bandType = "bs", fill = "#FC8D62") + 
+  stat_qq_line(col = "#FC8D62")+ #"orange2") + 
   stat_qq_point() +
   ggtitle("Bootstrap") +
   xlab("Theoretical quantiles") +
-  ylab("pH") +
+  ylab("Observed quantiles of pH") +
   theme_bw() +
   theme(axis.text.y = element_blank(), 
           axis.ticks.y = element_blank(), 
@@ -415,12 +413,12 @@ p10 <- urine %>% ggplot(aes(sample = ph)) +
   coord_cartesian(ylim = c(3.2, 8.7))
 
 p11 <- urine %>% ggplot(aes(sample = ph)) + 
-  stat_qq_band(alpha = 0.5, bandType = "ts", fill = "#56B4E9") + 
-  stat_qq_line(col = "steelblue") + 
+  stat_qq_band(alpha = 0.5, bandType = "ts", fill = "#8DA0CB") + 
+  stat_qq_line(col = "#8DA0CB") + #"steelblue") + 
   stat_qq_point() +
   ggtitle("Tail-sensitive") +
   xlab("Theoretical quantiles") +
-  ylab("pH") +
+  ylab("Observed quantiles of pH") +
   theme_bw() +
   theme(axis.text.y = element_blank(), 
         axis.ticks.y = element_blank(), 
@@ -432,7 +430,7 @@ grid.arrange(p9, p10, p11, ncol = 3, widths = c(1.11, 1, 1))
 
 \FloatBarrier
 
-### Using user-provided distributions
+### User-provided distributions
 \label{sec:user-dists}
 
 Using the capabilities of \pkg{qqplotr} with the distributions implemented in the \pkg{stats} package is relatively straightfoward, since the implementation allows you to specify the suffix (i.e., distribution and or abbreviation) via the `distribution` argument and the parameter estimates via `dparams` argument. However, there are times when the distributions in \pkg{stats} are not sufficient for the demands of the analysis. For example, there is no left-skewed distribution listed. User-coded distributions or distributions from other packages can be used with \pkg{qqplotr} as long as the distributions are defined following the conventions laid out in the \pkg{stats} package. Specfically, for some distribution there must be density/mass (`d` prefix), CDF (`p` prefix), quantile (`q` prefix), and simulation (`r` prefix) functions. In this section we illustrate the use of the smallest extreme value distribution (SEV).
@@ -479,7 +477,8 @@ With the `*sev` distribution functions in hand, we can create a Q-Q plot to asse
 
 ```{r sev-qq, fig.cap = "Q-Q plot comparing the long jump distances to the standard SEV distribution. The SEV distribution appears to adequately model the distances.", fig.width = 3.5, fig.height = 3.5, out.width='0.45\\textwidth', fig.align="center", message=FALSE, warning = FALSE}
 ggplot(longjump, aes(sample = distance)) +
-  stat_qq_band(distribution = "sev", dparams = list(mu = 0, sigma = 1), alpha = 0.3) +
+  stat_qq_band(distribution = "sev", dparams = list(mu = 0, sigma = 1), 
+               alpha = 0.3) +
   stat_qq_line(distribution = "sev", dparams = list(mu = 0, sigma = 1)) +
   stat_qq_point(distribution = "sev", dparams = list(mu = 0, sigma = 1)) +
   xlab("Theoretical quantiles") +
@@ -502,7 +501,8 @@ To illustrate how to construct an adjusted detrended Q-Q plot using \pkg{qqplotr
 
 ```{r detrend-sev, echo=FALSE, fig.width = 3.5, fig.height = 3.5, out.width='0.45\\textwidth', fig.cap = "An adjusted detrended Q-Q plot assessing the appropriateness of the SEV distribution for the long jump data.", fig.align="center", message=FALSE, warning = FALSE}
 p7 <- ggplot(longjump, aes(sample = distance)) +
-  stat_qq_band(distribution = "sev", alpha = 0.3, dparams = list(mu = 0, sigma = 1)) +
+  stat_qq_band(distribution = "sev", dparams = list(mu = 0, sigma = 1),
+               alpha = 0.3) +
   stat_qq_line(distribution = "sev", dparams = list(mu = 0, sigma = 1)) +
   stat_qq_point(distribution = "sev", dparams = list(mu = 0, sigma = 1)) +
   xlab("Theoretical quantiles") +
@@ -511,7 +511,7 @@ p7 <- ggplot(longjump, aes(sample = distance)) +
 
 p8 <- ggplot(longjump, aes(sample = distance)) +
 
-  stat_qq_band(distribution = "sev", alpha = 0.3, detrend = TRUE, dparams = list(mu = 0, sigma = 1)) +
+  stat_qq_band(distribution = "sev",  detrend = TRUE, dparams = list(mu = 0, sigma = 1), alpha = 0.3) +
   stat_qq_line(distribution = "sev", detrend = TRUE, dparams = list(mu = 0, sigma = 1)) +
   stat_qq_point(distribution = "sev", detrend = TRUE, dparams = list(mu = 0, sigma = 1)) +
   xlab("Theoretical quantiles") +
@@ -525,7 +525,8 @@ p8
 
 ```{r eval=FALSE}
 ggplot(longjump, aes(sample = distance)) +
-  stat_qq_band(distribution = "sev", alpha = 0.3, detrend = TRUE, dparams = c(mu = 0, sigma = 1)) +
+  stat_qq_band(distribution = "sev", detrend = TRUE, dparams = c(mu = 0, sigma = 1),  
+               alpha = 0.3) +
   stat_qq_line(distribution = "sev", detrend = TRUE, dparams = c(mu = 0, sigma = 1)) +
   stat_qq_point(distribution = "sev", detrend = TRUE, dparams = c(mu = 0, sigma = 1)) +
   xlab("Theoretical quantiles") +
@@ -625,7 +626,8 @@ params <- iowa %>% filter(!is.na(WTKG3)) %>% summarize(
   m = mean(WTKG3/100),
   s = sd(WTKG3/100)
 )
-p3 <- sample_ia %>% ggplot(aes(sample = WTKG3/100, colour=Gender, fill=Gender)) + 
+p3 <- sample_ia %>% 
+  ggplot(aes(sample = WTKG3/100, colour=Gender, fill=Gender)) + 
   stat_qq_band(alpha = 0.3, dparams=list(mean=params$m, sd=params$s)) + 
   stat_qq_line(dparams=list(mean=params$m, sd=params$s)) + 
   stat_qq_point(dparams=list(mean=params$m, sd=params$s)) +
@@ -657,70 +659,45 @@ grid.arrange(p3, p5, ncol = 2)
 Instead of transforming the observed values, we can change the theoretical distribution against which we compare. 
 Figure \ref{fig:weights-log} shows two Q-Q plots, one for each of the genders. A log-normal distribution is chosen as the theoretical distribution. By default, for each of the groups ML estimates are used:  
 
-```{r weights-log, echo=9:10, fig.width = 8, fig.height = 3.5, fig.cap = "Sample (200 men and 200 women) of weights, the theoretical distribution  is changed to a log normal. Shift and scale parameters are estimated separately for each of the genders before comparing distributions to a log-normal.", out.width='.9\\textwidth', fig.align="center", message=FALSE, warning = FALSE}
-
-mlog <- mean(log(sample_ia$WTKG3 / 100), na.rm = TRUE)
-sdlog <- sd(log(sample_ia$WTKG3 / 100), na.rm = TRUE)
-
-p4 <- sample_ia %>% ggplot(aes(sample = WTKG3 / 100, colour = Gender, fill = Gender)) + geom_abline(colour = "grey60") +
-  stat_qq_band(
-    distribution = "lnorm",
-    dparams = list(meanlog = mlog, sdlog = sdlog),
-    alpha = 0.3
-  ) +
-  stat_qq_line(
-    distribution = "lnorm",
-    dparams = list(meanlog = mlog, sdlog = sdlog)
-  ) +
-  stat_qq_point(
-    distribution = "lnorm",
-    dparams = list(meanlog = mlog, sdlog = sdlog)
-  ) +
-  scale_fill_brewer(palette = "Set1") +
-  scale_colour_brewer(palette = "Set1") +
-  xlab("Theoretical quantiles") +
-  ylab("Weight (in kg)") +
-  theme_bw() + 
-  theme(legend.position = c(0.2, 0.8), aspect.ratio = 1)
-
-mlog <- mean(log(sample_ia$WTKG3 / 100), na.rm = TRUE)
-sdlog <- sd(log(sample_ia$WTKG3 / 100), na.rm = TRUE)
-
-p4 <- sample_ia %>% ggplot(aes(sample = WTKG3 / 100, colour = Gender, fill = Gender)) + geom_abline(colour = "grey60") +
-  stat_qq_band(
-    distribution = "lnorm",
-    dparams = list(meanlog = mlog, sdlog = sdlog),
-    alpha = 0.3
-  ) +
-  stat_qq_line(
-    distribution = "lnorm",
-    dparams = list(meanlog = mlog, sdlog = sdlog)
-  ) +
-  stat_qq_point(
-    distribution = "lnorm",
-    dparams = list(meanlog = mlog, sdlog = sdlog)
-  ) +
-  scale_fill_brewer(palette = "Set1") +
-  scale_colour_brewer(palette = "Set1") +
-  xlab("Theoretical quantiles") +
-  ylab("Weight (in kg)") +
-  theme_bw() + 
-  theme(legend.position = c(0.2, 0.8), aspect.ratio = 1) 
+```{r weights-log, echo=6:9, fig.width = 8, fig.height = 3.5, fig.cap = "Sample (200 men and 200 women) of weights, the theoretical distribution  is changed to a log normal. Shift and scale parameters are estimated separately for each of the genders before comparing distributions to a log-normal.", out.width='.9\\textwidth', fig.align="center", message=FALSE, warning = FALSE}
 
 customization <- list(
+  scale_fill_brewer(palette = "Set1"), 
+  scale_colour_brewer(palette = "Set1"),
   xlab("Theoretical quantiles"),
   ylab("Weight (in kg)"),
   theme_bw(),
   theme(legend.position = "none", aspect.ratio = 1)
 )
 
-p6 <- sample_ia %>% ggplot(aes(sample = WTKG3 / 100, colour = Gender, fill = Gender)) +
+mlog <- mean(log(sample_ia$WTKG3 / 100), na.rm = TRUE)
+sdlog <- sd(log(sample_ia$WTKG3 / 100), na.rm = TRUE)
+
+p4 <- sample_ia %>% 
+  ggplot(aes(sample = WTKG3 / 100, colour = Gender, fill = Gender)) +
+  geom_abline(colour = "grey60") +
+  stat_qq_band(
+    distribution = "lnorm",
+    dparams = list(meanlog = mlog, sdlog = sdlog),
+    alpha = 0.3
+  ) +
+  stat_qq_line(
+    distribution = "lnorm",
+    dparams = list(meanlog = mlog, sdlog = sdlog)
+  ) +
+  stat_qq_point(
+    distribution = "lnorm",
+    dparams = list(meanlog = mlog, sdlog = sdlog)
+  ) +
+  customization +
+  theme(legend.position = c(0.2, 0.8)) 
+
+p6 <- sample_ia %>% 
+  ggplot(aes(sample = WTKG3 / 100, colour = Gender, fill = Gender)) +
   geom_abline(colour="grey60") +
   stat_qq_band(distribution = "lnorm", alpha = 0.3) +
   stat_qq_line(distribution = "lnorm") +
   stat_qq_point(distribution = "lnorm") +
-  scale_fill_brewer(palette = "Set1") +
-  scale_colour_brewer(palette = "Set1") +
   customization + facet_grid(.~Gender)
 
 #grid.arrange(p4, p6, ncol = 2)

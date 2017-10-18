@@ -18,24 +18,10 @@ An abstract of less than 150 words.
 \item
   Abstract
 \item
-  Give examples
-
-  \begin{itemize}
-  \tightlist
-  \item
-    Heike: BRFSS example
-  \end{itemize}
-\item
   Conclusion
 \item
   Be consistent with colors/themes/sizes for the plots.
 \end{itemize}
-
-\begin{Schunk}
-\begin{Soutput}
-#> Warning: package 'dplyr' was built under R version 3.4.2
-\end{Soutput}
-\end{Schunk}
 
 \subsection{Background}\label{background}
 
@@ -346,25 +332,25 @@ stat_qq_band(
   \texttt{robustbase} package.
 \end{itemize}
 
-\subsubsection{\texorpdfstring{Grouping and
-\texttt{qqplotr}}{Grouping and qqplotr}}\label{grouping-and-qqplotr}
+\subsubsection{\texorpdfstring{Groups in
+\texttt{qqplotr}}{Groups in qqplotr}}\label{groups-in-qqplotr}
 
-\alex{I've renamed this subsection to 'Grouping' instead of 'Facetting' because it seems more appropriate to explain how everything works when separating our sample in *groups*. @heike: Did you had something else in mind specifically regading facetting?}
+\texttt{qqplotr} is implemented in accordance with the \texttt{ggplot2}
+concept of groups. When the user maps values to aesthetics that
+explicitly (by using \texttt{group}) or implicitly (such as
+\texttt{shape} or discrete values of \texttt{colour,\ size}, etc)
+introduce groups, the corresponding calculations respect the grouping in
+the data. All the groups are compared to the same distributional family
+specified, but the parameters are \emph{separately} estimated for each
+of the groups (that is, given that \texttt{dparams\ =\ NULL}).
 
-The implemented statistical transformations also allow for grouping.
-When providing any type of grouping summarization to a \texttt{ggplot}
-call, all the groups will be compared to the same provided theoretical
-distribution. The MLEs (in turn) will be \emph{separately} computed for
-each one of the groups (that is, given that \texttt{dparams\ =\ NULL}).
+In the case that the user wants to fix a particular distribution or set
+of distributions. This can be achieved by manually setting/calculating
+estimators beforehand, storing them into a list, and providing this list
+to \texttt{dparams} of the appropriate \pkg{qqplotr} functions.
 
-In some other cases, the user might be interested in comparing each one
-of the groups to a fixed, specific set of estimators (e.g., the MLEs of
-the entire sample). This can be done by manually calculating the
-appropriate estimators beforehand, storing them into a list, and
-providing this list to \texttt{dparams} of the desired \pkg{qqplotr}
-functions.
-
-The use of groups will be better illustrated in \nameref{sec:brfss}.
+The use of groups will be illustrated in more detail in the
+\nameref{sec:brfss}.
 
 \FloatBarrier
 
@@ -413,7 +399,7 @@ urine %>% ggplot(aes(sample = ph)) +
   stat_qq_line() + 
   stat_qq_point() +
   xlab("Theoretical quantiles") +
-  ylab("pH") +
+  ylab("Observed quantiles of pH") +
   theme_bw()
 \end{Sinput}
 \begin{figure}
@@ -437,13 +423,13 @@ heavy-tailed distributions.
 
 Figure \ref{fig:urine-qq-bands} presents three plots with the distinct
 confidence bands on top of the same normal Q-Q points and reference
-lines. Notice that the normal confidence bands (in red, left) are the
-same as in Figure \ref{fig:urine-qq}. When assessing the bootstrap (in
-green, center) and tail-sensitive confidence bands (in blue, right), we
-can see that more points are inside the confidence bands than with the
-normal confidence bands method. Hence, one could conclude by looking at
-the tail-sensitive plot at the right hand side that, even though the
-normal distribution seems like a rough approximation, the assumption of
+lines. Notice that the normal confidence bands (on the left) are the
+same as in Figure \ref{fig:urine-qq}. When assessing the bootstrap
+(center) and tail-sensitive confidence bands (on the right), we can see
+that more points are inside the confidence bands than with the normal
+confidence bands method. Hence, one could conclude by looking at the
+tail-sensitive plot at the right hand side that, even though the normal
+distribution seems like a rough approximation, the assumption of
 normality is reasonable for the urine pH measurements.
 
 \begin{Schunk}
@@ -453,14 +439,14 @@ normality is reasonable for the urine pH measurements.
 
 }
 
-\caption[Normal Q-Q plots of pH measurements of urine samles with different confidence bands constructions]{Normal Q-Q plots of pH measurements of urine samles with different confidence bands constructions. Different conclusiong can be made depending on the confidence bands method used.}\label{fig:urine-qq-bands}
+\caption[Normal Q-Q plots of pH measurements from urine samples using different confidence bands]{Normal Q-Q plots of pH measurements from urine samples using different confidence bands. Depending on the confidence band, we come to different conclusion.}\label{fig:urine-qq-bands}
 \end{figure}
 \end{Schunk}
 
 \FloatBarrier
 
-\subsubsection{Using user-provided
-distributions}\label{using-user-provided-distributions}
+\subsubsection{User-provided
+distributions}\label{user-provided-distributions}
 
 \label{sec:user-dists}
 
@@ -537,7 +523,8 @@ representation of the distances.
 \begin{Schunk}
 \begin{Sinput}
 ggplot(longjump, aes(sample = distance)) +
-  stat_qq_band(distribution = "sev", dparams = list(mu = 0, sigma = 1), alpha = 0.3) +
+  stat_qq_band(distribution = "sev", dparams = list(mu = 0, sigma = 1), 
+               alpha = 0.3) +
   stat_qq_line(distribution = "sev", dparams = list(mu = 0, sigma = 1)) +
   stat_qq_point(distribution = "sev", dparams = list(mu = 0, sigma = 1)) +
   xlab("Theoretical quantiles") +
@@ -581,7 +568,8 @@ vertical and horizontal distances are on the same scale we further add
 \begin{Schunk}
 \begin{Sinput}
 ggplot(longjump, aes(sample = distance)) +
-  stat_qq_band(distribution = "sev", alpha = 0.3, detrend = TRUE, dparams = c(mu = 0, sigma = 1)) +
+  stat_qq_band(distribution = "sev", detrend = TRUE, dparams = c(mu = 0, sigma = 1),  
+               alpha = 0.3) +
   stat_qq_line(distribution = "sev", detrend = TRUE, dparams = c(mu = 0, sigma = 1)) +
   stat_qq_point(distribution = "sev", detrend = TRUE, dparams = c(mu = 0, sigma = 1)) +
   xlab("Theoretical quantiles") +
@@ -690,7 +678,9 @@ default, for each of the groups ML estimates are used:
 
 \begin{Schunk}
 \begin{Sinput}
-p4 <- sample_ia %>% ggplot(aes(sample = WTKG3 / 100, colour = Gender, fill = Gender)) + geom_abline(colour = "grey60") +
+p4 <- sample_ia %>% 
+  ggplot(aes(sample = WTKG3 / 100, colour = Gender, fill = Gender)) +
+  geom_abline(colour = "grey60") +
   stat_qq_band(
     distribution = "lnorm",
     dparams = list(meanlog = mlog, sdlog = sdlog),
@@ -704,12 +694,16 @@ p4 <- sample_ia %>% ggplot(aes(sample = WTKG3 / 100, colour = Gender, fill = Gen
     distribution = "lnorm",
     dparams = list(meanlog = mlog, sdlog = sdlog)
   ) +
-  scale_fill_brewer(palette = "Set1") +
-  scale_colour_brewer(palette = "Set1") +
-  xlab("Theoretical quantiles") +
-  ylab("Weight (in kg)") +
-  theme_bw() + 
-  theme(legend.position = c(0.2, 0.8), aspect.ratio = 1) 
+  customization +
+  theme(legend.position = c(0.2, 0.8)) 
+
+p6 <- sample_ia %>% 
+  ggplot(aes(sample = WTKG3 / 100, colour = Gender, fill = Gender)) +
+  geom_abline(colour="grey60") +
+  stat_qq_band(distribution = "lnorm", alpha = 0.3) +
+  stat_qq_line(distribution = "lnorm") +
+  stat_qq_point(distribution = "lnorm") +
+  customization + facet_grid(.~Gender)
 \end{Sinput}
 \begin{figure}
 
