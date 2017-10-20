@@ -20,7 +20,7 @@ author:
     - Ames, IA 50011-1210
     email:  hofmann@iastate.edu
 abstract: >
-  An abstract of less than 150 words.
+  Univariate distributional assessment is a common thread throughout statistical analyses during both the exploratory and confirmatory stages. Q-Q plots compare two distributions by matching a commmon set of quantiles. Additional graphical elements are often added to Q-Q plots in order to aid in distributional assessment. Different orientations of Q-Q plots have also been proposed, most notably the de-trended Q-Q plot. Various implementations of Q-Q plots exist in R. \pkg{qqplotr} extends \pkg{ggplot2} to provide a complete implementation of Q-Q plots. In the remainder of this paper, we will introduce the plotting framework provided by \pkg{qqplotr} and provide multiple examples of how it can be used. 
 preamble: >
   % Any extra latex you need in the preamble
   \usepackage{nameref}
@@ -227,10 +227,14 @@ stat_qq_line(
   ...
   )
 ```
-\hh{Two lines in a Q-Q plot are of high importance:
-a) By definition of a Q-Q plot the *identity line* represents the theoretical distribution. b) The *Q-Q line* is an estimate of the empirical distribution. 
+
+Two lines in a Q-Q plot are of particular importance:
+
+a) By definition of a Q-Q plot the *identity line* represents the theoretical distribution. 
+b) The *Q-Q line* is an estimate of the empirical distribution. 
+
 Intercept and slope of these lines relate to mean and scale parameters of the theoretical and the empirical distribution, respectively.
-By comparing these two lines we learn about how well the  parameters estimated from the sample match the theoretical  parameters.  For a distributional family that is invariant to linear transformations, the parameters specified in the theoretical distribution only have an effect on the Q-Q line and the Q-Q points, i.e., those get shifted and scaled in the plot, but relative relationships do not change aside a change in scales.  For other distributions, such as a log normal, re-specifications of the parameters result in non-linear transformations of the Q-Q line and Q-Q points (see Figure \ref{fig:qqline} for an example).  }
+By comparing these two lines we learn about how well the  parameters estimated from the sample match the theoretical  parameters.  For a distributional family that is invariant to linear transformations, the parameters specified in the theoretical distribution only have an effect on the Q-Q line and the Q-Q points, i.e., those get shifted and scaled in the plot, but relative relationships do not change aside a change in scales.  For other distributions, such as a log normal, re-specifications of the parameters result in non-linear transformations of the Q-Q line and Q-Q points (see Figure \ref{fig:qqline} for an example).  
 
 
 ```{r qqline, echo=FALSE, message=FALSE, warning=FALSE, fig.width=8, fig.height=8, out.width='\\textwidth', fig.cap="Q-Q plots of (top-left) mis-specified Normal distribution, (top-right)  Normal distribution with ML parameter estimates. Between these two plots only the scales on the axes change. The bottom two plots show Q-Q plots of the same sample from a log-normal distribution. On the left, the theoretcial distribution is mis-specified with a mean of 0 and variance of 1. On the right, ML estimates for mean and variance are used."}
