@@ -35,7 +35,7 @@ output: rticles::rjournal_article
 ## TODO:
 
 * Abstract
-* Conclusion
+* Conclusion -- al{AL: Do we need to add more than we have in the discussion already?}
 
 * Be consistent with indentation rules for code. We need to decide on these.
 * Be consistent with colors/themes/sizes for the plots.
