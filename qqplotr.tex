@@ -31,6 +31,13 @@ used.
   Conclusion
 \item
   Be consistent with colors/themes/sizes for the plots.
+\item
+  Are we saying ``normal'' or ``Normal'' throughout the text?
+\item
+  Do we want to use \texttt{bandType\ =\ "bs"} or should we change it to
+  \texttt{bandType\ =\ "boot"}?
+\item
+  Are we saying ``color'' or ``colour'' for ggplot2 code?
 \end{itemize}
 
 \subsection{Background}\label{background}
@@ -273,7 +280,7 @@ non-linear transformations of the Q-Q line and Q-Q points (see Figure
 
 \begin{Schunk}
 \begin{figure}
-\includegraphics[width=\textwidth]{qqplotr_files/figure-latex/qqline-1} \caption[Q-Q plots of (top-left) mis-specified Normal distribution, (top-right)  Normal distribution with ML parameter estimates]{Q-Q plots of (top-left) mis-specified Normal distribution, (top-right)  Normal distribution with ML parameter estimates. Between these two plots only the scales on the axes change. The bottom two plots show Q-Q plots of the same sample from a log-normal distribution. On the left, the theoretcial distribution is mis-specified with a mean of 0 and variance of 1. On the right, ML estimates for mean and variance are used.}\label{fig:qqline}
+\includegraphics[width=\textwidth]{qqplotr_files/figure-latex/qqline-1} \caption[Q-Q plots of (top-left) a mis-specified Normal distribution, (top-right)  a Normal distribution with ML parameter estimates]{Q-Q plots of (top-left) a mis-specified Normal distribution, (top-right)  a Normal distribution with ML parameter estimates. Between these two plots only the scales on the axes change. The bottom two plots show Q-Q plots of the same sample from a log-normal distribution. On the left, the theoretical distribution is mis-specified with a mean of 0 and variance of 1. On the right, ML estimates for mean and variance are used.}\label{fig:qqline}
 \end{figure}
 \end{Schunk}
 
@@ -314,8 +321,8 @@ stat_qq_band(
 
 \begin{itemize}
 \item
-  \texttt{bandType} is a character string that controls the method to be
-  used when constructing the confidence bands:
+  \texttt{bandType} is a character string controlling the method used to
+  construct the confidence bands:
 
   \begin{itemize}
   \tightlist
@@ -340,20 +347,20 @@ stat_qq_band(
     confidence bands proposed by \citet{Aldor-Noiman2013-xw}.
   \end{itemize}
 \item
-  \texttt{B} is an integer that represents the number of bootstrap
+  \texttt{B} is an integer spoecifying the number of bootstrap
   replicates (if \texttt{bandType\ =\ "bs"}) or the number of simulated
   samples (if \texttt{bandType\ =\ "ts"}).
 \item
-  \texttt{conf} is a numerical variable that controls the confidence
-  level of the bands, which is bound between 0 and 1.
+  \texttt{conf} is a numerical variable setting the confidence level of
+  the bands, which is bound between 0 and 1.
 \item
   \texttt{mu} and \texttt{sigma} are only used when
   \texttt{bandType\ =\ "ts"}. They represent the center and scale
-  distributional parameters, respectively, which are used to construct
-  the simulated tail-sensitive confidence bands. If any of the
-  parameters is provided with \texttt{NULL}, then both the center and
-  scale parameters will be estimated using robust estimates via the
-  \texttt{robustbase} package.
+  parameters, respectively, which are used to construct the simulated
+  tail-sensitive confidence bands. If any parameters is \texttt{NULL},
+  then both the center and scale parameters will be estimated using
+  robust estimates via the \texttt{robustbase} package
+  \citep{robustbase}.
 \end{itemize}
 
 \subsubsection{\texorpdfstring{Groups in
@@ -362,19 +369,18 @@ stat_qq_band(
 \texttt{qqplotr} is implemented in accordance with the \texttt{ggplot2}
 concept of groups. When the user maps values to aesthetics that
 explicitly (by using \texttt{group}) or implicitly (such as
-\texttt{shape} or discrete values of \texttt{colour,\ size}, etc)
+\texttt{shape} or discrete values of \texttt{color,\ size}, etc.)
 introduce groups, the corresponding calculations respect the grouping in
 the data. All the groups are compared to the same distributional family
 specified, but the parameters are \emph{separately} estimated for each
-of the groups (that is, given that \texttt{dparams\ =\ NULL}).
+of the groups (that is, given that \texttt{dparams\ =\ NULL}). If the
+user wants to fit the \textbf{same} distribution (i.e., same parameters
+estimates) to each group, then the estimates must be manually calculated
+and passed to \texttt{dparams} as a named list for each of the desired
+\pkg{qqplotr} functions.
 
-In the case that the user wants to fix a particular distribution or set
-of distributions. This can be achieved by manually setting/calculating
-estimators beforehand, storing them into a list, and providing this list
-to \texttt{dparams} of the appropriate \pkg{qqplotr} functions.
-
-The use of groups will be illustrated in more detail in the
-\nameref{sec:brfss}.
+The use of groups is illustrated in more detail in the
+\nameref{sec:brfss} section.
 
 \FloatBarrier
 
@@ -393,8 +399,6 @@ library(qqplotr)
 
 \subsubsection{\texorpdfstring{Constructing Q-Q plots with
 \texttt{qqplotr}}{Constructing Q-Q plots with qqplotr}}\label{constructing-q-q-plots-with-qqplotr}
-
-\alex{The idea of this subsection is to briefly exemplify the usage of the implemented functions of qqplotr, while also showcasing the three methods for constructing the confidence bands. Hence, I've included the urine dataset because of the distinct conclusions that can be made based on the visual inference of the pH measurement QQ-plots when using the three confidence bands methods, which justifies their implementation.}
 
 To give a brief introduction on how to use \pkg{qqplotr} and its
 functions, let us use as example the \texttt{urine} dataset from the
@@ -432,23 +436,18 @@ urine %>% ggplot(aes(sample = ph)) +
 
 }
 
-\caption[Normal Q-Q plot comparing pH measurements of the urine samples with a normal distribution]{Normal Q-Q plot comparing pH measurements of the urine samples with a normal distribution.}\label{fig:urine-qq}
+\caption{Normal Q-Q plot comparing pH measurements of the urine samples with a normal distribution. \al{Do we really need this plot? We could reference Figure 6 as easily.}}\label{fig:urine-qq}
 \end{figure}
 \end{Schunk}
 
 \FloatBarrier
 
-Three distinct approaches to construct the confidence bands are availble
-in \pkg{qqplotr}, as presented in \nameref{sec:implementing}. For
-instance, \citet{Aldor-Noiman2013-xw} discuss that their proposed
-tail-sensitive simultaneous confidence bands offers more statistical
-power, especially when distinguishing normal distributions from mildy or
-heavy-tailed distributions.
-
-Figure \ref{fig:urine-qq-bands} presents three plots with the distinct
-confidence bands on top of the same normal Q-Q points and reference
-lines. Notice that the normal confidence bands (on the left) are the
-same as in Figure \ref{fig:urine-qq}. When assessing the bootstrap
+As previously discussed, three distinct approaches are availble in
+\pkg{qqplotr} to construct the confidence bands. Figure
+\ref{fig:urine-qq-bands} presents three plots with the different
+confidence bands overlayed on the same normal Q-Q points and reference
+lines. Notice that the normal-based confidence bands (on the left) are
+the same as in Figure \ref{fig:urine-qq}. When assessing the bootstrap
 (center) and tail-sensitive confidence bands (on the right), we can see
 that more points are inside the confidence bands than with the normal
 confidence bands method. Hence, one could conclude by looking at the
@@ -463,7 +462,7 @@ normality is reasonable for the urine pH measurements.
 
 }
 
-\caption[Normal Q-Q plots of pH measurements from urine samples using different confidence bands]{Normal Q-Q plots of pH measurements from urine samples using different confidence bands. Depending on the confidence band, we come to different conclusion.}\label{fig:urine-qq-bands}
+\caption[Normal Q-Q plots of pH measurements from urine samples using different confidence bands]{Normal Q-Q plots of pH measurements from urine samples using different confidence bands. Depending on the type of confidence band used, we come to different conclusions.}\label{fig:urine-qq-bands}
 \end{figure}
 \end{Schunk}
 
@@ -478,24 +477,24 @@ Using the capabilities of \pkg{qqplotr} with the distributions
 implemented in the \pkg{stats} package is relatively straightfoward,
 since the implementation allows you to specify the suffix (i.e.,
 distribution and or abbreviation) via the \texttt{distribution} argument
-and the parameter estimates via \texttt{dparams} argument. However,
+and the parameter estimates via the \texttt{dparams} argument. However,
 there are times when the distributions in \pkg{stats} are not sufficient
 for the demands of the analysis. For example, there is no left-skewed
-distribution listed. User-coded distributions or distributions from
-other packages can be used with \pkg{qqplotr} as long as the
+distribution listed. User-coded distributions, or distributions from
+other packages, can be used with \pkg{qqplotr} as long as the
 distributions are defined following the conventions laid out in the
 \pkg{stats} package. Specfically, for some distribution there must be
 density/mass (\texttt{d} prefix), CDF (\texttt{p} prefix), quantile
 (\texttt{q} prefix), and simulation (\texttt{r} prefix) functions. In
-this section we illustrate the use of the smallest extreme value
+this section, we illustrate the use of the smallest extreme value
 distribution (SEV).
 
-To qualify for the Olympics in the men's long jump in 2012, athletes had
-to either meet/exceed the 8.1 meter standard or place in the top twelve.
-During the qualification events, each athlete was able to jump three
-times, and their best (i.e., longest) jump is treated as the result.
-Figure \ref{fig:jump-density} shows a density plot of the results, which
-are clearly left skewed.
+To qualify for the 2012 Olympics in the men's long jump athletes had to
+meet/exceed the 8.1 meter standard or place in the top twelve. During
+the qualification events, each athlete was able to jump up to three
+times, using their best (i.e., longest) jump as the result. Figure
+\ref{fig:jump-density} shows a density plot of the results, which are
+clearly left skewed.
 
 \begin{Schunk}
 \begin{figure}
@@ -540,9 +539,10 @@ rsev <- function(n, mu = 0, sigma = 1) {
 
 With the \texttt{*sev} distribution functions in hand, we can create a
 Q-Q plot to assess the appropriateness of the SEV model (Figure
-\ref{fig:sev-qq}). The Q-Q plot show that the distances do not
+\ref{fig:sev-qq}). The Q-Q plot shows that the distances do not
 substantially deviate from the SEV model, so we have found an adequate
-representation of the distances.
+representation of the distances. The code used to create Figure
+\ref{fig:sev-qq} is given below:
 
 \begin{Schunk}
 \begin{Sinput}
@@ -561,7 +561,7 @@ ggplot(longjump, aes(sample = distance)) +
 
 }
 
-\caption[Q-Q plot comparing the long jump distances to the standard SEV distribution]{Q-Q plot comparing the long jump distances to the standard SEV distribution. The SEV distribution appears to adequately model the distances.}\label{fig:sev-qq}
+\caption[Q-Q plot comparing the long jump distances to the standard SEV distribution with 95\% pointwise confidence bands]{Q-Q plot comparing the long jump distances to the standard SEV distribution with 95\% pointwise confidence bands. The SEV distribution appears to adequately model the distances.}\label{fig:sev-qq}
 \end{figure}
 \end{Schunk}
 
@@ -570,13 +570,14 @@ ggplot(longjump, aes(sample = distance)) +
 \label{sec:detrending}
 
 To illustrate how to construct an adjusted detrended Q-Q plot using
-\pkg{qqplotr}, consider detrending the Q-Q plot in Figure
-\ref{fig:sev-qq}. To obtain a detrended version of Figure
-\ref{fig:sev-qq}, we must add the argument \texttt{detrend\ =\ TRUE} to
+\pkg{qqplotr}, consider detrending Figure \ref{fig:sev-qq}. This is done
+by adding the argument \texttt{detrend\ =\ TRUE} to
 \texttt{stat\_qq\_point}, \texttt{stat\_qq\_line}, and
 \texttt{stat\_qq\_band}. To adjust the aspect ratio to ensure that
 vertical and horizontal distances are on the same scale we further add
-\texttt{coord\_fixed(ratio=1)}.
+\texttt{coord\_fixed(ratio=1)}. We leave it to the user to adjust the
+\(y\)-axis limits on a case-by-case basis. The full command to construct
+Figure \ref{fig:detrend-sev} is given below:
 
 \begin{Schunk}
 \begin{figure}
@@ -609,33 +610,34 @@ ggplot(longjump, aes(sample = distance)) +
 
 The Center for Disease Control and Prevention runs an annual telephone
 survey, the Behavioral Risk Factor Surveillance System (BRFSS), to keep
-track of the US populations' `health-related risk behaviors, chronic
-health conditions, and use of preventive services'.
-
-Close to half a million interviews are conducted each year. Here, we are
-focussing on the 2012 responses for Iowa. 7166 responses were gathered
-across 359 questions and derived variables. Among these, are
-participants' heights and weights, which we are going to assess in more
-detail.
+track of the US populations' ``health-related risk behaviors, chronic
+health conditions, and use of preventive services.''
+\al{(We need a citation for this quote.)}\\
+Close to half a million interviews are conducted each year. In this
+example, we focus on the responses for Iowa in 2012. The data set
+consists of 7166 responses across 359 questions and derived variables.
+To further illustrate the functionality of \pkg{qqplotr}, we focus on
+assessing the distributions of Iowan's heights and weights.
 
 Figure \ref{fig:heights} shows two Q-Q plots side by side. For each of
 the plots, a sample of 200 men and 200 women is drawn from the overall
 number of responses. On the left hand side, individuals' heights are
 plotted in a Q-Q plot comparing raw heights to a normal distribution. We
-see that the distributions for both men and women (colour) is showing
+see that the distributions for both men and women (colour) show
 horizontal steps: this indicates that the distributional assessement is
-heavily dominated by the discreteness in the data, as most survey
-participants responded to the question of their height only up to the
-closest inch. On the right hand side of Figure \ref{fig:heights}, we use
-jittering; this means that we add a random number generated from a
-random uniform distribution on \(\pm 0.5\) inch to the reported height,
-as shown in the code below:
+heavily dominated by the discreteness in the data, as most respondents
+provided their height to the closest inch. On the right hand side of
+Figure \ref{fig:heights}, we use jittering to remedy this
+situation---that is, we add a random number generated from a random
+uniform distribution on \(\pm 0.5\) inch to the reported height, as
+shown in the code below:
+\al{We need to add the code! Should we show the entire chunk below?}
 
 By using jittering we diminish the effect that discreteness has on the
 distribution and brings the observed distribution much closer to a
-normal distribution. Note that separate normal distributions were fitted
-for each gender. Not surprisingly, the resulting distributions have
-different means (women are on average 6 inch shorter than men in this
+normal distribution. Note that separate normal distributions were fit to
+each gender. Unsurprisingly, the resulting distributions have different
+means (women are, on average, 6 inches shorter than men in this
 dataset). Interestingly, the slope of the two genders is similar,
 indicating that the same scale parameter fits both genders'
 distributions (the standard deviation of height in the data set is 2.97
@@ -650,7 +652,7 @@ based on the whole population is larger.
 
 \begin{table}
 
-\caption{\label{tab:heights-table}Summary of Iowa's residents' heights and weights with corresponding standard deviations by gender and for the total population.\label{tab:heights}}
+\caption{\label{tab:heights-table}Summary of Iowa residents' heights and weights with corresponding standard deviations by gender and for the total population.\label{tab:heights}}
 \centering
 \begin{tabular}[t]{lrrrr}
 \toprule
