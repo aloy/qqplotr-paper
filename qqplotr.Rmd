@@ -553,13 +553,15 @@ Close to half a million interviews are conducted each year. In this example, we 
 
 Figure \ref{fig:heights} shows two Q-Q plots side by side. For each of the plots, a sample of 200 men and 200 women is drawn from the overall number of responses. On the left hand side, individuals' heights are plotted in a Q-Q plot comparing raw heights to a normal distribution. We see that the distributions for both men and women (colour) show horizontal steps: this indicates that the distributional assessement is heavily dominated by the discreteness in the data, as most respondents provided their height to the closest inch. On the right hand side of Figure \ref{fig:heights}, we use jittering to remedy this situation---that is, we add a random number generated from a random uniform distribution on $\pm 0.5$ inch to the reported height, as shown in the code below: \al{We need to add the code! Should we show the entire chunk below?}
 
-```{r iowa-read, echo=12:14, message=FALSE, warning=FALSE}
+```{r iowa-read, echo=TRUE, message=FALSE, warning=FALSE}
 iowa <- readRDS("data/brfss-iowa.rda")
 set.seed(3145)
 
 sample_ia <- iowa %>% nest(-SEX) %>% mutate(
-  data = data %>% purrr::map(.f = function(x) sample_n(x, size = 200))  
-) %>% unnest(data) %>% dplyr::select(SEX, WTKG3, HTIN4) %>%
+  data = data %>% 
+    purrr::map(.f = function(x) sample_n(x, size = 200))  
+) %>% unnest(data) %>% 
+  dplyr::select(SEX, WTKG3, HTIN4) %>%
   mutate(Gender = c("Male", "Female")[SEX])
 
 params <- iowa %>% filter(!is.na(HTIN4)) %>% summarize(
@@ -575,9 +577,16 @@ customization <- list(scale_fill_brewer(palette="Set1"),
   theme(legend.position = c(0.8, 0.2), aspect.ratio = 1))
 
 p1 <- sample_ia %>% ggplot(aes(sample = HTIN4, colour=Gender, fill=Gender)) + 
-  stat_qq_band(alpha = 0.3, dparams=list(mean=params$m, sd=params$s)) + 
-  stat_qq_line( dparams=list(mean=params$m, sd=params$s)) + 
-  stat_qq_point( dparams=list(mean=params$m, sd=params$s)) +
+  stat_qq_band(
+    alpha = 0.3, 
+    dparams=list(mean=params$m, sd=params$s)
+  ) + 
+  stat_qq_line( 
+    dparams=list(mean=params$m, sd=params$s)
+  ) + 
+  stat_qq_point( 
+    dparams=list(mean=params$m, sd=params$s)
+  ) +
   customization
 
 p2 <- sample_ia %>% mutate(
@@ -585,9 +594,16 @@ p2 <- sample_ia %>% mutate(
     ) %>% 
   ggplot(aes(sample = HTIN4.jitter, colour=Gender, fill=Gender)) + 
   geom_abline(slope=1, intercept=0, colour = "grey40") +
-  stat_qq_band(alpha = 0.3, dparams = list(mean=params$m, sd=params$s)) +
-  stat_qq_line(dparams = list(mean=params$m, sd=params$s)) + 
-  stat_qq_point(dparams = list(mean=params$m, sd=params$s)) +
+  stat_qq_band(
+    alpha = 0.3, 
+    dparams = list(mean=params$m, sd=params$s)
+  ) +
+  stat_qq_line(
+    dparams = list(mean=params$m, sd=params$s)
+  ) + 
+  stat_qq_point(
+    dparams = list(mean=params$m, sd=params$s)
+  ) +
   customization +
   ylab("Jittered Height (in inch)") 
 ```
@@ -700,9 +716,16 @@ p4 <- sample_ia %>%
 p6 <- sample_ia %>% 
   ggplot(aes(sample = WTKG3 / 100, colour = Gender, fill = Gender)) +
   geom_abline(colour="grey60") +
-  stat_qq_band(distribution = "lnorm", alpha = 0.3) +
-  stat_qq_line(distribution = "lnorm") +
-  stat_qq_point(distribution = "lnorm") +
+  stat_qq_band(
+    distribution = "lnorm", 
+    alpha = 0.3
+  ) +
+  stat_qq_line(
+    distribution = "lnorm"
+  ) +
+  stat_qq_point(
+    distribution = "lnorm"
+  ) +
   customization + facet_grid(.~Gender)
 
 #grid.arrange(p4, p6, ncol = 2)

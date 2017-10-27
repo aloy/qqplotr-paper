@@ -26,8 +26,22 @@ used.
 
 \begin{itemize}
 \item
+<<<<<<< HEAD
   Conclusion --
   \al{AL: Do we need to add more than we have in the discussion already?}
+=======
+  Abstract
+\item
+  Conclusion -- al\{AL: Do we need to add more than we have in the
+  discussion already?\}
+\item
+  Be consistent with indentation rules for code. We need to decide on
+  these.
+\item
+  Be consistent with colors/themes/sizes for the plots.
+\item
+  Are we saying ``normal'' or ``Normal'' throughout the text?
+>>>>>>> code chunk added and formatted
 \item
   Do we want to use \texttt{bandType\ =\ "bs"} or should we change it to
   \texttt{bandType\ =\ "boot"}?
@@ -643,6 +657,63 @@ uniform distribution on \(\pm 0.5\) inch to the reported height, as
 shown in the code below:
 \al{We need to add the code! Should we show the entire chunk below?}
 
+\begin{Schunk}
+\begin{Sinput}
+iowa <- readRDS("data/brfss-iowa.rda")
+set.seed(3145)
+
+sample_ia <- iowa %>% nest(-SEX) %>% mutate(
+  data = data %>% 
+    purrr::map(.f = function(x) sample_n(x, size = 200))  
+) %>% unnest(data) %>% 
+  dplyr::select(SEX, WTKG3, HTIN4) %>%
+  mutate(Gender = c("Male", "Female")[SEX])
+
+params <- iowa %>% filter(!is.na(HTIN4)) %>% summarize(
+  m = mean(HTIN4),
+  s = sd(HTIN4)
+)
+customization <- list(scale_fill_brewer(palette="Set1"),
+  scale_colour_brewer(palette = "Set1"),
+  xlab("Theoretical quantiles"),
+  ylab("Height (in inch)"),
+  coord_equal(),
+  theme_bw(),
+  theme(legend.position = c(0.8, 0.2), aspect.ratio = 1))
+
+p1 <- sample_ia %>% ggplot(aes(sample = HTIN4, colour=Gender, fill=Gender)) + 
+  stat_qq_band(
+    alpha = 0.3, 
+    dparams=list(mean=params$m, sd=params$s)
+  ) + 
+  stat_qq_line( 
+    dparams=list(mean=params$m, sd=params$s)
+  ) + 
+  stat_qq_point( 
+    dparams=list(mean=params$m, sd=params$s)
+  ) +
+  customization
+
+p2 <- sample_ia %>% mutate(
+    HTIN4.jitter = jitter(HTIN4, factor = 2)
+    ) %>% 
+  ggplot(aes(sample = HTIN4.jitter, colour=Gender, fill=Gender)) + 
+  geom_abline(slope=1, intercept=0, colour = "grey40") +
+  stat_qq_band(
+    alpha = 0.3, 
+    dparams = list(mean=params$m, sd=params$s)
+  ) +
+  stat_qq_line(
+    dparams = list(mean=params$m, sd=params$s)
+  ) + 
+  stat_qq_point(
+    dparams = list(mean=params$m, sd=params$s)
+  ) +
+  customization +
+  ylab("Jittered Height (in inch)") 
+\end{Sinput}
+\end{Schunk}
+
 By using jittering we diminish the effect that discreteness has on the
 distribution and brings the observed distribution much closer to a
 normal distribution. Note that separate normal distributions were fit to
@@ -735,9 +806,16 @@ p4 <- sample_ia %>%
 p6 <- sample_ia %>% 
   ggplot(aes(sample = WTKG3 / 100, colour = Gender, fill = Gender)) +
   geom_abline(colour="grey60") +
-  stat_qq_band(distribution = "lnorm", alpha = 0.3) +
-  stat_qq_line(distribution = "lnorm") +
-  stat_qq_point(distribution = "lnorm") +
+  stat_qq_band(
+    distribution = "lnorm", 
+    alpha = 0.3
+  ) +
+  stat_qq_line(
+    distribution = "lnorm"
+  ) +
+  stat_qq_point(
+    distribution = "lnorm"
+  ) +
   customization + facet_grid(.~Gender)
 \end{Sinput}
 \begin{figure}
@@ -778,8 +856,13 @@ Specifically, two types of probability plots will be included:
   equally spaced on the \(x\)-axis, whereas points on the \(x\)-axis of
   a Q-Q plot are more concentrated in the higher-density regions of the
   reference distribution. This leads to Q-Q plots being more sensitive
+<<<<<<< HEAD
   to discrepancies in the tails of the distribution and standardized P-P
   plots being more sensitive to discrepancies in the ``middle'' of the
+=======
+  to discrepencies in the tails of the distribution and standardized P-P
+  plots being more sensitive to discrepencies in the ``middle'' of the
+>>>>>>> code chunk added and formatted
   proposed distribution.
 \item
   In engineering applications, probability plots refer to a linearized
