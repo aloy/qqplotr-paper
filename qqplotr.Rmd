@@ -30,18 +30,20 @@ output: rticles::rjournal_article
 
 \newcommand{\hh}[1]{{\textcolor{orange}{#1}}}
 \newcommand{\al}[1]{{\textcolor{violet}{#1}}}
-\newcommand{\alex}[1]{{\textcolor{green}{#1}}}
+\newcommand{\Aa}[1]{{\textcolor{olive}{#1}}}
 
 ## TODO:
 
-* Abstract
-* Conclusion -- al{AL: Do we need to add more than we have in the discussion already?}
+* Conclusion -- \al{AL: Do we need to add more than we have in the discussion already?}
 
-* Be consistent with indentation rules for code. We need to decide on these.
-* Be consistent with colors/themes/sizes for the plots.
-* Are we saying "normal" or "Normal" throughout the text?
 * Do we want to use `bandType = "bs"` or should we change it to `bandType = "boot"`?
-* Are we saying "color" or "colour" for ggplot2 code?
+
+* Be consistent with:
+    + Indentation rules for code. We need to decide on these.
+    + Colors/themes/sizes for the plots.
+    + Are we saying "normal" or "Normal" throughout the text?
+    + Are we saying "color" or "colour" for ggplot2 code?
+    + Are we using em dashes (---) or en dashes (--) throughout the text? With or without spacing?
 
 <!-- Loading supplementary packages to correctly draw the plots -->
 ```{r message=FALSE, warning=FALSE, echo=FALSE}
@@ -322,7 +324,7 @@ construct the confidence bands:
     + **Normal:** Specifying `bandType = "normal"` (default) constructs pointwise confidence
 bands based on the normal approximation to the distribution of the order
 statistics. For example, an approximate 95\% confidence interval for the $i$th
-order statistic is $\widehat{X}_{(i)}~\pm~\Phi^{-1}(.975)~\cdot~SE(X_{(i)})$,
+order statistic is \linebreak $\widehat{X}_{(i)}~\pm~\Phi^{-1}(.975)~\cdot~SE(X_{(i)})$,
 where $\widehat{X}_{(i)}$ denotes the value along the fitted line,
 $\Phi^{-1}(\cdot)$ denotes the quantile function for the standard normal
 distribution, and $SE(X_{(i)})$ is the standard error of the $i$th order
@@ -347,8 +349,8 @@ will be estimated using robust estimates via the `robustbase` package \citep{rob
 
 ### Groups in `qqplotr`
 
-`qqplotr` is implemented in accordance with the `ggplot2` concept of groups. When the user maps values to aesthetics that explicitly (by using `group`) or implicitly (such as `shape` or discrete values of `color, size`, etc.) introduce groups, the corresponding calculations respect the grouping in the data. All the groups are compared to the same distributional family specified, but the parameters are *separately* estimated for each of the groups (that is, given that `dparams = NULL`).
-If the user wants to fit the **same** distribution (i.e., same parameters estimates) to each group, then the estimates must be manually calculated and passed to `dparams` as a named list for each of the desired \pkg{qqplotr} functions.
+`qqplotr` is implemented in accordance with the `ggplot2` concept of groups. When the user maps values to aesthetics that explicitly (by using `group`) or implicitly (such as `shape` or discrete values of `color`, `size` etc.) introduce groups, the corresponding calculations respect the grouping in the data. All the groups are compared to the same distributional family specified, but the parameters are *separately* estimated for each of the groups (that is, given that `dparams = NULL`).
+If the user wants to fit the *same* distribution (i.e., same parameters estimates) to each group, then the estimates must be manually calculated and passed to `dparams` as a named list for each of the desired \pkg{qqplotr} functions.
 
 <!-- In the case that the user wants to fix a particular distribution or set of distributions. This can be achieved by manually setting/calculating  estimators beforehand, storing them into a list, and providing this list to `dparams` of the appropriate \pkg{qqplotr} functions. -->
 
@@ -365,7 +367,6 @@ the package:
 ```{r message=FALSE}
 library(qqplotr)
 ```
-
 
 ### Constructing Q-Q plots with `qqplotr`
 
@@ -768,13 +769,12 @@ This paper presents the \pkg{qqplotr} package, an extension of \pkg{ggplot2} tha
 
 Q-Q plots are members of the larger probability plotting family, and future versions of \pkg{qqplotr} will incorporate additional plots. Specifically, two types of probability plots will be included:
 
-1. A standardarized P-P plot is constructed for location-scale distributions by plotting $F(z_{(i)})$ against $p_i$, where $z_{(i)}$ denotes the ordered and standardized observations and $p_i$ is denotes the plotting position \citep{Gan1991-yk}. As \citet{Gan1991-yk} point out, the probability plotting positions are equally spaced on the $x$-axis, whereas points on the $x$-axis of a Q-Q plot are more concentrated in the higher-density regions of the reference distribution. This leads to Q-Q plots being more sensitive to discrepencies in the tails of the distribution and standardized P-P plots being more sensitive to discrepencies in the "middle" of the proposed distribution. 
+1. A standardarized P-P plot is constructed for location-scale distributions by plotting $F(z_{(i)})$ against $p_i$, where $z_{(i)}$ denotes the ordered and standardized observations and $p_i$ denotes the plotting position \citep{Gan1991-yk}. As \citet{Gan1991-yk} point out, the probability plotting positions are equally spaced on the $x$-axis, whereas points on the $x$-axis of a Q-Q plot are more concentrated in the higher-density regions of the reference distribution. This leads to Q-Q plots being more sensitive to discrepancies in the tails of the distribution and standardized P-P plots being more sensitive to discrepancies in the "middle" of the proposed distribution. 
 2. In engineering applications, probability plots refer to a linearized plot of $F(x_i)$ against $x_i$. The linearizing transformation of the hypothesized CDF is found by first finding a transformation that linearizes the quantile function---i.e., linearizing the plot of $F^{-1}(p)$ vs $x_p$---and then mapping $F^{-1}(p)$ back to the probability scale \citep[cf.][Chapter 6]{Meeker1998}.
 
-It is important to note that all of the probability plotting methods discussed----Q-Q plots, standardized P-P plots, and probability plots---are invariant to linear transformations. Consequently, each type of plot will exhibit a linear relationship between the sample and hypothesized distribution for location-scale families, even if the location and/or scale parameters in the sample differ from the hypothesized distribution. This is not the case with unstandardized P-P plots \citep{Wilk1968-ii}, so they will not be included in \pkg{qqplotr}.
+It is important to note that all of the probability plotting methods discussed---Q-Q plots, standardized P-P plots, and probability plots---are invariant to linear transformations. Consequently, each type of plot will exhibit a linear relationship between the sample and hypothesized distribution for location-scale families, even if the location and/or scale parameters in the sample differ from the hypothesized distribution. This is not the case with unstandardized P-P plots \citep{Wilk1968-ii}, so they will not be included in \pkg{qqplotr}.
 
-
-We have made design choices in \pkg{qqplotr} that we believe are in line with best practices for distributional assessment, but the implementation is flexible enough to allow for easy customization. For example, maximum likelihood estimation is used to estimate the parameters of the proposed model, but if outliers are present robust estimators may be desirable, such as if you are comparing the empirical distribution to the normal distribution. In this scenario, robust estimates of the location and scale can be obtained using the \pkg{robustbase} package \citep{robustbase}, and specified using the `dparams` argument directly. This is especially useful if you wish to use the parametric bootstrap to build confidence bands. Similarly, `stat_qq_line` only implements a reference line that passes through the first and third quartiles of the distributions. While this is the most commonly used reference line, alternative reference lines can be quickly implemented using `ggplot2::geom_abline` by specifying the slope and intercept.
+We have made design choices in \pkg{qqplotr} that we believe are in line with best practices for distributional assessment, but the implementation is flexible enough to allow for easy customization. For example, maximum likelihood estimation is used to estimate the parameters of the proposed model, but if outliers are present robust estimators may be desirable, such as if you are comparing the empirical distribution to the normal distribution. In this scenario, robust estimates of the location and scale can be obtained using the \pkg{robustbase} package \citep{robustbase}, and specified using the `dparams` argument directly. This is especially useful if you wish to use the parametric bootstrap to build confidence bands. Similarly, `stat_qq_line` \Aa{implements a reference line that passes through two quantiles of the distributions -- by default, the first and third quartiles, but this is easily changable by using the `qprobs` argument.} While this is the most commonly used reference line, alternative reference lines \Aa{that are not based on quantiles of the distributions} can be quickly implemented using `ggplot2::geom_abline` by specifying the slope and intercept.
 
 
 
