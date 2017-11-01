@@ -26,25 +26,8 @@ used.
 
 \begin{itemize}
 \item
-<<<<<<< HEAD
   Conclusion --
   \al{AL: Do we need to add more than we have in the discussion already?}
-=======
-  Abstract
-\item
-  Conclusion -- al\{AL: Do we need to add more than we have in the
-  discussion already?\}
-\item
-  Be consistent with indentation rules for code. We need to decide on
-  these.
-\item
-  Be consistent with colors/themes/sizes for the plots.
-\item
-  Are we saying ``normal'' or ``Normal'' throughout the text?
->>>>>>> code chunk added and formatted
-\item
-  Do we want to use \texttt{bandType\ =\ "bs"} or should we change it to
-  \texttt{bandType\ =\ "boot"}?
 \item
   Be consistent with:
 
@@ -362,9 +345,9 @@ stat_qq_band(
     normal distribution, and \(SE(X_{(i)})\) is the standard error of
     the \(i\)th order statistic.
   \item
-    \textbf{Bootstrap:} Specifying \texttt{bandType\ =\ "bs"} constructs
-    pointwise confidence bands using percentile confidence intervals
-    from the parametric bootstrap.
+    \textbf{Bootstrap:} Specifying \texttt{bandType\ =\ "boot"}
+    constructs pointwise confidence bands using percentile confidence
+    intervals from the parametric bootstrap.
   \item
     \textbf{Tail-sensitive:} Specifying \texttt{bandType\ =\ "ts"}
     constructs the simulation-based tail-sensitive simultaneous
@@ -372,8 +355,8 @@ stat_qq_band(
   \end{itemize}
 \item
   \texttt{B} is an integer spoecifying the number of bootstrap
-  replicates (if \texttt{bandType\ =\ "bs"}) or the number of simulated
-  samples (if \texttt{bandType\ =\ "ts"}).
+  replicates (if \texttt{bandType\ =\ "boot"}) or the number of
+  simulated samples (if \texttt{bandType\ =\ "ts"}).
 \item
   \texttt{conf} is a numerical variable setting the confidence level of
   the bands, which is bound between 0 and 1.
@@ -856,13 +839,8 @@ Specifically, two types of probability plots will be included:
   equally spaced on the \(x\)-axis, whereas points on the \(x\)-axis of
   a Q-Q plot are more concentrated in the higher-density regions of the
   reference distribution. This leads to Q-Q plots being more sensitive
-<<<<<<< HEAD
   to discrepancies in the tails of the distribution and standardized P-P
   plots being more sensitive to discrepancies in the ``middle'' of the
-=======
-  to discrepencies in the tails of the distribution and standardized P-P
-  plots being more sensitive to discrepencies in the ``middle'' of the
->>>>>>> code chunk added and formatted
   proposed distribution.
 \item
   In engineering applications, probability plots refer to a linearized

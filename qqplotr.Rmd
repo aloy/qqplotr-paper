@@ -36,8 +36,6 @@ output: rticles::rjournal_article
 
 * Conclusion -- \al{AL: Do we need to add more than we have in the discussion already?}
 
-* Do we want to use `bandType = "bs"` or should we change it to `bandType = "boot"`?
-
 * Be consistent with:
     + Indentation rules for code. We need to decide on these.
     + Colors/themes/sizes for the plots.
@@ -329,14 +327,14 @@ where $\widehat{X}_{(i)}$ denotes the value along the fitted line,
 $\Phi^{-1}(\cdot)$ denotes the quantile function for the standard normal
 distribution, and $SE(X_{(i)})$ is the standard error of the $i$th order
 statistic.
-    + **Bootstrap:** Specifying `bandType = "bs"` constructs pointwise confidence 
+    + **Bootstrap:** Specifying `bandType = "boot"` constructs pointwise confidence 
 bands using percentile confidence intervals from the parametric bootstrap.
     + **Tail-sensitive:** Specifying `bandType = "ts"` constructs the simulation-based
 tail-sensitive simultaneous confidence bands proposed by
 \citet{Aldor-Noiman2013-xw}.
 
 * `B` is an integer spoecifying the number of bootstrap replicates (if
-`bandType = "bs"`) or the number of simulated samples (if `bandType = "ts"`).
+`bandType = "boot"`) or the number of simulated samples (if `bandType = "ts"`).
 
 * `conf` is a numerical variable setting the confidence level of the bands,
 which is bound between 0 and 1.
@@ -403,7 +401,7 @@ p9 <- urine %>% ggplot(aes(sample = ph)) +
   coord_cartesian(ylim = c(3.2, 8.7))
 
 p10 <- urine %>% ggplot(aes(sample = ph)) + 
-  stat_qq_band(alpha = 0.5, bandType = "bs", fill = "#FC8D62") + 
+  stat_qq_band(alpha = 0.5, bandType = "boot", fill = "#FC8D62") + 
   stat_qq_line(col = "#FC8D62")+ #"orange2") + 
   stat_qq_point() +
   ggtitle("Bootstrap") +
