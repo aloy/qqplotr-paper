@@ -576,12 +576,12 @@ iowa <- readRDS("data/brfss-iowa.rda")
 set.seed(3145)
 
 sample_ia <- iowa %>% 
-  nest(-SEX) %>% 
+  tidyr::nest(-SEX) %>% 
   mutate(
     data = data %>% 
     purrr::map(.f = function(x) sample_n(x, size = 200))
     ) %>% 
-  unnest(data) %>% 
+  tidyr::unnest(data) %>% 
   dplyr::select(SEX, WTKG3, HTIN4) %>%
   mutate(Gender = c("Male", "Female")[SEX])
 
@@ -597,12 +597,15 @@ customization <- list(scale_fill_brewer(palette="Set1"),
   theme_bw(),
   theme(legend.position = c(0.8, 0.2), aspect.ratio = 1))
 
-p1 <- sample_ia %>% ggplot(aes(sample = HTIN4, colour=Gender, fill=Gender)) + 
+p1 <- sample_ia %>% 
+  ggplot(aes(sample = HTIN4, colour=Gender, fill=Gender)) + 
   stat_qq_band(
     alpha = 0.3, 
+    identity = FALSE,
     dparams=list(mean=params$m, sd=params$s)
   ) + 
   stat_qq_line( 
+    identity = FALSE,
     dparams=list(mean=params$m, sd=params$s)
   ) + 
   stat_qq_point( 
@@ -610,16 +613,17 @@ p1 <- sample_ia %>% ggplot(aes(sample = HTIN4, colour=Gender, fill=Gender)) +
   ) +
   customization
 
-p2 <- sample_ia %>% mutate(
-    HTIN4.jitter = jitter(HTIN4, factor = 2)
-    ) %>% 
+p2 <- sample_ia %>% 
+  mutate(HTIN4.jitter = jitter(HTIN4, factor = 2)) %>% 
   ggplot(aes(sample = HTIN4.jitter, colour=Gender, fill=Gender)) + 
   geom_abline(slope=1, intercept=0, colour = "grey40") +
   stat_qq_band(
     alpha = 0.3, 
+    identity = FALSE,
     dparams = list(mean=params$m, sd=params$s)
   ) +
   stat_qq_line(
+    identity = FALSE,
     dparams = list(mean=params$m, sd=params$s)
   ) + 
   stat_qq_point(
@@ -664,14 +668,17 @@ grid.arrange(p1, p2, ncol = 2)
 Unlike respondents' heights, their weights do not seem to be normally distributed. Figure \ref{fig:weights} shows two Q-Q plots of these data. The Q-Q plot on the left compares raw weights to a normal distribution. We see that tails of the observed distribution are heavier than expected under a normal distribution. On the right, weights are log-transformed. We see that a normal distribution for each of the genders appears to be reasonable, with the exception of a few extreme outliers.
 
 ```{r weights, echo=FALSE, fig.width = 8, fig.height = 3.5, fig.cap = "Q-Q plots comparing weights to the normal distribution for a sample of 200 men and 200 women. Unlike people's height, weight seems to be heavily right skewed with some additional outliers in the left tail (left plot). On the right, weight was log-transfomed before its distribution is compared to a theoretical normal. ", out.width='\\textwidth', fig.align="center", message=FALSE, warning = FALSE}
-params <- iowa %>% filter(!is.na(WTKG3)) %>% summarize(
-  m = mean(WTKG3/100),
-  s = sd(WTKG3/100)
-)
+params <- iowa %>% 
+  filter(!is.na(WTKG3)) %>% 
+  summarize(
+    m = mean(WTKG3/100),
+    s = sd(WTKG3/100)
+  )
+
 p3 <- sample_ia %>% 
   ggplot(aes(sample = WTKG3/100, colour=Gender, fill=Gender)) + 
-  stat_qq_band(alpha = 0.3, dparams=list(mean=params$m, sd=params$s)) + 
-  stat_qq_line(dparams=list(mean=params$m, sd=params$s)) + 
+  stat_qq_band(alpha = 0.3, identity = FALSE, dparams=list(mean=params$m, sd=params$s)) + 
+  stat_qq_line(identity = FALSE, dparams=list(mean=params$m, sd=params$s)) + 
   stat_qq_point(dparams=list(mean=params$m, sd=params$s)) +
   scale_fill_brewer(palette="Set1") +
   scale_colour_brewer(palette = "Set1") +
@@ -683,8 +690,8 @@ p3 <- sample_ia %>%
 
 p5 <- sample_ia %>% 
   ggplot(aes(sample = log(WTKG3/100), colour=Gender, fill=Gender)) + 
-  stat_qq_band(alpha = 0.3, dparams=list(mean=params$m, sd=params$s)) + 
-  stat_qq_line( dparams=list(mean=params$m, sd=params$s)) + 
+  stat_qq_band(alpha = 0.3, identity = FALSE, dparams=list(mean=params$m, sd=params$s)) + 
+  stat_qq_line( identity = FALSE, dparams=list(mean=params$m, sd=params$s)) + 
   stat_qq_point( dparams=list(mean=params$m, sd=params$s)) +
   scale_fill_brewer(palette="Set1") +
   scale_colour_brewer(palette = "Set1") +
