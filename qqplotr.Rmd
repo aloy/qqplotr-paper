@@ -20,7 +20,7 @@ author:
     - Ames, IA 50011-1210
     email:  hofmann@iastate.edu
 abstract: >
-  Univariate distributional assessment is a common thread throughout statistical analyses during both the exploratory and confirmatory stages. Q-Q plots compare two distributions by matching a commmon set of quantiles. Additional graphical elements are often added to Q-Q plots in order to aid in distributional assessment. Different orientations of Q-Q plots have also been proposed, most notably the de-trended Q-Q plot. Various implementations of Q-Q plots exist in R. \pkg{qqplotr} extends \pkg{ggplot2} to provide a complete implementation of Q-Q plots. In the remainder of this paper, we will introduce the plotting framework provided by \pkg{qqplotr} and provide multiple examples of how it can be used. 
+  Univariate distributional assessment is a common thread throughout statistical analyses during both the exploratory and confirmatory stages. Q-Q plots compare two distributions by matching a commmon set of quantiles. Additional graphical elements are often added to Q-Q plots in order to aid in distributional assessment. Different orientations of Q-Q plots have also been proposed, most notably the detrended Q-Q plot. Various implementations of Q-Q plots exist in R. \pkg{qqplotr} extends \pkg{ggplot2} to provide a complete implementation of Q-Q plots. In the remainder of this paper, we will introduce the plotting framework provided by \pkg{qqplotr} and provide multiple examples of how it can be used. 
 preamble: >
   % Any extra latex you need in the preamble
   \usepackage{nameref}
@@ -34,20 +34,20 @@ output: rticles::rjournal_article
 
 ## TODO:
 
-* Conclusion -- \al{AL: Do we need to add more than we have in the discussion already?}
+* Conclusion \al{AL: Do we need to add more than we have in the discussion already?
 
 * Be consistent with:
-    + Indentation rules for code. We need to decide on these.
+    + Indentation rules for code.
     + Colors/themes/sizes for the plots.
-    + Are we saying "normal" or "Normal" throughout the text?
-    + Are we saying "color" or "colour" for ggplot2 code?
-    + Are we using em dashes (---) or en dashes (--) throughout the text? With or without spacing?
+    + Use "normal" when not specifying (e.g., "a normal distribution"). Use "Normal" when specifying (e.g., "the Standard Normal Distribution")
+    + Use "colour" instead of "color" when using ggplot2 functions due to compatibility reasons.
+    + Dashing ponctuation: use em dashes (---) instead of en dashes (--). Don't place spaces before or after them.
 
 <!-- Loading supplementary packages to correctly draw the plots -->
-```{r message=FALSE, warning=FALSE, echo=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 library(gridExtra)
-library(tidyverse)
 library(knitr)
+library(tidyverse)
 knitr::opts_current$set(tidy=FALSE)
 ```
 
@@ -57,10 +57,10 @@ knitr::opts_current$set(tidy=FALSE)
 Univariate distributional assessment is a common thread throughout statistical analyses during both the exploratory and confirmatory stages. When we begin exploring a new data set we often consider the distribution of individual variables before moving on to explore multivariate relationships. After a model has been fit to a data set, we must assess whether the distributional assumptions made are reasonable, and if they are not, then we must understand the impact this has on the conclusions of the model. Graphics provide arguably the most common way to carry out these univariate assessments. While there are many plots that can be used for distributional exploration and assessment, a quantile-quantile (Q-Q) plot \citep{Wilk1968-ii} is one of the most common plots used. 
 
 Q-Q plots compare two distributions by matching a commmon set of quantiles. 
-<!-- For two samples of size $n$, $X_1, X_2, \ldots, X_n$ and $Y_1, Y_2, \ldots, Y_n$, a Q-Q plot is a scatterplot comparing the sample quantiles.  -->
+<!-- For two samples of size $n$, $X_1, X_2, \ldots, X_n$ and $Y_1, Y_2, \ldots, Y_n$, a Q-Q plot is a scatterplot comparing the sample quantiles.-->
 To compare a sample, $y_1, y_2, \ldots, y_n$ to a theoretical distribution, a Q-Q plot is simply a scatterplot of the sample quantiles, $y_{(i)}$, against the corresponding quantiles from the theoretical distribution, $F^{-1}\left( F_n(y_i) \right)$. If the empirical distribution is consistent with the theoretical distribution, then the Q-Q plot will be linear. For example, Figure \ref{fig:ex-qq1} shows two Q-Q plots: the left plot compares a sample drawn from a lognormal distribution to a lognormal distribution, while the right plot compares a sample drawn from a lognormal distribution to a normal distribution. As expected, the lognormal Q-Q plot is approximately linear, as the data and model are in agreement, while the normal Q-Q plot is curved, indicating disagreement between the data and the model.
 
-```{r ex-qq1, echo=FALSE, out.width='.4\\linewidth', fig.width=3.5, fig.height=3.5, fig.show='hold', fig.align='center', fig.cap="The left plot compares a sample drawn from a lognormal distribution to a lognormal distribution, while the right plot compares a sample drawn from a lognormal distribution to a normal distribution. The curvature in the normal Q-Q plot highlights the disagreement betweeen the data and the model.", message = FALSE}
+```{r ex-qq1, echo=FALSE, message=FALSE, out.width='.4\\linewidth', fig.width=3.5, fig.height=3.5, fig.show='hold', fig.align='center', fig.cap="The left plot compares a sample drawn from a lognormal distribution to a lognormal distribution, while the right plot compares a sample drawn from a lognormal distribution to a normal distribution. The curvature in the normal Q-Q plot highlights the disagreement betweeen the data and the model."}
 library(qqplotr)
 set.seed(952017)
 rand_sample <- data.frame(rs = rlnorm(20, meanlog = 0, sdlog = 1))
@@ -80,10 +80,9 @@ ggplot(data = rand_sample, mapping = aes(sample = rs)) +
   theme_minimal()
 ```
 
-Additional graphical elements are often added to Q-Q plots in order to aid in distributional assessment. A reference line is often added to a Q-Q plot to help detection of departures from the proposed model.  This line is often drawn by connecting the first and third quartiles. Pointwise or simultaneous confidence bands are also frequently built around the reference line to display the expected degree of sampling error for the proposed model. Such bands hep gauge how troubling a departure from the proposed model may be.
-Figure \ref{fig:ex-qq2} adds such reference lines and 95% pointwise confidence bands to the Q-Q plots in Figure \ref{fig:ex-qq1}.
+Additional graphical elements are often added to Q-Q plots in order to aid in distributional assessment. A reference line is often added to a Q-Q plot to help detection of departures from the proposed model. This line is often drawn \Aa{either by tracing the identity line or by connecting two data quantiles, such as the first and third quartiles}. Pointwise or simultaneous confidence bands are also frequently built around the reference line to display the expected degree of sampling error for the proposed model. Such bands help gauge how troubling a departure from the proposed model may be. Figure \ref{fig:ex-qq2} adds \Aa{identity} reference lines and 95% pointwise confidence bands to the Q-Q plots in Figure \ref{fig:ex-qq1}.
 
-```{r ex-qq2, echo=FALSE, out.width='.4\\linewidth', fig.width=3.5, fig.height=3.5, fig.show='hold', fig.align='center', fig.cap="Adding reference lines and $95\\%$ pointwise confidence bands to the Q-Q plots in Figure 1.", message = FALSE}
+```{r ex-qq2, echo=FALSE, message=FALSE, out.width='.4\\linewidth', fig.width=3.5, fig.height=3.5, fig.show='hold', fig.align='center', fig.cap="Adding reference lines and $95\\%$ pointwise confidence bands to the Q-Q plots in Figure 1."}
 library(qqplotr)
 set.seed(952017)
 rand_sample <- data.frame(rs = rlnorm(20, meanlog = 0, sdlog = 1))
@@ -107,9 +106,9 @@ ggplot(data = rand_sample, mapping = aes(sample = rs)) +
   theme_minimal()
 ```
 
-Different orientations of Q-Q plots have also been proposed, most notably the de-trended Q-Q plot. To detrend a Q-Q plot, the $y$-axis is changed to show the difference between the observed quantile and the reference line. Consequently, the line representing the agreement with the theoretical distribution is the $x$-axis. \citet{Loy2016-fg} find that detrended Q-Q plots are more powerful than other designs, \al{so long as $x$- and $y$-axes to show the same range. Adjusting the aspect ratio in this way ensures that distances in the $x$- and $y$-directions are on the same scale. This Q-Q plot design is called an *adjusted-detrended Q-Q plot*.  If the range of the axes are not adjusted, then this results an ordinary detrended Q-Q plot, which which was found to have lower power than the standard Q-Q plot in some situations \citep{Loy2016-fg}.} Figure \ref{fig:ex-detrend} displays the normal Q-Q plot from Figure \ref{fig:ex-qq2} along with its adjusted detrended version.
+Different orientations of Q-Q plots have also been proposed, most notably the detrended Q-Q plot. To detrend a Q-Q plot, the $y$-axis is changed to show the difference between the observed quantile and the reference line. Consequently, the line representing the agreement with the theoretical distribution is the $x$-axis. \citet{Loy2016-fg} find that detrended Q-Q plots are more powerful than other designs, so long as $x$- and $y$-axes show the same range. Adjusting the aspect ratio in this way ensures that distances in the $x$- and $y$-directions are on the same scale. This Q-Q plot design is called an *adjusted detrended Q-Q plot*. If the range of the axes are not adjusted, then an ordinary detrended Q-Q plot is produced, which was found to have lower power than the standard Q-Q plot in some situations \citep{Loy2016-fg}. Figure \ref{fig:ex-detrend} displays the Q-Q plot from Figure \ref{fig:ex-qq2} along with its adjusted detrended version.
 
-```{r ex-detrend, echo=FALSE, out.width='.4\\linewidth', fig.width=3.5, fig.height=3.5, fig.show='hold', fig.align='center', fig.cap="The left plot displays a traditional normal Q-Q plot for data simulated from a lognormal distribution. The right plot displays an adjusted detrended Q-Q plot of the same data, created by plotting the differences between the sample quantiles and the proposed model on the $y$-axis.", message = FALSE}
+```{r ex-detrend, echo=FALSE, message = FALSE, out.width='.4\\linewidth', fig.width=3.5, fig.height=3.5, fig.show='hold', fig.align='center', fig.cap="The left plot displays a traditional normal Q-Q plot for data simulated from a lognormal distribution. The right plot displays an adjusted detrended Q-Q plot of the same data, created by plotting the differences between the sample quantiles and the proposed model on the $y$-axis."}
 library(qqplotr)
 set.seed(952017)
 rand_sample <- data.frame(rs = rlnorm(20, meanlog = 0, sdlog = 1))
@@ -134,35 +133,22 @@ ggplot(data = rand_sample, mapping = aes(sample = rs)) +
   coord_fixed(ratio=1)
 ```
 
-Various implementations of Q-Q plots exist in R. Normal Q-Q plots, where a sample is compared to the standard normal distribution, are implemented using `qqplot` and `qqline` in \pkg{base} graphics \citep{R}. \pkg{lattice} provides a general framework for Q-Q plots in the `qqmath` function, allowing one to compare a sample to any theoretical distribution by specifying the appropriate quantile function \citep{lattice}. `qqPlot` in the \pkg{car} package also allows for the assessment of non-normal distributions and adds pointwise confidence bands via normal theory or the parametric bootstrap \citep{car}. \pkg{ggplot2} provides `geom_qq` and `geom_qq_line`, enabling the creation of Q-Q plots with a reference line, much like those created using `qqmath` \citep{ggplot2}. None of these general use packages allow for easy construction of de-trended Q-Q plots.
+Various implementations of Q-Q plots exist in R. Normal Q-Q plots, where a sample is compared to the Standard Normal Distribution, are implemented using `qqplot` and `qqline` in \pkg{base} graphics \citep{R}. \pkg{lattice} provides a general framework for Q-Q plots in the `qqmath` function, allowing one to compare a sample to any theoretical distribution by specifying the appropriate quantile function \citep{lattice}. `qqPlot` in the \pkg{car} package also allows for the assessment of non-normal distributions and adds pointwise confidence bands via normal theory or the parametric bootstrap \citep{car}. \pkg{ggplot2} provides `geom_qq` and `geom_qq_line`, enabling the creation of Q-Q plots with a reference line, much like those created using `qqmath` \citep{ggplot2}. None of these general use packages allow for easy construction of detrended Q-Q plots.
 
 \pkg{qqplotr} extends \pkg{ggplot2} to provide a complete implementation of Q-Q plots. The package allows for quick construction of all Q-Q plot designs without sacrificing the flexibility of the \pkg{ggplot2} framework. In the remainder of this paper, we will introduce the plotting framework provided by \pkg{qqplotr} and provide multiple examples of how it can be used. 
 
-<!-- XXX `qualityTools` \cite{qualityTools} -->
+<!-- `qualityTools` \cite{qualityTools} -->
 
 ## Implementing Q-Q plots in the \pkg{ggplot2} framework
 \label{sec:implementing}
 
-<!-- With \pkg{qqplotr} we extend some of the original \pkg{ggplot2} Q-Q plot  -->
-<!-- functionatilites by permitting the drawing of Q-Q points, lines, and confidence  -->
-<!-- bands.  -->
 \pkg{qqplotr} provides a \pkg{ggplot2} layering mechanism for Q-Q points, lines, and confidence bands by implementing separate statistical transformations (`stat`s). In this section, we describe each transformation.
-
-<!-- The Q-Q plot functions are divided into three statistical transformations.  -->
-<!-- Below, we describe each one of those functions and also give an overview of its -->
-<!-- parameters. -->
 
 ### `stat_qq_point`
 
-This is a modified version of `stat_qq`/`geom_qq` from \pkg{ggplot2} that plots 
-the sample quantiles versus the theoretical quantiles (as in Figure 
-\ref{fig:ex-qq1}). The novelty of this implementation is an option to detrend 
-the plotted points (see \nameref{sec:background}). Note that all other 
-implemented functions in the \pkg{qqplotr} package also allow for this option.
-Below we present a complete call to `stat_qq_point` and highlight its default
-parameters values:
+This modified version of `stat_qq`/`geom_qq` (from \pkg{ggplot2}) plots the sample quantiles versus the theoretical quantiles (as done in Figure \ref{fig:ex-qq1}). The novelty of this implementation is an option to detrend the plotted points (see \nameref{sec:background}). Note that all other transformations in the \pkg{qqplotr} package also allow for the detrend option. Below we present a complete call to `stat_qq_point` and highlight the default values of its parameters:
 
-```{r echo=TRUE, eval=FALSE}
+```{r eval=FALSE}
 stat_qq_point(
   data = NULL,
   mapping = NULL,
@@ -174,43 +160,32 @@ stat_qq_point(
   distribution = "norm",
   dparams = list(),
   detrend = FALSE,
+  identity = TRUE,
   qtype = 7,
   qprobs = c(0.25, 0.75),
   ...
   )
 ```
 
-* Parameters such as `data`, `mapping`, `geom`, `position`, `na.rm`, 
-`show.legend`, and `inherit.aes` are specific for \pkg{ggplot2} implementations.
+* Parameters such as `data`, `mapping`, `geom`, `position`, `na.rm`, `show.legend`, and `inherit.aes` are commonly found among several \pkg{ggplot2} transformations.
 
-* `distribution` is a character string that sets the theoretical probability 
-distribution. Here, we followed the nomenclature from the \pkg{stats} package,
-but rather than requiring the full function name for a distribution (e.g., `"dnorm"`), only the suffixe is required (e.g., `"norm"`).
-If you wish to provide a
-custom distribution, then you must first create density (PDF), distribution (CDF), quantile, and simulation
-functions, following nomenclature outlined in the \pkg{stats} package (i.e., for
-`"custom"`, you must provide the `dcustom`, `pcustom`, `qcustom`, and 
-`rcustom` functions). A detailed example is given in the \nameref{sec:user-dists} section.
+* `distribution` is a character string that sets the theoretical probability distribution. Here, we followed the nomenclature from the \pkg{stats} package, but rather than requiring the full function name for a distribution (e.g., `"dnorm"`), only the suffix is required (i.e., `"norm"`). If you wish to provide a custom distribution, then you must first create its density (PDF), distribution (CDF), quantile, and simulation functions, following the nomenclature outlined in the \pkg{stats} package (i.e., for `"custom"`, you must provide the `dcustom`, `pcustom`, `qcustom`, and  `rcustom` functions). A detailed example is given in the \nameref{sec:user-dists} section.
 
-* `dparams` is a named list specifying the parameters of the proposed `distribution`.
-By default, maximum likelihood etimates (MLEs) are used, so this argument overrides this default.
-Please note that MLEs are currently only supported for
- distributions available in the \pkg{stats} package, so if a  custom distribution is used in `distribution` *all* of its parameters have to be provided in `dparams`.
+* `dparams` is a named list specifying the parameters of the proposed `distribution`. By default, maximum likelihood etimates (MLEs) are used, so this argument overrides this default. Please note that MLEs are currently only supported for distributions available in the \pkg{stats} package, so if a custom distribution is provided to `distribution`, then *all* of its parameters have to be estimated somehow and included in `dparams`.
 
-* `detrend` is a boolean that controls whether the points should be detrended (as 
-shown in Figure \ref{fig:ex-detrend}). More on that in \nameref{sec:detrending}.
+* `detrend` is a logical that controls whether the points should be detrended (as shown in Figure \ref{fig:ex-detrend}). More on that in the \nameref{sec:detrending} section.
 
-* `qtype` and `qprobs` are only used when `detrend = TRUE`. These parameters are
-passed on to the `type` and `probs` parameters of the `quantile` function from the
-\pkg{stats} package, which is used to define the quantiles the reference line (i.e., the proposed model) passes through.
+ \Aa{AA: Included the identity argument and its description:}
 
+* `identity` is only used when `detrend = TRUE`. This paraameter is a logical that controls if the identity line should be used as the reference line when constructing the detrended Q-Q plot. By default, the identity reference line is used. If `identity = FALSE`, then the points will be detrended according to the traditional Q-Q line that intercepts two data quantiles specified in \code{qprobs}
+
+* `qtype` and `qprobs` are only used when `detrend = TRUE` and `identity = FALSE`. These parameters are passed onto the `type` and `probs` parameters of the `quantile` function from \pkg{stats}, both of which are used to specify which quantiles that the reference line (i.e., the proposed model) passes through.
 
 ### `stat_qq_line`
 
-This statistical transformation draws a reference line based on the sample data 
-quantiles. Note that the parameters for `stat_qq_line` are identical to those for `stat_qq_point`.
+\Aa{This statistical transformation draws a reference line based on the identity line or two of the sample data quantiles.}
 
-```{r echo=TRUE, eval=FALSE}
+```{r eval=FALSE}
 stat_qq_line(
   data = NULL,
   mapping = NULL,
@@ -222,79 +197,78 @@ stat_qq_line(
   distribution = "norm",
   dparams = list(),
   detrend = FALSE,
+  identity = TRUE,
   qtype = 7,
   qprobs = c(0.25, 0.75),
   ...
   )
 ```
 
-Two lines are of particular importance in a Q-Q plot:
+\Aa{AA: Here I included a description about the identity parameter and also used that to seam with our reference line discussion.}
 
-a) By definition of a Q-Q plot the *identity line* represents the theoretical distribution. 
-b) The *Q-Q line* is an estimate of the empirical distribution. 
+Note that all the parameters for `stat_qq_line` are identical to those for `stat_qq_point`. The only exception being `identity`, which have a slightly different interpretation. Here, `identity` is *always* used, despite the value of `detrend`. This parameter controls which reference line will be drawn. Two lines are of particular importance in a Q-Q plot:
 
-The intercept and slope of these lines relate to mean and scale parameters of the theoretical and the empirical distribution, respectively.
-By comparing these two lines we learn about how well the  parameters estimated from the sample match the theoretical  parameters.  For a distributional family that is invariant to linear transformations, the parameters specified in the theoretical distribution only have an effect on the Q-Q line and the Q-Q points---that is, the parameters get shifted and scaled in the plot, but relative relationships do not change aside from a change in scales.  For other distributions, such as a lognormal distribution, re-specifications of the parameters result in non-linear transformations of the Q-Q line and Q-Q points (see Figure \ref{fig:qqline} for an example).  
+a) By definition of a Q-Q plot the *identity line* represents the theoretical distribution (`identity = TRUE`).
+b) The *Q-Q line* is an estimate of the empirical distribution (`identity = FALSE`). 
 
+The intercept and slope of these lines relate to mean and scale parameters of the theoretical and the empirical distribution, respectively. By comparing these two lines we learn about how well the parameters estimated from the sample match the theoretical parameters. For a distributional family that is invariant to linear transformations, the parameters specified in the theoretical distribution only have an effect on the Q-Q line and the Q-Q points---that is, the parameters get shifted and scaled in the plot, but relative relationships do not change aside from a change in scales. For other distributions, such as a lognormal distribution, re-specifications of the parameters result in non-linear transformations of the Q-Q line and Q-Q points (see Figure \ref{fig:qqline} for an example).
 
-```{r qqline, echo=FALSE, message=FALSE, warning=FALSE, fig.width=8, fig.height=8, out.width='\\textwidth', fig.cap="Q-Q plots of (top-left) a mis-specified Normal distribution, (top-right)  a Normal distribution with ML parameter estimates. Between these two plots only the scales on the axes change. The bottom two plots show Q-Q plots of the same sample from a log-normal distribution. On the left, the theoretical distribution is mis-specified with a mean of 0 and variance of 1. On the right, ML estimates for mean and variance are used."}
-library(tidyverse)
-library(qqplotr)
+```{r qqline, echo=FALSE, message=FALSE, warning=FALSE, fig.width=8, fig.height=8, out.width='\\textwidth', fig.cap="Q-Q plots of (top-left) a mis-specified normal distribution, (top-right) a normal distribution with ML parameter estimates. Between these two plots only the scales on the axes change. The bottom two plots show Q-Q plots of the same sample from a lognormal distribution. On the left, the theoretical distribution is mis-specified with a mean of 0 and variance of 1. On the right, ML estimates for mean and variance are used. \\Aa{AA: The two left hand side plots are different from before as an effect of the new identity referece line. Even though this was not what we originally wanted to show with this figure, I find that these new plots show exactly why using the identity line vs. the traditional Q-Q line is important in our package, which uses MLEs by default. It can serve as a good illustration.}"}
 library(gridExtra)
+library(qqplotr)
+library(tidyverse)
 
-dframe <- data.frame(xnorm = rnorm(50, mean=10, sd=2),
-           xlnorm = rlnorm(50, mean=2, sd=.5))
-p11 <- dframe %>% ggplot(aes(sample=xnorm)) + 
-  geom_qq_band(dparams=list(mean=0, sd=1)) + 
-  stat_qq_line(dparams=list(mean=0, sd=1)) + 
-  stat_qq_point(dparams=list(mean=0, sd=1)) +
+dframe <- data.frame(xnorm = rnorm(50, mean = 10, sd = 2),
+                     xlnorm = rlnorm(50, mean = 2, sd = .5))
+
+p11 <- dframe %>% ggplot(aes(sample = xnorm)) +
+  geom_qq_band(dparams = list(mean = 0, sd = 1)) +
+  stat_qq_line(dparams = list(mean = 0, sd = 1)) +
+  stat_qq_point(dparams = list(mean = 0, sd = 1)) +
   theme_bw() +
   xlab("Theoretical Quantiles") +
   ylab("Observed Quantiles") +
   ggtitle("Normal Distribution N(0,1)")
-p12 <- dframe %>% ggplot(aes(sample=xnorm)) + 
-  geom_abline() +
-  geom_qq_band() + 
-  stat_qq_line() + 
+
+p12 <- dframe %>% ggplot(aes(sample = xnorm)) +
+  geom_qq_band() +
+  stat_qq_line() +
   stat_qq_point() +
   theme_bw() +
   xlab("Theoretical Quantiles") +
   ylab("Observed Quantiles") +
   ggtitle(expression("Normal Distribution N("~mu~","~sigma~")"))
-p21 <- dframe %>% ggplot(aes(sample=xlnorm)) + 
-  geom_qq_band(distribution="lnorm", dparams=list(mean=0, sd=1)) + 
-  stat_qq_line(distribution="lnorm", dparams=list(mean=0, sd=1)) + 
-  stat_qq_point(distribution="lnorm", dparams=list(mean=0, sd=1)) +
-  theme_bw() +
-  xlab("Theoretical Quantiles") +
-  ylab("Observed Quantiles") +
-  ggtitle(expression("log Normal Distribution LN(0,1)"))
-p22 <- dframe %>% ggplot(aes(sample=xlnorm)) + 
-  geom_abline() +
-  geom_qq_band(distribution="lnorm") + 
-  stat_qq_line(distribution="lnorm") + 
-  stat_qq_point(distribution="lnorm") +
-  theme_bw() +
-  xlab("Theoretical Quantiles") +
-  ylab("Observed Quantiles") +
-  ggtitle(expression("log Normal Distribution LN("~mu~","~sigma~")"))
 
-grid.arrange(p11,p12,p21,p22, nrow=2, ncol=2)
+p21 <- dframe %>% ggplot(aes(sample = xlnorm)) +
+  geom_qq_band(distribution = "lnorm", dparams = list(mean = 0, sd = 1)) +
+  stat_qq_line(distribution = "lnorm", dparams = list(mean = 0, sd = 1)) +
+  stat_qq_point(distribution = "lnorm", dparams = list(mean = 0, sd = 1)) +
+  theme_bw() +
+  xlab("Theoretical Quantiles") +
+  ylab("Observed Quantiles") +
+  ggtitle(expression("Lognormal Distribution LN(0,1)"))
+
+p22 <- dframe %>% ggplot(aes(sample = xlnorm)) +
+  geom_qq_band(distribution = "lnorm") +
+  stat_qq_line(distribution = "lnorm") +
+  stat_qq_point(distribution = "lnorm") +
+  theme_bw() +
+  xlab("Theoretical Quantiles") +
+  ylab("Observed Quantiles") +
+  ggtitle(expression("Lognormal Distribution LN("~mu~","~sigma~")"))
+
+grid.arrange(p11, p12, p21, p22, nrow = 2, ncol = 2)
 ```
 
-\hh{By default the Q-Q line is drawn through two points, corresponding to the .25 and .75 quantiles of the distributions on $x$ (theoretical distribution) and $y$ (empirical distribution).  While we are using MLEs to identify the theoretical distribution, these estimates are only used in determining the $x$-coordinates of these points. For the $y$ coordinates, the 1st and 3rd quartiles are used by default for more robust estimation. Therefore, the difference between the observed and theoretical distributions presents itself in the difference between the Q-Q line and the identity line. Using robust estimates for the Q-Q line is of particular advantage for small samples \citep{Loy2016-fg}.}
+\Aa{AA: I suppose we need to rework the following paragraph, since the identity line is now used as default:}
 
-
-
+By default the Q-Q line is drawn through two points, corresponding to the .25 and .75 quantiles of the distributions on $x$ (theoretical distribution) and $y$ (empirical distribution). While we are using MLEs to identify the theoretical distribution, these estimates are only used in determining the $x$-coordinates of these points. For the $y$ coordinates, the 1st and 3rd quartiles are used by default for more robust estimation. Therefore, the difference between the observed and theoretical distributions presents itself in the difference between the Q-Q line and the identity line. Using robust estimates for the Q-Q line is of particular advantage for small samples \citep{Loy2016-fg}.
 
 ### `stat_qq_band`
 
-Confidence bands can be drawn around the reference line using one of three methods: a 
-normal approximation, the parametric bootstrap, or the tail-sensitive procedure \citep{Aldor-Noiman2013-xw}.
-Below, we present the call to `stat_qq_band` and describe its specific 
-parameters:
+Confidence bands can be drawn around the reference line using one of three methods: a normal approximation, the parametric bootstrap, or the tail-sensitive procedure \citep{Aldor-Noiman2013-xw}. Below, we present the call to `stat_qq_band` and describe its specific parameters:
 
-```{r echo=TRUE, eval=FALSE}
+```{r eval=FALSE}
 stat_qq_band(
   data = NULL,
   mapping = NULL,
@@ -306,6 +280,7 @@ stat_qq_band(
   distribution = "norm",
   dparams = list(),
   detrend = FALSE,
+  identity = TRUE,
   qtype = 7,
   qprobs = c(0.25, 0.75),
   bandType = "normal",
@@ -317,40 +292,20 @@ stat_qq_band(
   )
 ```
 
-* `bandType` is a character string controlling the method used to
-construct the confidence bands:
-    + **Normal:** Specifying `bandType = "normal"` (default) constructs pointwise confidence
-bands based on the normal approximation to the distribution of the order
-statistics. For example, an approximate 95\% confidence interval for the $i$th
-order statistic is \linebreak $\widehat{X}_{(i)}~\pm~\Phi^{-1}(.975)~\cdot~SE(X_{(i)})$,
-where $\widehat{X}_{(i)}$ denotes the value along the fitted line,
-$\Phi^{-1}(\cdot)$ denotes the quantile function for the standard normal
-distribution, and $SE(X_{(i)})$ is the standard error of the $i$th order
-statistic.
-    + **Bootstrap:** Specifying `bandType = "boot"` constructs pointwise confidence 
-bands using percentile confidence intervals from the parametric bootstrap.
-    + **Tail-sensitive:** Specifying `bandType = "ts"` constructs the simulation-based
-tail-sensitive simultaneous confidence bands proposed by
-\citet{Aldor-Noiman2013-xw}.
+* `bandType` is a character string controlling the method used to construct the confidence bands:
+    + **Normal:** Specifying `bandType = "normal"` constructs pointwise confidence bands based on a normal approximation to the distribution of the order statistics. For example, an approximate 95\% confidence interval for the $i$th order statistic is \linebreak $\widehat{X}_{(i)}~\pm~\Phi^{-1}(.975)~\cdot~SE(X_{(i)})$, where $\widehat{X}_{(i)}$ denotes the value along the fitted referene line, $\Phi^{-1}(\cdot)$ denotes the quantile function for the Standard Normal Distribution, and $SE(X_{(i)})$ is the standard error of the $i$th order statistic.
+    + **Bootstrap:** Specifying `bandType = "boot"` constructs pointwise confidence bands using percentile confidence intervals from the parametric bootstrap.
+    + **Tail-sensitive:** Specifying `bandType = "ts"` constructs the simulation-based tail-sensitive simultaneous confidence bands proposed by \citet{Aldor-Noiman2013-xw}.
 
-* `B` is an integer spoecifying the number of bootstrap replicates (if
-`bandType = "boot"`) or the number of simulated samples (if `bandType = "ts"`).
+* `B` is a dual-purpose integer parameter: it specifies the number of bootstrap replicates, if `bandType = "boot"`, or the number of simulated samples, if `bandType = "ts"`.
 
-* `conf` is a numerical variable setting the confidence level of the bands,
-which is bound between 0 and 1.
+* `conf` is a numerical variable, bound between 0 and 1, that sets the confidence level of the bands.
 
-* `mu` and `sigma` are only used when `bandType = "ts"`. They represent the 
-center and scale parameters, respectively, which are used to
-construct the simulated tail-sensitive confidence bands. If any
-parameters is `NULL`, then both the center and scale parameters
-will be estimated using robust estimates via the `robustbase` package \citep{robustbase}.
+* `mu` and `sigma` are only used when `bandType = "ts"`. They represent the center and scale parameters, respectively, used to construct the simulated tail-sensitive confidence bands. If any of them is `NULL`, then both the center and scale parameters will be estimated using robust estimates via \pkg{robustbase} \citep{robustbase}.
 
 ### Groups in `qqplotr`
 
-`qqplotr` is implemented in accordance with the `ggplot2` concept of groups. When the user maps values to aesthetics that explicitly (by using `group`) or implicitly (such as `shape` or discrete values of `color`, `size` etc.) introduce groups, the corresponding calculations respect the grouping in the data. All the groups are compared to the same distributional family specified, but the parameters are *separately* estimated for each of the groups (that is, given that `dparams = NULL`).
-If the user wants to fit the *same* distribution (i.e., same parameters estimates) to each group, then the estimates must be manually calculated and passed to `dparams` as a named list for each of the desired \pkg{qqplotr} functions.
-
-<!-- In the case that the user wants to fix a particular distribution or set of distributions. This can be achieved by manually setting/calculating  estimators beforehand, storing them into a list, and providing this list to `dparams` of the appropriate \pkg{qqplotr} functions. -->
+`qqplotr` is implemented in accordance with the `ggplot2` concept of groups. When the user maps values to aesthetics that explicitly (by using `group`) or implicitly (such as `shape` or discrete values of `color`, `size` etc.) introduce groups, the corresponding calculations respect the grouping in the data. All the groups are compared to the same distributional family specified, but the parameters are *separately* estimated for each of the groups (that is, given that `dparams = NULL`). If the user wants to fit the *same* distribution (i.e., same parameter estimates) to each group, then the estimates must be manually calculated and passed onto `dparams` as a named list for each of the desired \pkg{qqplotr} transformations.
 
 The use of groups is illustrated in more detail in the \nameref{sec:brfss} section.
 
@@ -359,8 +314,7 @@ The use of groups is illustrated in more detail in the \nameref{sec:brfss} secti
 ## Examples
 \label{sec:examples}
 
-In this section, we demonstrate the capabilities of the \pkg{qqplotr} package. We start by loading
-the package:
+In this section, we demonstrate the capabilities of the \pkg{qqplotr} package by provide multiple examples of how the package can be used. We start by loading the package:
 
 ```{r message=FALSE}
 library(qqplotr)
@@ -368,45 +322,41 @@ library(qqplotr)
 
 ### Constructing Q-Q plots with `qqplotr`
 
-To give a brief introduction on how to use \pkg{qqplotr} and its functions, let us use as example the `urine` dataset from the \pkg{boot} package. This small dataset presents 79 urine specimens that were analyzed in order to determine if certain physical characteristics of the urine (e.g. pH or urea concentration) might be related to the formation of calcium oxalate crystals. In this example, we will focus on the distributional assessment of pH measurements made on the samples.
+To give a brief introduction on how to use \pkg{qqplotr} and its transformations, let us use as example the `urine` dataset from \pkg{boot}. This small dataset presents 79 urine specimens that were analyzed in order to determine if certain physical characteristics of the urine (e.g., pH or urea concentration) might be related to the formation of calcium oxalate crystals. In this example, we will focus on the distributional assessment of pH measurements made on the samples.
 
-We start by plotting a normal Q-Q plot of the data. Figure \ref{fig:urine-qq} shows the Q-Q plot of the pH measurements versus the normal distribution quantiles. As previously described, the theoretical distributional paremeters are estimated on the fly with MLEs. By default, `stat_qq_band` creates pointwise confidence bands based on the normal approximation to the distribution of the order statistics (i.e., `bandType = "normal"`). As we can see, the urine pH measurements distribution for this dataset is lightly right-skewed. The chosen normal confidence bands suggests that the assumption of normality is not appropriate to the data.
-
-```{r urine-qq, echo = TRUE, message = FALSE, warning = FALSE, fig.width = 3.5, fig.height = 3.5, fig.cap = "Normal Q-Q plot comparing pH measurements of the urine samples with a normal distribution. \\al{Do we really need this plot? We could reference Figure 6 as easily.}", out.width='0.45\\textwidth', fig.align="center"}
-require(boot)
-urine %>% ggplot(aes(sample = ph)) + 
-  stat_qq_band(alpha = 0.5) + 
-  stat_qq_line() + 
-  stat_qq_point() +
-  xlab("Theoretical quantiles") +
-  ylab("Observed quantiles of pH") +
-  theme_bw()
-```
-
-\FloatBarrier
+We start by plotting a normal Q-Q plot of the data. The top-left plot in Figure \ref{fig:urine-qq-bands} shows the Q-Q plot of the pH measurements versus the normal distribution quantiles. As previously described, the theoretical distributional parameters are estimated on the fly with MLEs. By default, `stat_qq_band` creates pointwise confidence bands based on the normal approximation (`bandType = "normal"`) of the order statistics distribution. As we can see, the urine pH measurements distribution for this dataset is lightly right-skewed.
 
 As previously discussed, three distinct approaches are availble in \pkg{qqplotr} to construct the confidence bands. 
 <!-- For instance, \citet{Aldor-Noiman2013-xw} discuss that their proposed tail-sensitive simultaneous confidence bands offers more statistical power, especially when distinguishing normal distributions from mildy or heavy-tailed distributions. -->
-Figure \ref{fig:urine-qq-bands} presents three plots with the different confidence bands overlayed on the same normal Q-Q points and reference lines. Notice that the normal-based confidence bands (on the left) are the same as in Figure \ref{fig:urine-qq}. When assessing the bootstrap (center) and tail-sensitive confidence bands (on the right), we can see that more points are inside the confidence bands than with the normal confidence bands method. Hence, one could conclude by looking at the tail-sensitive plot at the right hand side that, even though the normal distribution seems like a rough approximation, the assumption of normality is reasonable for the urine pH measurements.
+The top row from Figure \ref{fig:urine-qq-bands} presents three plots with the different confidence bands drawn over the same normal Q-Q points and identity lines. The bottom row from Figure \ref{fig:urine-qq-bands} presents the detrended version of the those plots, which will be used to aid in the visual inference.
 
-```{r urine-qq-bands, echo = FALSE, message = FALSE, warning = FALSE, fig.width = 9.5, fig.height = 3.5, fig.cap = "Normal Q-Q plots of pH measurements from urine samples using different confidence bands. Depending on the type of confidence band used, we come to different conclusions.", out.width='1.0\\textwidth', fig.align="center"}
-p9 <- urine %>% ggplot(aes(sample = ph)) + 
-  stat_qq_band(alpha = 0.5, bandType = "normal", fill = "#66C2A5") + 
-  stat_qq_line(col = "#66C2A5") + #"gray40") + 
+When assessing the tail-sensitive confidence bands (bottom-right), we can see that an additional point is inside the confidence bands when compared to the normal (bottom-left) and the bootstrap confidence bands methods (bottom-center). In addition, the points from the distribution center of mass are also more distant from tail-sensitive confidence bands limits when compared to the other methods. Hence, one could conclude by looking at the tail-sensitive plot at the bottom-left that, even though the normal distribution seems like a slightly rough approximation, the assumption of normality is reasonable for the urine pH measurements. By inspecting the other confidence bands methods, in turn, one might be in doubt about the assumption of normality.
+
+```{r urine-qq-bands, echo=FALSE, message=FALSE, warning=FALSE, fig.width=9.5, fig.height=7.0, fig.cap="Normal Q-Q plots of pH measurements from urine samples using different confidence bands. Depending on the type of confidence band used, we come to different conclusions. \\Aa{AA: Not sure about how much (and if) to include of the code chunk used to produce}", out.width='1.0\\textwidth', fig.align="center"}
+require(boot)
+set.seed(9)
+
+p11 <- urine %>% ggplot(aes(sample = ph)) + 
+  stat_qq_band(alpha = 0.5,
+               bandType = "normal",
+               fill = "#66C2A5") + 
+  stat_qq_line(col = "#66C2A5") +
   stat_qq_point() +
   ggtitle("Normal") +
   xlab("Theoretical quantiles") +
-  ylab("Observed quantiles of pH") +
+  ylab("Observed quantiles of pH measurements") +
   theme_bw() +
   coord_cartesian(ylim = c(3.2, 8.7))
 
-p10 <- urine %>% ggplot(aes(sample = ph)) + 
-  stat_qq_band(alpha = 0.5, bandType = "boot", fill = "#FC8D62") + 
-  stat_qq_line(col = "#FC8D62")+ #"orange2") + 
+p12 <- urine %>% ggplot(aes(sample = ph)) + 
+  stat_qq_band(alpha = 0.5,
+               bandType = "boot",
+               fill = "#FC8D62") + 
+  stat_qq_line(col = "#FC8D62")+
   stat_qq_point() +
   ggtitle("Bootstrap") +
   xlab("Theoretical quantiles") +
-  ylab("Observed quantiles of pH") +
+  ylab("Observed quantiles of pH measurements") +
   theme_bw() +
   theme(axis.text.y = element_blank(), 
           axis.ticks.y = element_blank(), 
@@ -415,20 +365,71 @@ p10 <- urine %>% ggplot(aes(sample = ph)) +
           plot.margin = margin(t = 3.5, r = 5.5, b = 5.5, l = 5.5, unit = "pt")) +
   coord_cartesian(ylim = c(3.2, 8.7))
 
-p11 <- urine %>% ggplot(aes(sample = ph)) + 
-  stat_qq_band(alpha = 0.5, bandType = "ts", fill = "#8DA0CB") + 
-  stat_qq_line(col = "#8DA0CB") + #"steelblue") + 
+p13 <- urine %>% ggplot(aes(sample = ph)) + 
+  stat_qq_band(alpha = 0.5,
+               bandType = "ts",
+               fill = "#8DA0CB") + 
+  stat_qq_line(col = "#8DA0CB") +
   stat_qq_point() +
   ggtitle("Tail-sensitive") +
   xlab("Theoretical quantiles") +
-  ylab("Observed quantiles of pH") +
+  ylab("Observed quantiles of pH measurements") +
   theme_bw() +
   theme(axis.text.y = element_blank(), 
         axis.ticks.y = element_blank(), 
         axis.title.y = element_blank()) +
   coord_cartesian(ylim = c(3.2, 8.7))
 
-grid.arrange(p9, p10, p11, ncol = 3, widths = c(1.11, 1, 1))
+p21 <- urine %>% ggplot(aes(sample = ph)) + 
+  stat_qq_band(alpha = 0.5,
+               bandType = "normal",
+               fill = "#66C2A5",
+               detrend = TRUE) + 
+  stat_qq_line(col = "#66C2A5",
+               detrend = TRUE) +
+  stat_qq_point(detrend = TRUE) +
+  ggtitle("Normal (Detrended)") +
+  xlab("Theoretical quantiles") +
+  ylab("Differences") +
+  theme_bw() +
+  coord_cartesian(ylim = c(-1, 1))
+
+p22 <- urine %>% ggplot(aes(sample = ph)) + 
+  stat_qq_band(alpha = 0.5,
+               bandType = "boot",
+               fill = "#FC8D62",
+               detrend = TRUE) + 
+  stat_qq_line(col = "#FC8D62",
+               detrend = TRUE)+
+  stat_qq_point(detrend = TRUE) +
+  ggtitle("Bootstrap (Detrended)") +
+  xlab("Theoretical quantiles") +
+  ylab("Differences") +
+  theme_bw() +
+  theme(axis.text.y = element_blank(), 
+          axis.ticks.y = element_blank(), 
+          axis.title.y = element_blank(),
+          plot.title = element_text(vjust = 0),
+          plot.margin = margin(t = 3.5, r = 5.5, b = 5.5, l = 5.5, unit = "pt")) +
+  coord_cartesian(ylim = c(-1, 1))
+
+p23 <- urine %>% ggplot(aes(sample = ph)) + 
+  stat_qq_band(alpha = 0.5,
+               bandType = "ts",
+               fill = "#8DA0CB",
+               detrend = TRUE) + 
+  stat_qq_line(col = "#8DA0CB", detrend = TRUE) +
+  stat_qq_point(detrend = TRUE) +
+  ggtitle("Tail-sensitive (Detrended)") +
+  xlab("Theoretical quantiles") +
+  ylab("Differences") +
+  theme_bw() +
+  theme(axis.text.y = element_blank(), 
+        axis.ticks.y = element_blank(), 
+        axis.title.y = element_blank()) +
+  coord_cartesian(ylim = c(-1, 1))
+
+grid.arrange(p11, p12, p13, p21, p22, p23, nrow = 2, ncol = 3, widths = c(1.11, 1, 1))
 ```
 
 \FloatBarrier
@@ -441,7 +442,7 @@ Using the capabilities of \pkg{qqplotr} with the distributions implemented in th
 To qualify for the 2012 Olympics in the men's long jump athletes had to meet/exceed the 8.1 meter standard or place in the top twelve. During the qualification events, each athlete was able to jump up to three times, using their best (i.e., longest) jump as the result. Figure \ref{fig:jump-density} shows a density plot of the results, which are clearly left skewed. 
 
 
-```{r jump-density, echo=FALSE, fig.width = 3.5, fig.height = 3.5, fig.cap = "Density plot of the 2012 men's long jump qualifying round. The distances are clearly left skewed.", out.width='0.45\\textwidth', fig.align="center", message=FALSE, warning = FALSE}
+```{r jump-density, echo=FALSE, message=FALSE, warning=FALSE, fig.width=3.5, fig.height=3.5, fig.cap="Density plot of the 2012 men's long jump qualifying round. The distances are clearly left skewed.", out.width='0.45\\textwidth', fig.align="center"}
 longjump <- na.omit(longjump)
 ggplot(longjump, aes(distance)) +
   geom_density(fill = "orange", color = "orange", alpha = 0.5) +
@@ -478,7 +479,7 @@ rsev <- function(n, mu = 0, sigma = 1) {
 
 With the `*sev` distribution functions in hand, we can create a Q-Q plot to assess the appropriateness of the SEV model (Figure \ref{fig:sev-qq}). The Q-Q plot shows that the distances do not substantially deviate from the SEV model, so we have found an adequate representation of the distances. The code used to create Figure \ref{fig:sev-qq} is given below:
 
-```{r sev-qq, fig.cap = "Q-Q plot comparing the long jump distances to the standard SEV distribution with 95\\% pointwise confidence bands. The SEV distribution appears to adequately model the distances.", fig.width = 3.5, fig.height = 3.5, out.width='0.45\\textwidth', fig.align="center", message=FALSE, warning = FALSE}
+```{r sev-qq, message=FALSE, warning=FALSE, fig.cap="Q-Q plot comparing the long jump distances to the standard SEV distribution with 95\\% pointwise confidence bands. The SEV distribution appears to adequately model the distances.", fig.width=3.5, fig.height=3.5, out.width='0.45\\textwidth', fig.align="center"}
 ggplot(longjump, aes(sample = distance)) +
   stat_qq_band(distribution = "sev", dparams = list(mu = 0, sigma = 1), 
                alpha = 0.3) +
@@ -495,7 +496,7 @@ ggplot(longjump, aes(sample = distance)) +
 
 <!-- \al{AL: It seems natural to have a subsection here, even if we continue the example, to allow people to skim the paper and find the topic they are most interested in. I tried to eliminate the techinical discussion of the plot since it is in the background section, instead describing the code. What do you think?} -->
 
-<!-- \pkg{qqplotr} also allows for Q-Q plots to be *detrended*. In a detrended Q-Q plot, the $y$-axis shows the difference between the empirical quantile and the reference line (i.e. the theoretical distribution). This layout directly plots what we want viewers to assess --the difference between the distributions being compared-- which \citet{Loy2016-fg} found to be more powerful than other designs, so long as the $y$-axis limits are set so that the aspect ratio is kept the same as in the traditional Q-Q plot. -->
+<!-- \pkg{qqplotr} also allows for Q-Q plots to be *detrended*. In a detrended Q-Q plot, the $y$-axis shows the difference between the empirical quantile and the reference line (i.e., the theoretical distribution). This layout directly plots what we want viewers to assess---the difference between the distributions being compared---which \citet{Loy2016-fg} found to be more powerful than other designs, so long as the $y$-axis limits are set so that the aspect ratio is kept the same as in the traditional Q-Q plot. -->
 
 To illustrate how to construct an adjusted detrended Q-Q plot using \pkg{qqplotr}, consider detrending Figure \ref{fig:sev-qq}. This is done by adding the argument `detrend = TRUE` to `stat_qq_point`, `stat_qq_line`, and `stat_qq_band`. To adjust the aspect ratio to ensure that vertical and horizontal distances are on the same scale we further add `coord_fixed(ratio=1)`. We leave it to the user to adjust the $y$-axis limits on a case-by-case basis. The full command to construct Figure \ref{fig:detrend-sev} is given below:
 
@@ -785,7 +786,7 @@ ggplot(data.frame(x = chisq1), aes(sample = x)) +
 
 ## Discussion
 
-This paper presents the \pkg{qqplotr} package, an extension of \pkg{ggplot2} that implements Q-Q plots in both the standard and de-trended orientations, reference lines for Q-Q plots, and confidence bands for Q-Q plots. The examples illustrate how to create Q-Q plots for non-standard distributions found outside of the \pkg{stats}, how to create de-trend Q-Q plots, and how to create Q-Q plots when data are grouped. Further, in the BRFSS example, we illustrated how jittering can be used in Q-Q plots to better compare discretized data to a continuous distribution.
+This paper presents the \pkg{qqplotr} package, an extension of \pkg{ggplot2} that implements Q-Q plots in both the standard and detrended orientations, reference lines for Q-Q plots, and confidence bands for Q-Q plots. The examples illustrate how to create Q-Q plots for non-standard distributions found outside of the \pkg{stats}, how to create de-trend Q-Q plots, and how to create Q-Q plots when data are grouped. Further, in the BRFSS example, we illustrated how jittering can be used in Q-Q plots to better compare discretized data to a continuous distribution.
 
 
 Q-Q plots are members of the larger probability plotting family, and future versions of \pkg{qqplotr} will incorporate additional plots. Specifically, two types of probability plots will be included:
@@ -795,7 +796,7 @@ Q-Q plots are members of the larger probability plotting family, and future vers
 
 It is important to note that all of the probability plotting methods discussed---Q-Q plots, standardized P-P plots, and probability plots---are invariant to linear transformations. Consequently, each type of plot will exhibit a linear relationship between the sample and hypothesized distribution for location-scale families, even if the location and/or scale parameters in the sample differ from the hypothesized distribution. This is not the case with unstandardized P-P plots \citep{Wilk1968-ii}, so they will not be included in \pkg{qqplotr}.
 
-We have made design choices in \pkg{qqplotr} that we believe are in line with best practices for distributional assessment, but the implementation is flexible enough to allow for easy customization. For example, maximum likelihood estimation is used to estimate the parameters of the proposed model, but if outliers are present robust estimators may be desirable, such as if you are comparing the empirical distribution to the normal distribution. In this scenario, robust estimates of the location and scale can be obtained using the \pkg{robustbase} package \citep{robustbase}, and specified using the `dparams` argument directly. This is especially useful if you wish to use the parametric bootstrap to build confidence bands. Similarly, `stat_qq_line` \Aa{implements a reference line that passes through two quantiles of the distributions -- by default, the first and third quartiles, but this is easily changable by using the `qprobs` argument.} While this is the most commonly used reference line, alternative reference lines \Aa{that are not based on quantiles of the distributions} can be quickly implemented using `ggplot2::geom_abline` by specifying the slope and intercept.
+We have made design choices in \pkg{qqplotr} that we believe are in line with best practices for distributional assessment, but the implementation is flexible enough to allow for easy customization. For example, maximum likelihood estimation is used to estimate the parameters of the proposed model, but if outliers are present robust estimators may be desirable, such as if you are comparing the empirical distribution to the normal distribution. In this scenario, robust estimates of the location and scale can be obtained using the \pkg{robustbase} package \citep{robustbase}, and specified using the `dparams` argument directly. This is especially useful if you wish to use the parametric bootstrap to build confidence bands. Similarly, `stat_qq_line` \Aa{implements a reference line that passes through two quantiles of the distributions -- by default, the first and third quartiles, but this is easily changable by using the `qprobs` argument.} While this is the most traditional used reference line, alternative reference lines \Aa{that are not based on quantiles of the distributions} can be quickly implemented using `ggplot2::geom_abline` by specifying the slope and intercept.
 
 
 
