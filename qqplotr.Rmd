@@ -144,7 +144,7 @@ Various implementations of Q-Q plots exist in R. Normal Q-Q plots, where a sampl
 
 ### `stat_qq_point`
 
-This modified version of `stat_qq`/`geom_qq` (from \pkg{ggplot2}) plots the sample quantiles versus the theoretical quantiles (as done in Figure \ref{fig:ex-qq1}). The novelty of this implementation is an option to detrend the plotted points (see \nameref{sec:background}). Note that all other transformations in the \pkg{qqplotr} package also allow for the detrend option. Below we present a complete call to `stat_qq_point` and highlight the default values of its parameters:
+This modified version of `stat_qq`/`geom_qq` (from \pkg{ggplot2}) plots the sample quantiles versus the theoretical quantiles (as done in Figure \ref{fig:ex-qq1}). The novelty of this implementation is an option to detrend the plotted points. Note that all other transformations in the \pkg{qqplotr} package also allow for the detrend option. Below we present a complete call to `stat_qq_point` and highlight the default values of its parameters:
 
 ```{r eval=FALSE}
 stat_qq_point(
@@ -167,19 +167,19 @@ stat_qq_point(
 
 * Parameters such as `data`, `mapping`, `geom`, `position`, `na.rm`, `show.legend`, and `inherit.aes` are commonly found among several \pkg{ggplot2} transformations.
 
-* `distribution` is a character string that sets the theoretical probability distribution. Here, we followed the nomenclature from the \pkg{stats} package, but rather than requiring the full function name for a distribution (e.g., `"dnorm"`), only the suffix is required (e.g., `"norm"`). If you wish to provide a custom distribution, then you must first create its density (PDF), distribution (CDF), quantile, and simulation functions, following the nomenclature outlined in the \pkg{stats} package (i.e., for `"custom"`, you must provide the `dcustom`, `pcustom`, `qcustom`, and  `rcustom` functions). A detailed example is given in the \nameref{sec:user-dists} section.
+* `distribution` is a character string that sets the theoretical probability distribution. Here, we followed the nomenclature from the \pkg{stats} package, but rather than requiring the full function name for a distribution (e.g., `"dnorm"`), only the suffix is required (e.g., `"norm"`). If you wish to provide a custom distribution, then you must first create its density (PDF), distribution (CDF), quantile, and simulation functions, following the nomenclature outlined in the \pkg{stats} package. For example, for `"custom"`, you must provide the `dcustom`, `pcustom`, `qcustom`, and  `rcustom` functions. A detailed example is given in the \nameref{sec:user-dists} section.
 
-* `dparams` is a named list specifying the parameters of the proposed `distribution`. By default, maximum likelihood etimates (MLEs) are used, so this argument overrides this default. Please note that MLEs are currently only supported for distributions available in the \pkg{stats} package, so if a custom distribution is provided to `distribution`, then *all* of its parameters have to be estimated somehow and included in `dparams`.
+* `dparams` is a named list specifying the parameters of the proposed `distribution`. By default, maximum likelihood etimates (MLEs) are used, so this argument overrides this default. Please note that MLEs are currently only supported for distributions available in the \pkg{stats} package, so if a custom distribution is provided to `distribution`, then *all* of its parameters have to be estimated somehow and passed as a named list to `dparams`.
 
-* `detrend` is a logical that controls whether the points should be detrended (as shown in Figure \ref{fig:ex-detrend}). For additional details, we refer the reader to the \nameref{sec:detrending} section.
+* `detrend` is a logical that controls whether the points should be detrended (as shown in Figure \ref{fig:ex-detrend}). For additional details, see the \nameref{sec:detrending} section.
 
-* `identity` is only used when `detrend = TRUE`. This parameter is a logical that controls if the identity line should be used as the reference line when constructing the detrended Q-Q plot. By default, the identity reference line is used. If `identity = FALSE`, then the points will be detrended according to the traditional Q-Q line that intercepts two data quantiles specified in \code{qprobs}
+* `identity` is only used when `detrend = TRUE`. This parameter is a logical that controls if the identity line should be used as the reference line when constructing the detrended Q-Q plot. By default, the identity reference line is used. If `identity = FALSE`, then the points will be detrended according to the traditional Q-Q line that intersects the two data quantiles specified in \code{qprobs}
 
 * `qtype` and `qprobs` are only used when `detrend = TRUE` and `identity = FALSE`. These parameters are passed onto the `type` and `probs` parameters of the `quantile` function from \pkg{stats}, both of which are used to specify which quantiles that the reference line (i.e., the proposed model) passes through.
 
 ### `stat_qq_line`
 
-\Aa{This statistical transformation draws a reference line based on the identity line or some of the sample data quantiles.}
+\Aa{This statistical transformation draws a reference line based on the identity line or two sample quantiles.}
 
 ```{r eval=FALSE}
 stat_qq_line(
@@ -200,7 +200,7 @@ stat_qq_line(
   )
 ```
 
-Nearly all of the parameters for `stat_qq_line` are identical to those for `stat_qq_point`. The one exception is `identity`, which has a slightly different interpretation. In `stat_qq_line`, `identity` is *always* used, regardless of the value of `detrend`. This parameter controls which reference line that is drawn:
+Nearly all of the parameters for `stat_qq_line` are identical to those for `stat_qq_point`. The one exception is `identity`, which has a slightly different interpretation. In `stat_qq_line`, `identity` is *always* used, regardless of the value of `detrend`. This parameter controls which reference line is drawn:
 
 a) When `identity = TRUE`, the *identity line* is drawn. By definition of a Q-Q plot the *identity line* represents the theoretical distribution.
 b) When `identity = FALSE`, the *Q-Q line* is drawn. This line estimates the empirical distribution. 
@@ -256,6 +256,8 @@ grid.arrange(p11, p12, p21, p22, nrow = 2, ncol = 2)
 
 \Aa{AA: I suppose we need to rework the following paragraph, since the identity line is now used as default:}
 
+\al{I found myself asking if the paragraph below was necessary/out of place now that we have made some changes to the package and adjusted the above exposition.}
+
 By default the Q-Q line is drawn through two points, corresponding to the .25 and .75 quantiles of the distributions on $x$ (theoretical distribution) and $y$ (empirical distribution). While we are using MLEs to identify the theoretical distribution, these estimates are only used in determining the $x$-coordinates of these points. For the $y$ coordinates, the 1st and 3rd quartiles are used by default for more robust estimation. Therefore, the difference between the observed and theoretical distributions presents itself in the difference between the Q-Q line and the identity line. Using robust estimates for the Q-Q line is of particular advantage for small samples \citep{Loy2016-fg}.
 
 ### `stat_qq_band`
@@ -287,11 +289,11 @@ stat_qq_band(
 ```
 
 * `bandType` is a character string controlling the method used to construct the confidence bands:
-    + **Normal:** Specifying `bandType = "normal"` constructs pointwise confidence bands based on a normal approximation to the distribution of the order statistics. For example, an approximate 95\% confidence interval for the $i$th order statistic is \linebreak $\widehat{X}_{(i)}~\pm~\Phi^{-1}(.975)~\cdot~SE(X_{(i)})$, where $\widehat{X}_{(i)}$ denotes the value along the fitted referene line, $\Phi^{-1}(\cdot)$ denotes the quantile function for the Standard Normal Distribution, and $SE(X_{(i)})$ is the standard error of the $i$th order statistic.
+    + **Normal:** Specifying `bandType = "normal"` constructs pointwise confidence bands based on a normal approximation to the distribution of the order statistics. For example, an approximate 95\% confidence interval for the $i$th order statistic is \linebreak $\widehat{X}_{(i)}~\pm~\Phi^{-1}(.975)~\cdot~SE(X_{(i)})$, where $\widehat{X}_{(i)}$ denotes the value along the fitted reference line, $\Phi^{-1}(\cdot)$ denotes the quantile function for the Standard Normal Distribution, and $SE(X_{(i)})$ is the standard error of the $i$th order statistic.
     + **Bootstrap:** Specifying `bandType = "boot"` constructs pointwise confidence bands using percentile confidence intervals from the parametric bootstrap.
-    + **Tail-sensitive:** Specifying `bandType = "ts"` constructs the simulation-based tail-sensitive simultaneous confidence bands proposed by \citet{Aldor-Noiman2013-xw}.
+    + **Tail-sensitive:** Specifying `bandType = "ts"` constructs the simulation-based tail-sensitive simultaneous confidence bands proposed by \citet{Aldor-Noiman2013-xw}. \al{Currently, TS bands are only implemented for `distribution = norm`.}
 
-* `B` is a dual-purpose integer parameter: it specifies the number of bootstrap replicates, if `bandType = "boot"`, or the number of simulated samples, if `bandType = "ts"`.
+* `B` is a dual-purpose integer parameter: it specifies the number of bootstrap replicates, if `bandType = "boot"`, or the number of simulated samples if `bandType = "ts"`.
 
 * `conf` is a numerical variable, bound between 0 and 1, that sets the confidence level of the bands.
 
@@ -299,8 +301,7 @@ stat_qq_band(
 
 ### Groups in `qqplotr`
 
-`qqplotr` is implemented in accordance with the `ggplot2` concept of groups. When the user maps values to aesthetics that explicitly (by using `group`) or implicitly (such as `shape` or discrete values of `colour`, `size` etc.) introduce groups, the corresponding calculations respect the grouping in the data. All groups are compared to the same distributional family, but the parameters are estimated *separately* for each of the groups (given that `dparams = NULL`). If the user wants to fit the *same* distribution (i.e., same parameter estimates) to each group, then the estimates must be manually calculated and passed onto `dparams` as a named list for each of the desired \pkg{qqplotr} transformations.
-
+`qqplotr` is implemented in accordance with the `ggplot2` concept of groups. When the user maps values to aesthetics that explicitly (by using `group`) or implicitly (such as `shape` or discrete values of `colour`, `size` etc.) introduce groups, the corresponding calculations respect the grouping in the data. All groups are compared to the same distributional family, but the parameters are estimated *separately* for each of the groups (given that `dparams = NULL`). If the user wants to fit the *same* distribution (i.e., same parameter estimates) to each group, then the estimates must be manually calculated and passed to `dparams` as a named list for each of the desired \pkg{qqplotr} transformations.
 The use of groups is illustrated in more detail in the \nameref{sec:brfss} section.
 
 \FloatBarrier
