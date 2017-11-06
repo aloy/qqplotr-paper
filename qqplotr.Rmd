@@ -323,7 +323,9 @@ We start by plotting a normal Q-Q plot of the data. The top-left plot in Figure 
 
 As previously discussed, three distinct approaches are availble in \pkg{qqplotr} to construct the confidence bands. 
 <!-- For instance, \citet{Aldor-Noiman2013-xw} discuss that their proposed tail-sensitive simultaneous confidence bands offers more statistical power, especially when distinguishing normal distributions from mildy or heavy-tailed distributions. -->
-The top row from Figure \ref{fig:urine-qq-bands} presents three plots with the different confidence bands drawn over the same normal Q-Q points and identity lines. The bottom row from Figure \ref{fig:urine-qq-bands} presents the detrended version of the those plots, which will be used to aid in the visual inference.
+The top row from Figure \ref{fig:urine-qq-bands} presents three plots with the different confidence bands drawn over the same normal Q-Q points and identity lines. The bottom row from Figure \ref{fig:urine-qq-bands} presents the detrended version of the those plots.
+
+\al{The next paragraph is confusing. If we want to talk about a specific point, then we should highlight it on the plots using a different color. This will help reduce cognitive load on the reader. Also, the final conclusion from the TS version seems off: when using simultaneous bands, we would reject normality if a point is outside the bands, whereas we are unlikely to do so using pointwise bands (if you assume the analyst knows a bit about probability). We should clean up this discussion a bit.}
 
 When assessing the tail-sensitive confidence bands (bottom-right), we can see that an additional point is inside the confidence bands when compared to the normal (bottom-left) and the bootstrap confidence bands methods (bottom-center). In addition, the points from the distribution center of mass are also more distant from tail-sensitive confidence bands limits when compared to the other methods. Hence, one could conclude by looking at the tail-sensitive plot at the bottom-right that, even though the normal distribution seems like a slightly rough approximation, the assumption of normality is reasonable for the urine pH measurements. By inspecting the other confidence bands methods, in turn, one might be in doubt about the assumption of normality.
 
@@ -432,9 +434,9 @@ grid.arrange(p11, p12, p13, p21, p22, p23, nrow = 2, ncol = 3, widths = c(1.11, 
 ### User-provided distributions
 \label{sec:user-dists}
 
-Using the capabilities of \pkg{qqplotr} with the distributions implemented in the \pkg{stats} package is relatively straightfoward, since the implementation allows you to specify the suffix (i.e., distribution and or abbreviation) via the `distribution` argument and the parameter estimates via the `dparams` argument. However, there are times when the distributions in \pkg{stats} are not sufficient for the demands of the analysis. For example, there is no left-skewed distribution listed. User-coded distributions, or distributions from other packages, can be used with \pkg{qqplotr} as long as the distributions are defined following the conventions laid out in the \pkg{stats} package. Specfically, for some distribution there must be density/mass (`d` prefix), CDF (`p` prefix), quantile (`q` prefix), and simulation (`r` prefix) functions. In this section, we illustrate the use of the smallest extreme value distribution (SEV).
+Using the capabilities of \pkg{qqplotr} with the distributions implemented in the \pkg{stats} package is relatively straightfoward, since the implementation allows you to specify the suffix (i.e., distribution and or abbreviation) via the `distribution` argument and the parameter estimates via the `dparams` argument. However, there are times when the distributions in \pkg{stats} are not sufficient for the demands of the analysis. For example, there is no left-skewed distribution listed \al{aside from the Beta Distribution, which has a restrictive support.} User-coded distributions, or distributions from other packages, can be used with \pkg{qqplotr} as long as the distributions are defined following the conventions laid out in the \pkg{stats} package. Specfically, for some distribution there must be density/mass (`d` prefix), CDF (`p` prefix), quantile (`q` prefix), and simulation (`r` prefix) functions. In this section, we illustrate the use of the smallest extreme value distribution (SEV).
 
-To qualify for the 2012 Olympics in the men's long jump athletes had to meet/exceed the 8.1 meter standard or place in the top twelve. During the qualification events, each athlete was able to jump up to three times, using their best (i.e., longest) jump as the result. Figure \ref{fig:jump-density} shows a density plot of the results, which are clearly left skewed. 
+To qualify for the 2012 Olympics in the men's long jump, athletes had to meet/exceed the 8.1 meter standard or place in the top twelve. During the qualification events, each athlete was able to jump up to three times, using their best (i.e., longest) jump as the result. Figure \ref{fig:jump-density} shows a density plot of the results, which are clearly left skewed. 
 
 ```{r jump-density, echo=FALSE, message=FALSE, warning=FALSE, fig.width=3.5, fig.height=3.5, fig.cap="Density plot of the 2012 men's long jump qualifying round. The distances are clearly left skewed.", out.width='0.45\\textwidth', fig.align="center"}
 longjump <- na.omit(longjump)
@@ -605,10 +607,12 @@ sample_ia <- iowa %>%
   dplyr::select(SEX, WTKG3, HTIN4) %>%
   mutate(Gender = c("Male", "Female")[SEX])
 
-params <- iowa %>% filter(!is.na(HTIN4)) %>% summarize(
-  m = mean(HTIN4),
-  s = sd(HTIN4)
-)
+params <- iowa %>% 
+  filter(!is.na(HTIN4)) %>% 
+  summarize(
+    m = mean(HTIN4),
+    s = sd(HTIN4)
+  )
 
 customization <- list(scale_fill_brewer(palette="Set1"),
   scale_colour_brewer(palette = "Set1"),
@@ -654,7 +658,7 @@ p2 <- sample_ia %>%
   ylab("Jittered Height (in inch)") 
 ```
 
-By using jittering we diminish the effect that discreteness has on the distribution and brings the observed distribution much closer to a normal distribution. Note that separate normal distributions were fit to each gender. Unsurprisingly, the resulting distributions have different means (women are, on average, 6 inches shorter than men in this dataset). Interestingly, the slope of the two genders is similar, indicating that the same scale parameter fits both genders' distributions (the standard deviation of height in the data set is 2.97 inch for men and 2.91 inch for women, see Table \ref{tab:heights}). The dark line between the two groups is the identity line, representing the theoretical distribution each group is compared to. This distribution is based on parameters estimated from the whole population (see Table \ref{tab:heights} for the estimates). While the mean is about half way between the gender means,  the standard deviation of the height based on the whole population is larger, as seen by the steeper slope of the identity compared to the lines for each group.
+By using jittering we diminish the effect that discreteness has on the distribution and brings the observed distribution much closer to a normal distribution. Note that separate normal distributions were fit to each gender. \al{XX I think that we need a note here explaining why we needed to specify dparams rather than letting qqplotr fit the MLEs.} Unsurprisingly, the resulting distributions have different means (women are, on average, 6 inches shorter than men in this dataset). Interestingly, the slope of the two genders is similar, indicating that the same scale parameter fits both genders' distributions (the standard deviation of height in the data set is 2.97 inch for men and 2.91 inch for women, see Table \ref{tab:heights}). The dark line between the two groups is the identity line, representing the theoretical distribution each group is compared to. This distribution is based on parameters estimated from the whole population (see Table \ref{tab:heights} for the estimates). While the mean is about half way between the gender means,  the standard deviation of the height based on the whole population is larger, as seen by the steeper slope of the identity compared to the lines for each group.
 
 ```{r heights-table, echo=FALSE, results="asis"}
 bygender <- iowa %>% group_by(SEX) %>%
