@@ -36,14 +36,14 @@ used.
   \item
     Colors/themes/sizes for the plots.
   \item
-    Use ``normal'' when not specifying (e.g., ``a normal
-    distribution''). Use ``Normal'' when specifying (e.g., ``the
-    Standard Normal Distribution'')
+    Use ``normal'' when not specifying (as in ``a normal
+    distribution''). Use ``Normal'' when specifying (as in ``the
+    Standard Normal Distribution'').
   \item
     Use ``colour'' instead of ``color'' when using ggplot2 functions due
     to compatibility reasons.
   \item
-    Dashing ponctuation: use em dashes (---) instead of en dashes (--).
+    Dashing punctuation: use em dashes (---) instead of en dashes (--).
     Don't place spaces before or after them.
   \end{itemize}
 \end{itemize}
@@ -235,7 +235,7 @@ stat_qq_point(
   details, we refer the reader to the \nameref{sec:detrending} section.
 \item
   \texttt{identity} is only used when \texttt{detrend\ =\ TRUE}. This
-  paraameter is a logical that controls if the identity line should be
+  parameter is a logical that controls if the identity line should be
   used as the reference line when constructing the detrended Q-Q plot.
   By default, the identity reference line is used. If
   \texttt{identity\ =\ FALSE}, then the points will be detrended
@@ -252,7 +252,7 @@ stat_qq_point(
 
 \subsubsection{\texorpdfstring{\texttt{stat\_qq\_line}}{stat\_qq\_line}}\label{stat_qq_line}
 
-\Aa{This statistical transformation draws a reference line based on the identity line or two of the sample data quantiles.}
+\Aa{This statistical transformation draws a reference line based on the identity line or some of the sample data quantiles.}
 
 \begin{Schunk}
 \begin{Sinput}
@@ -398,9 +398,9 @@ stat_qq_band(
   \texttt{mu} and \texttt{sigma} are only used when
   \texttt{bandType\ =\ "ts"}. They represent the center and scale
   parameters, respectively, used to construct the simulated
-  tail-sensitive confidence bands. If \texttt{NULL}, then both the
-  center and scale parameters will be estimated using robust estimates
-  via \pkg{robustbase} \citep{robustbase}.
+  tail-sensitive confidence bands. If either is \texttt{NULL}, then
+  \emph{both} the center and scale parameters will be estimated using
+  robust estimates via \pkg{robustbase} \citep{robustbase}.
 \end{itemize}
 
 \subsubsection{\texorpdfstring{Groups in
@@ -473,7 +473,7 @@ compared to the normal (bottom-left) and the bootstrap confidence bands
 methods (bottom-center). In addition, the points from the distribution
 center of mass are also more distant from tail-sensitive confidence
 bands limits when compared to the other methods. Hence, one could
-conclude by looking at the tail-sensitive plot at the bottom-left that,
+conclude by looking at the tail-sensitive plot at the bottom-right that,
 even though the normal distribution seems like a slightly rough
 approximation, the assumption of normality is reasonable for the urine
 pH measurements. By inspecting the other confidence bands methods, in
@@ -486,7 +486,7 @@ turn, one might be in doubt about the assumption of normality.
 
 }
 
-\caption{Normal Q-Q plots of pH measurements from urine samples using different confidence bands. Depending on the type of confidence band used, we come to different conclusions. \Aa{AA: Not sure about how much (and if) to include of the code chunk used to produce}}\label{fig:urine-qq-bands}
+\caption{Normal Q-Q plots of pH measurements from urine samples using different confidence bands. Depending on the type of confidence band used, we come to different conclusions. \Aa{AA: Not sure about how much (and if) to include of the code chunk used to produce these plots.}}\label{fig:urine-qq-bands}
 \end{figure}
 \end{Schunk}
 
@@ -604,17 +604,15 @@ ggplot(longjump, aes(sample = distance)) +
 
 \label{sec:detrending}
 
-\al{Need to get the detrended plot working here, updating the short first paragraph if needed.}
-
 To illustrate how to construct an adjusted detrended Q-Q plot using
 \pkg{qqplotr}, consider detrending Figure \ref{fig:sev-qq}. This is done
 by adding the argument \texttt{detrend\ =\ TRUE} to
 \texttt{stat\_qq\_point}, \texttt{stat\_qq\_line}, and
 \texttt{stat\_qq\_band}. To adjust the aspect ratio to ensure that
 vertical and horizontal distances are on the same scale we further add
-\texttt{coord\_fixed(ratio=1)}. We leave it to the user to adjust the
-\(y\)-axis limits on a case-by-case basis. The full command to construct
-Figure \ref{fig:detrend-sev} is given below:
+\texttt{coord\_fixed(ratio\ =\ 1)}. We leave it to the user to adjust
+the \(y\)-axis limits on a case-by-case basis. The full command to
+construct Figure \ref{fig:detrend-sev} is given below:
 
 \begin{Schunk}
 \begin{figure}
@@ -636,22 +634,23 @@ ggplot(longjump, aes(sample = distance)) +
     identity = FALSE,
     dparams = c(mu = 0, sigma = 1),  
     alpha = 0.3
-    ) +
+  ) +
   stat_qq_line(
     distribution = "sev", 
     detrend = TRUE, 
     identity = FALSE,
     dparams = c(mu = 0, sigma = 1)
-    ) +
+  ) +
   stat_qq_point(
     distribution = "sev", 
-    detrend = TRUE, 
+    detrend = TRUE,
+    identity = FALSE,
     dparams = c(mu = 0, sigma = 1)
-    ) +
+  ) +
   xlab("SEV quantiles") +
   ylab("Differences") +
   theme_bw() +
-  coord_fixed(ratio=1)
+  coord_fixed(ratio = 1)
 \end{Sinput}
 \end{Schunk}
 
@@ -701,6 +700,7 @@ params <- iowa %>% filter(!is.na(HTIN4)) %>% summarize(
   m = mean(HTIN4),
   s = sd(HTIN4)
 )
+
 customization <- list(scale_fill_brewer(palette="Set1"),
   scale_colour_brewer(palette = "Set1"),
   xlab("Theoretical quantiles"),
@@ -714,32 +714,32 @@ p1 <- sample_ia %>%
   stat_qq_band(
     alpha = 0.3, 
     identity = FALSE,
-    dparams=list(mean=params$m, sd=params$s)
+    dparams = list(mean = params$m, sd = params$s)
   ) + 
   stat_qq_line( 
     identity = FALSE,
-    dparams=list(mean=params$m, sd=params$s)
+    dparams = list(mean = params$m, sd = params$s)
   ) + 
   stat_qq_point( 
-    dparams=list(mean=params$m, sd=params$s)
+    dparams = list(mean = params$m, sd = params$s)
   ) +
   customization
 
 p2 <- sample_ia %>% 
   mutate(HTIN4.jitter = jitter(HTIN4, factor = 2)) %>% 
-  ggplot(aes(sample = HTIN4.jitter, colour=Gender, fill=Gender)) + 
-  geom_abline(slope=1, intercept=0, colour = "grey40") +
+  ggplot(aes(sample = HTIN4.jitter, colour = Gender, fill = Gender)) + 
+  geom_abline(slope = 1, intercept = 0, colour = "grey40") +
   stat_qq_band(
     alpha = 0.3, 
     identity = FALSE,
-    dparams = list(mean=params$m, sd=params$s)
+    dparams = list(mean = params$m, sd = params$s)
   ) +
   stat_qq_line(
     identity = FALSE,
-    dparams = list(mean=params$m, sd=params$s)
+    dparams = list(mean = params$m, sd = params$s)
   ) + 
   stat_qq_point(
-    dparams = list(mean=params$m, sd=params$s)
+    dparams = list(mean = params$m, sd = params$s)
   ) +
   customization +
   ylab("Jittered Height (in inch)") 
@@ -804,12 +804,12 @@ reasonable, with the exception of a few extreme outliers.
 
 }
 
-\caption[Q-Q plots comparing weights to the normal distribution for a sample of 200 men and 200 women]{Q-Q plots comparing weights to the normal distribution for a sample of 200 men and 200 women. Unlike people's height, weight seems to be heavily right skewed with some additional outliers in the left tail (left plot). On the right, weight was log-transfomed before its distribution is compared to a theoretical normal. }\label{fig:weights}
+\caption[Q-Q plots comparing weights to the normal distribution for a sample of 200 men and 200 women]{Q-Q plots comparing weights to the normal distribution for a sample of 200 men and 200 women. Unlike people's height, weight seems to be heavily right skewed with some additional outliers in the left tail (left plot). On the right, weight was log-transfomed before its distribution is compared to a theoretical normal.}\label{fig:weights}
 \end{figure}
 \end{Schunk}
 
 Instead of log-transforming the observed weights, we can change the
-theoretical distribution to lognormal. Figure \ref{fig:weights-log}
+theoretical distribution to a lognormal. Figure \ref{fig:weights-log}
 shows two lognormal Q-Q plots, one for each gender. note that by
 default, the MLEs are used to parameterize the lognormal distribution
 for each group:
@@ -818,7 +818,7 @@ for each group:
 \begin{Sinput}
 p4 <- sample_ia %>% 
   ggplot(aes(sample = WTKG3 / 100, colour = Gender, fill = Gender)) +
-  geom_abline(colour = "grey60") +
+  geom_abline(colour = "grey40") +
   stat_qq_band(
     distribution = "lnorm",
     dparams = list(meanlog = mlog, sdlog = sdlog),
@@ -837,7 +837,7 @@ p4 <- sample_ia %>%
 
 p6 <- sample_ia %>% 
   ggplot(aes(sample = WTKG3 / 100, colour = Gender, fill = Gender)) +
-  geom_abline(colour="grey60") +
+  geom_abline(colour = "grey40") +
   stat_qq_band(
     distribution = "lnorm", 
     alpha = 0.3
@@ -848,7 +848,7 @@ p6 <- sample_ia %>%
   stat_qq_point(
     distribution = "lnorm"
   ) +
-  customization + facet_grid(.~Gender)
+  customization + facet_grid(. ~ Gender)
 \end{Sinput}
 \begin{figure}
 
@@ -867,7 +867,7 @@ This paper presents the \pkg{qqplotr} package, an extension of
 detrended orientations, reference lines for Q-Q plots, and confidence
 bands for Q-Q plots. The examples illustrate how to create Q-Q plots for
 non-standard distributions found outside of the \pkg{stats}, how to
-create de-trend Q-Q plots, and how to create Q-Q plots when data are
+create detrended Q-Q plots, and how to create Q-Q plots when data are
 grouped. Further, in the BRFSS example, we illustrated how jittering can
 be used in Q-Q plots to better compare discretized data to a continuous
 distribution.
@@ -896,7 +896,7 @@ Specifically, two types of probability plots will be included:
   plot of \(F(x_i)\) against \(x_i\). The linearizing transformation of
   the hypothesized CDF is found by first finding a transformation that
   linearizes the quantile function---i.e., linearizing the plot of
-  \(F^{-1}(p)\) vs \(x_p\)---and then mapping \(F^{-1}(p)\) back to the
+  \(F^{-1}(p)\) vs. \(x_p\)---and then mapping \(F^{-1}(p)\) back to the
   probability scale \citep[cf.][Chapter 6]{Meeker1998}.
 \end{enumerate}
 
@@ -916,18 +916,16 @@ implementation is flexible enough to allow for easy customization. For
 example, maximum likelihood estimation is used to estimate the
 parameters of the proposed model, but if outliers are present robust
 estimators may be desirable, such as if you are comparing the empirical
-distribution to the normal distribution. In this scenario, robust
+distribution to a normal distribution. In this scenario, robust
 estimates of the location and scale can be obtained using the
 \pkg{robustbase} package \citep{robustbase}, and specified using the
-\texttt{dparams} argument directly. This is especially useful if you
+\texttt{dparams} parameter directly. This is especially useful if you
 wish to use the parametric bootstrap to build confidence bands.
 Similarly, \texttt{stat\_qq\_line}
-\Aa{implements a reference line that passes through two quantiles of the distributions -- by default, the first and third quartiles, but this is easily changable by using the `qprobs` argument.}
-While this is the most traditional used reference line, alternative
-reference lines
-\Aa{that are not based on quantiles of the distributions} can be quickly
-implemented using \texttt{ggplot2::geom\_abline} by specifying the slope
-and intercept.
+\Aa{implements two types of reference lines: one that is the identity line, and another that passes through two quantiles of the distributions, such as the first and third quartiles}.
+While those are the most traditional used reference lines, alternative
+ones can be quickly implemented, for instance, using
+\texttt{ggplot2::geom\_abline} by specifying the slope and intercept.
 
 \bibliography{RJreferences}
 
