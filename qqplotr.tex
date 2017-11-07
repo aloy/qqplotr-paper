@@ -8,14 +8,15 @@
 Univariate distributional assessment is a common thread throughout
 statistical analyses during both the exploratory and confirmatory
 stages. Q-Q plots compare two distributions by matching a common set of
-quantiles. Additional graphical elements are often added to Q-Q plots in
-order to aid in distributional assessment. Different orientations of Q-Q
-plots have also been proposed, most notably the detrended Q-Q plot.
-Various implementations of Q-Q plots exist in R. \pkg{qqplotr} extends
-\pkg{ggplot2} to provide a complete implementation of Q-Q plots. In the
-remainder of this paper, we will introduce the plotting framework
-provided by \pkg{qqplotr} and provide multiple examples of how it can be
-used.
+quantiles and displaying them as a scatterplot. To aid in the
+interpretation of Q-Q plots, reference lines and confidence bands are
+often added. Another approach to aid in interpretation is to detrend the
+Q-Q plot so the vertical comparisons of interest are the focus. While
+various implementations of Q-Q plots exist in R, none implement all of
+these features. \pkg{qqplotr} extends \pkg{ggplot2} to provide a
+complete implementation of Q-Q plots. This paper introduces the plotting
+framework provided by \pkg{qqplotr} and provides multiple examples of
+how it can be used.
 }
 
 \newcommand{\hh}[1]{{\textcolor{orange}{#1}}}
@@ -71,14 +72,14 @@ theoretical distribution, a Q-Q plot is simply a scatterplot of the
 sample quantiles, \(y_{(i)}\), against the corresponding quantiles from
 the theoretical distribution, \(F^{-1}\left( F_n(y_{(i)}) \right)\). If
 the empirical distribution is consistent with the theoretical
-distribution, then the Q-Q plot will be linear. For example, Figure
-\ref{fig:ex-qq1} shows two Q-Q plots: the left plot compares a sample
-drawn from a lognormal distribution to a lognormal distribution, while
-the right plot compares a sample drawn from a lognormal distribution to
-a normal distribution. As expected, the lognormal Q-Q plot is
-approximately linear, as the data and model are in agreement, while the
-normal Q-Q plot is curved, indicating disagreement between the data and
-the model.
+distribution, then the Q-Q plot will be linear. For example,
+Figure\textasciitilde{}\ref{fig:ex-qq1} shows two Q-Q plots: the left
+plot compares a sample drawn from a lognormal distribution to a
+lognormal distribution, while the right plot compares a sample drawn
+from a lognormal distribution to a normal distribution. As expected, the
+lognormal Q-Q plot is approximately linear, as the data and model are in
+agreement, while the normal Q-Q plot is curved, indicating disagreement
+between the data and the model.
 
 \begin{Schunk}
 \begin{figure}
@@ -99,9 +100,9 @@ two pairs of quantiles, such as the first and third quartiles. Pointwise
 or simultaneous confidence bands are also frequently built around the
 reference line to display the expected degree of sampling error for the
 proposed model. Such bands help gauge how troubling a departure from the
-proposed model may be. Figure \ref{fig:ex-qq2} adds identity reference
-lines and 95\% pointwise confidence bands to the Q-Q plots in
-Figure\textasciitilde{}\ref{fig:ex-qq1}.
+proposed model may be. Figure\textasciitilde{}\ref{fig:ex-qq2} adds
+identity reference lines and 95\% pointwise confidence bands to the Q-Q
+plots in Figure\textasciitilde{}\ref{fig:ex-qq1}.
 
 \begin{Schunk}
 \begin{figure}
@@ -126,9 +127,10 @@ is called an \emph{adjusted detrended Q-Q plot}. Without this adjustment
 to the range of the axes \emph{ordinary detrended Q-Q plots} are
 produced, which were found to have lower power than the standard Q-Q
 plot in some situations \citep{Loy2016-fg}, while the adjusted detrended
-Q-Q plots were found to be more powerful. Figure \ref{fig:ex-detrend}
-displays the Q-Q plot from Figure\textasciitilde{}\ref{fig:ex-qq2} along
-with its adjusted detrended version.
+Q-Q plots were found to be more powerful.
+Figure\textasciitilde{}\ref{fig:ex-detrend} displays the Q-Q plot from
+Figure\textasciitilde{}\ref{fig:ex-qq2} along with its adjusted
+detrended version.
 
 \begin{Schunk}
 \begin{figure}
@@ -177,10 +179,10 @@ transformation.
 
 This modified version of \texttt{stat\_qq}/\texttt{geom\_qq} (from
 \pkg{ggplot2}) plots the sample quantiles versus the theoretical
-quantiles (as done in Figure \ref{fig:ex-qq1}). The novelty of this
-implementation is an option to detrend the plotted points. Note that all
-other transformations in the \pkg{qqplotr} package also allow for the
-detrend option. Below we present a complete call to
+quantiles (as done in Figure\textasciitilde{}\ref{fig:ex-qq1}). The
+novelty of this implementation is an option to detrend the plotted
+points. Note that all other transformations in the \pkg{qqplotr} package
+also allow for the detrend option. Below we present a complete call to
 \texttt{stat\_qq\_point} and highlight the default values of its
 parameters:
 
@@ -234,8 +236,9 @@ stat_qq_point(
   \texttt{dparams}.
 \item
   \texttt{detrend} is a logical that controls whether the points should
-  be detrended (as shown in Figure \ref{fig:ex-detrend}). For additional
-  details, see the \nameref{sec:detrending} section.
+  be detrended (as shown in
+  Figure\textasciitilde{}\ref{fig:ex-detrend}). For additional details,
+  see the \nameref{sec:detrending} section.
 \item
   \texttt{identity} is only used when \texttt{detrend\ =\ TRUE}. This
   parameter is a logical that controls if the identity line should be
@@ -307,8 +310,8 @@ effect on the Q-Q line and the Q-Q points---that is, the parameters get
 shifted and scaled in the plot, but relative relationships do not change
 aside from a change in scales. For other distributions, such as a
 lognormal distribution, re-specifications of the parameters result in
-non-linear transformations of the Q-Q line and Q-Q points (see Figure
-\ref{fig:qqline} for an example).
+non-linear transformations of the Q-Q line and Q-Q points (see
+Figure\textasciitilde{}\ref{fig:qqline} for an example).
 
 \begin{Schunk}
 \begin{figure}
@@ -454,21 +457,22 @@ crystals. In this example, we focus on the distributional assessment of
 pH measurements made on the samples.
 
 We start by plotting a normal Q-Q plot of the data. The top-left plot in
-Figure \ref{fig:urine-qq-bands} shows the Q-Q plot of the pH
-measurements versus the normal distribution quantiles. As previously
-described, the theoretical distributional parameters are estimated on
-the fly with MLEs. By default, \texttt{stat\_qq\_band} creates pointwise
-confidence bands based on the normal approximation
+Figure\textasciitilde{}\ref{fig:urine-qq-bands} shows the Q-Q plot of
+the pH measurements versus the normal distribution quantiles. As
+previously described, the theoretical distributional parameters are
+estimated on the fly with MLEs. By default, \texttt{stat\_qq\_band}
+creates pointwise confidence bands based on the normal approximation
 (\texttt{bandType\ =\ "normal"}) of the order statistics distribution.
 As we can see, the urine pH measurements distribution for this dataset
 is lightly right-skewed.
 
 As previously discussed, three distinct approaches are availble in
-\pkg{qqplotr} to construct the confidence bands. The top row from Figure
-\ref{fig:urine-qq-bands} presents three plots with the different
-confidence bands drawn over the same normal Q-Q points and identity
-lines. The bottom row from Figure \ref{fig:urine-qq-bands} presents the
-detrended version of the those plots.
+\pkg{qqplotr} to construct the confidence bands. The top row from
+Figure\textasciitilde{}\ref{fig:urine-qq-bands} presents three plots
+with the different confidence bands drawn over the same normal Q-Q
+points and identity lines. The bottom row from
+Figure\textasciitilde{}\ref{fig:urine-qq-bands} presents the detrended
+version of the those plots.
 
 \al{The next paragraph is confusing. If we want to talk about a specific point, then we should highlight it on the plots using a different color. This will help reduce cognitive load on the reader. Also, the final conclusion from the TS version seems off: when using simultaneous bands, we would reject normality if a point is outside the bands, whereas we are unlikely to do so using pointwise bands (if you assume the analyst knows a bit about probability). We should clean up this discussion a bit.}
 
@@ -522,9 +526,9 @@ we illustrate the use of the smallest extreme value distribution (SEV).
 To qualify for the 2012 Olympics in the men's long jump, athletes had to
 meet/exceed the 8.1 meter standard or place in the top twelve. During
 the qualification events, each athlete was able to jump up to three
-times, using their best (i.e., longest) jump as the result. Figure
-\ref{fig:jump-density} shows a density plot of the results, which are
-clearly left skewed.
+times, using their best (i.e., longest) jump as the result.
+Figure\textasciitilde{}\ref{fig:jump-density} shows a density plot of
+the results, which are clearly left skewed.
 
 \begin{Schunk}
 \begin{figure}
@@ -568,11 +572,11 @@ rsev <- function(n, mu = 0, sigma = 1) {
 \end{Schunk}
 
 With the \texttt{*sev} distribution functions in hand, we can create a
-Q-Q plot to assess the appropriateness of the SEV model (Figure
-\ref{fig:sev-qq}). The Q-Q plot shows that the distances do not
-substantially deviate from the SEV model, so we have found an adequate
-representation of the distances. The code used to create Figure
-\ref{fig:sev-qq} is given below:
+Q-Q plot to assess the appropriateness of the SEV model
+(Figure\textasciitilde{}\ref{fig:sev-qq}). The Q-Q plot shows that the
+distances do not substantially deviate from the SEV model, so we have
+found an adequate representation of the distances. The code used to
+create Figure\textasciitilde{}\ref{fig:sev-qq} is given below:
 
 \begin{Schunk}
 \begin{Sinput}
@@ -611,14 +615,15 @@ ggplot(longjump, aes(sample = distance)) +
 \label{sec:detrending}
 
 To illustrate how to construct an adjusted detrended Q-Q plot using
-\pkg{qqplotr}, consider detrending Figure \ref{fig:sev-qq}. This is done
-by adding the argument \texttt{detrend\ =\ TRUE} to
-\texttt{stat\_qq\_point}, \texttt{stat\_qq\_line}, and
-\texttt{stat\_qq\_band}. To adjust the aspect ratio to ensure that
-vertical and horizontal distances are on the same scale we further add
-\texttt{coord\_fixed(ratio\ =\ 1)}. We leave it to the user to adjust
-the \(y\)-axis limits on a case-by-case basis. The full command to
-construct Figure \ref{fig:detrend-sev} is given below:
+\pkg{qqplotr}, consider detrending
+Figure\textasciitilde{}\ref{fig:sev-qq}. This is done by adding the
+argument \texttt{detrend\ =\ TRUE} to \texttt{stat\_qq\_point},
+\texttt{stat\_qq\_line}, and \texttt{stat\_qq\_band}. To adjust the
+aspect ratio to ensure that vertical and horizontal distances are on the
+same scale we further add \texttt{coord\_fixed(ratio\ =\ 1)}. We leave
+it to the user to adjust the \(y\)-axis limits on a case-by-case basis.
+The full command to construct
+Figure\textasciitilde{}\ref{fig:detrend-sev} is given below:
 
 \begin{Schunk}
 \begin{figure}
@@ -674,18 +679,18 @@ we focus on the responses for Iowa in 2012. The data set consists of
 illustrate the functionality of \pkg{qqplotr}, we focus on assessing the
 distributions of Iowan's heights and weights.
 
-Figure \ref{fig:heights} shows two Q-Q plots side by side. For each of
-the plots, a sample of 200 men and 200 women is drawn from the overall
-number of responses. On the left hand side, individuals' heights are
-plotted in a Q-Q plot comparing raw heights to a normal distribution. We
-see that the distributions for both men and women (colour) show
-horizontal steps: this indicates that the distributional assessement is
-heavily dominated by the discreteness in the data, as most respondents
-provided their height to the closest inch. On the right hand side of
-Figure \ref{fig:heights}, we use jittering to remedy this
-situation---that is, we add a random number generated from a random
-uniform distribution on \(\pm 0.5\) inch to the reported height, as
-shown in the code below:
+Figure\textasciitilde{}\ref{fig:heights} shows two Q-Q plots side by
+side. For each of the plots, a sample of 200 men and 200 women is drawn
+from the overall number of responses. On the left hand side,
+individuals' heights are plotted in a Q-Q plot comparing raw heights to
+a normal distribution. We see that the distributions for both men and
+women (colour) show horizontal steps: this indicates that the
+distributional assessement is heavily dominated by the discreteness in
+the data, as most respondents provided their height to the closest inch.
+On the right hand side of Figure\textasciitilde{}\ref{fig:heights}, we
+use jittering to remedy this situation---that is, we add a random number
+generated from a random uniform distribution on \(\pm 0.5\) inch to the
+reported height, as shown in the code below:
 
 \begin{Schunk}
 \begin{Sinput}
@@ -800,12 +805,13 @@ Total & 66.99 & 4.18 & 8.98 & 0.24\\
 \end{Schunk}
 
 Unlike respondents' heights, their weights do not seem to be normally
-distributed. Figure \ref{fig:weights} shows two Q-Q plots of these data.
-The Q-Q plot on the left compares raw weights to a normal distribution.
-We see that tails of the observed distribution are heavier than expected
-under a normal distribution. On the right, weights are log-transformed.
-We see that a normal distribution for each of the genders appears to be
-reasonable, with the exception of a few extreme outliers.
+distributed. Figure\textasciitilde{}\ref{fig:weights} shows two Q-Q
+plots of these data. The Q-Q plot on the left compares raw weights to a
+normal distribution. We see that tails of the observed distribution are
+heavier than expected under a normal distribution. On the right, weights
+are log-transformed. We see that a normal distribution for each of the
+genders appears to be reasonable, with the exception of a few extreme
+outliers.
 
 \begin{Schunk}
 \begin{figure}
@@ -819,10 +825,10 @@ reasonable, with the exception of a few extreme outliers.
 \end{Schunk}
 
 Instead of log-transforming the observed weights, we can change the
-theoretical distribution to a lognormal. Figure \ref{fig:weights-log}
-shows two lognormal Q-Q plots, one for each gender. note that by
-default, the MLEs are used to parameterize the lognormal distribution
-for each group:
+theoretical distribution to a lognormal.
+Figure\textasciitilde{}\ref{fig:weights-log} shows two lognormal Q-Q
+plots, one for each gender. note that by default, the MLEs are used to
+parameterize the lognormal distribution for each group:
 
 \begin{Schunk}
 \begin{Sinput}

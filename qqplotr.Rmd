@@ -20,7 +20,7 @@ author:
     - Ames, IA 50011-1210
     email:  hofmann@iastate.edu
 abstract: >
-  Univariate distributional assessment is a common thread throughout statistical analyses during both the exploratory and confirmatory stages. Q-Q plots compare two distributions by matching a common set of quantiles. Additional graphical elements are often added to Q-Q plots in order to aid in distributional assessment. Different orientations of Q-Q plots have also been proposed, most notably the detrended Q-Q plot. Various implementations of Q-Q plots exist in R. \pkg{qqplotr} extends \pkg{ggplot2} to provide a complete implementation of Q-Q plots. In the remainder of this paper, we will introduce the plotting framework provided by \pkg{qqplotr} and provide multiple examples of how it can be used. 
+  Univariate distributional assessment is a common thread throughout statistical analyses during both the exploratory and confirmatory stages. Q-Q plots compare two distributions by matching a common set of quantiles and displaying them as a scatterplot. To aid in the interpretation of Q-Q plots, reference lines and confidence bands are often added. Another approach to aid in interpretation is to detrend the Q-Q plot so the vertical comparisons of interest are the focus. While various implementations of Q-Q plots exist in R, none implement all of these features. \pkg{qqplotr} extends \pkg{ggplot2} to provide a complete implementation of Q-Q plots. This paper introduces the plotting framework provided by \pkg{qqplotr} and provides multiple examples of how it can be used. 
 preamble: >
   % Any extra latex you need in the preamble
   \usepackage{nameref}
