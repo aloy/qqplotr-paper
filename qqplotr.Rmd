@@ -193,7 +193,7 @@ stat_qq_line(
   distribution = "norm",
   dparams = list(),
   detrend = FALSE,
-  identity = TRUE,
+  identity = FALSE,
   qtype = 7,
   qprobs = c(0.25, 0.75),
   ...
@@ -202,12 +202,13 @@ stat_qq_line(
 
 Nearly all of the parameters for `stat_qq_line` are identical to those for `stat_qq_point`. With the exception of `identity` the parameters also have the same interpretation. However, for `stat_qq_line`, `identity` is *always* used, regardless of the value of `detrend`. This parameter controls which reference line is drawn:
 
-\hh{While I agree that the identity line is the theoretical distribution that people should be comparing to, this is not the convention - convention is to draw the line through the quantiles. I would suggest to not make the identity line the default. Otherwise the use of `stat_qq_line` is a bit questionable because we could very easily just add an identity line to the plot using `geom_abline(intercept=0, slope=1)`}
 
+b) When `identity = FALSE`, the *Q-Q line* is drawn. By default the Q-Q line is drawn through two points, corresponding to the .25 and .75 quantiles of the distributions on $x$ (theoretical distribution) and $y$ (empirical distribution). This line estimates the empirical distribution. Using robust estimates for the Q-Q line is of particular advantage for small samples \citep{Loy2016-fg}.
 a) When `identity = TRUE`, the *identity line* is drawn. By definition of a Q-Q plot the *identity line* represents the theoretical distribution.
-b) When `identity = FALSE`, the *Q-Q line* is drawn. This line estimates the empirical distribution. 
 
-The intercept and slope of these lines relate to the mean and scale parameters of the theoretical and the empirical distributions, respectively. By comparing these two lines we learn about how well the parameters estimated from the sample match the theoretical parameters. For a distributional family that is invariant to linear transformations, the parameters specified in the theoretical distribution only have an effect on the Q-Q line and the Q-Q points---that is, the parameters get shifted and scaled in the plot, but relative relationships do not change aside from a change in scales. For other distributions, such as a lognormal distribution, re-specifications of the parameters result in non-linear transformations of the Q-Q line and Q-Q points (see Figure~\ref{fig:qqline} for an example).
+The intercept and slope of these lines relate to the mean and scale parameters of the  empirical and theoretical distributions, respectively. 
+By comparing these two lines we learn about how well the parameters estimated from the sample match the theoretical parameters. For a distributional family that is invariant to linear transformations, the parameters specified in the theoretical distribution only have an effect on the Q-Q line and the Q-Q points---that is, the parameters get shifted and scaled in the plot, but relative relationships do not change aside from a change in scales. For other distributions, such as a lognormal distribution, re-specifications of the parameters result in non-linear transformations of the Q-Q line and Q-Q points (see Figure~\ref{fig:qqline} for an example). 
+
 
 ```{r qqline, echo=FALSE, message=FALSE, warning=FALSE, fig.width=8, fig.height=8, out.width='\\textwidth', fig.cap="Q-Q plots of (top-left) a mis-specified normal distribution, (top-right) a normal distribution with ML parameter estimates. Between these two plots only the scales on the axes change. The bottom two plots show Q-Q plots of the same sample from a lognormal distribution. On the left, the theoretical distribution is mis-specified with a mean of 0 and variance of 1. On the right, ML estimates for mean and variance are used. \\Aa{AA: The two left hand side plots are different from before as an effect of the new identity referece line. Even though this was not what we originally wanted to show with this figure, I find that these new plots show exactly why using the identity line vs. the traditional Q-Q line is important in our package, which uses MLEs by default. It can serve as a good illustration.}"}
 library(gridExtra)
@@ -256,12 +257,9 @@ p22 <- dframe %>% ggplot(aes(sample = xlnorm)) +
 grid.arrange(p11, p12, p21, p22, nrow = 2, ncol = 2)
 ```
 
-\Aa{AA: I suppose we need to rework the following paragraph, since the identity line is now used as default:}
-
-\al{I found myself asking if the paragraph below was necessary/out of place now that we have made some changes to the package and adjusted the above exposition.}
-
-By default the Q-Q line is drawn through two points, corresponding to the .25 and .75 quantiles of the distributions on $x$ (theoretical distribution) and $y$ (empirical distribution). While we are using MLEs to identify the theoretical distribution, these estimates are only used in determining the $x$-coordinates of these points. For the $y$ coordinates, the 1st and 3rd quartiles are used by default for more robust estimation. Therefore, the difference between the observed and theoretical distributions presents itself in the difference between the Q-Q line and the identity line. Using robust estimates for the Q-Q line is of particular advantage for small samples \citep{Loy2016-fg}.
-
+<!--
+ While we are using MLEs to identify the theoretical distribution, these estimates are only used in determining the $x$-coordinates of these points. For the $y$ coordinates, the 1st and 3rd quartiles are used by default for more robust estimation. -->
+ 
 ### `stat_qq_band`
 
 Confidence bands can be drawn around the reference line using one of three methods: a normal approximation, the parametric bootstrap, or the tail-sensitive procedure \citep{Aldor-Noiman2013-xw}. Below, we present the call to `stat_qq_band` and describe its specific parameters:
@@ -278,7 +276,7 @@ stat_qq_band(
   distribution = "norm",
   dparams = list(),
   detrend = FALSE,
-  identity = TRUE,
+  identity = FALSE,
   qtype = 7,
   qprobs = c(0.25, 0.75),
   bandType = "normal",
@@ -853,6 +851,8 @@ ggplot(data.frame(x = chisq1), aes(sample = x)) +
 ```
 
 ## Discussion
+
+\hh{todo: identity line matches hypothesis test, usually we don't use robust estimates but ML estimates}
 
 This paper presents the \pkg{qqplotr} package, an extension of \pkg{ggplot2} that implements Q-Q plots in both the standard and detrended orientations, along with reference lines and confidence bands. The examples illustrate how to create Q-Q plots for non-standard distributions found outside of the \pkg{stats} package, how to create detrended Q-Q plots, and how to create Q-Q plots when data are grouped. Further, in the BRFSS example, we illustrated how jittering can be used in Q-Q plots to better compare discretized data to a continuous distribution.
 
