@@ -179,7 +179,7 @@ stat_qq_point(
 
 ### `stat_qq_line`
 
-\Aa{This statistical transformation draws a reference line based on the identity line or two sample quantiles.}
+\Aa{The `stat_qq_line` statistical transformation draws a reference line in a Q-Q plot.}
 
 ```{r eval=FALSE}
 stat_qq_line(
@@ -200,7 +200,9 @@ stat_qq_line(
   )
 ```
 
-Nearly all of the parameters for `stat_qq_line` are identical to those for `stat_qq_point`. The one exception is `identity`, which has a slightly different interpretation. In `stat_qq_line`, `identity` is *always* used, regardless of the value of `detrend`. This parameter controls which reference line is drawn:
+Nearly all of the parameters for `stat_qq_line` are identical to those for `stat_qq_point`. With the exception of `identity` the parameters also have the same interpretation. However, for `stat_qq_line`, `identity` is *always* used, regardless of the value of `detrend`. This parameter controls which reference line is drawn:
+
+\hh{While I agree that the identity line is the theoretical distribution that people should be comparing to, this is not the convention - convention is to draw the line through the quantiles. I would suggest to not make the identity line the default. Otherwise the use of `stat_qq_line` is a bit questionable because we could very easily just add an identity line to the plot using `geom_abline(intercept=0, slope=1)`}
 
 a) When `identity = TRUE`, the *identity line* is drawn. By definition of a Q-Q plot the *identity line* represents the theoretical distribution.
 b) When `identity = FALSE`, the *Q-Q line* is drawn. This line estimates the empirical distribution. 
