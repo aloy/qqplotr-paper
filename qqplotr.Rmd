@@ -68,14 +68,14 @@ ggplot(data = rand_sample, mapping = aes(sample = rs)) +
   ylab("Sample quantiles") +
   xlab("Lognormal quantiles") +
   # ggtitle("Lognormal Q-Q plot") +
-  theme_minimal()
+  theme_bw()
 
 ggplot(data = rand_sample, mapping = aes(sample = rs)) +
   stat_qq_point() +
   ylab("Sample quantiles") +
   xlab("Normal quantiles") +
   # ggtitle("Normal Q-Q plot") +
-  theme_minimal()
+  theme_bw()
 ```
 
 Additional graphical elements are often added to Q-Q plots in order to aid in distributional assessment. A reference line is often added to a Q-Q plot to help detection of departures from the proposed model. This line is often drawn either by tracing the identity line or by connecting two pairs of quantiles, such as the first and third quartiles. Pointwise or simultaneous confidence bands are also frequently built around the reference line to display the expected degree of sampling error for the proposed model. Such bands help gauge how troubling a departure from the proposed model may be. Figure \ref{fig:ex-qq2} adds identity reference lines and 95% pointwise confidence bands to the Q-Q plots in Figure \ref{fig:ex-qq1}.
@@ -92,7 +92,7 @@ ggplot(data = rand_sample, mapping = aes(sample = rs)) +
   ylab("Sample quantiles") +
   xlab("Lognormal quantiles") +
   # ggtitle("Lognormal Q-Q plot") +
-  theme_minimal()
+  theme_bw()
 
 ggplot(data = rand_sample, mapping = aes(sample = rs)) +
   stat_qq_point() +
@@ -101,7 +101,7 @@ ggplot(data = rand_sample, mapping = aes(sample = rs)) +
   ylab("Sample quantiles") +
   xlab("Normal quantiles") +
   # ggtitle("Normal Q-Q plot") +
-  theme_minimal()
+  theme_bw()
 ```
 
 Different orientations of Q-Q plots have also been proposed, most notably the detrended Q-Q plot. To detrend a Q-Q plot, the $y$-axis is changed to show the difference between the observed quantile and the reference line. Consequently, the line representing agreement with the theoretical distribution is the $x$-axis. \citet{Loy2016-fg} find that detrended Q-Q plots are more powerful than other designs, as long as the $x$- and $y$-axes are adjusted to ensure that distances in the $x$- and $y$-directions are on the same scale. This Q-Q plot design is called an *adjusted detrended Q-Q plot*. Without this adjustment to the range of the axes *ordinary detrended Q-Q plots* are produced, which were found to have lower power than the standard Q-Q plot in some situations \citep{Loy2016-fg}, while the adjusted detrended Q-Q plots were found to be more powerful. Figure \ref{fig:ex-detrend} displays the Q-Q plot from Figure \ref{fig:ex-qq2} along with its adjusted detrended version.
@@ -118,7 +118,7 @@ ggplot(data = rand_sample, mapping = aes(sample = rs)) +
   ylab("Sample quantiles") +
   xlab("Normal quantiles") +
   # ggtitle("Normal Q-Q plot") +
-  theme_minimal()
+  theme_bw()
 
 ggplot(data = rand_sample, mapping = aes(sample = rs)) +
   stat_qq_point(detrend = TRUE) +
@@ -127,7 +127,7 @@ ggplot(data = rand_sample, mapping = aes(sample = rs)) +
   ylab("Differences") +
   xlab("Normal quantiles") +
   # ggtitle("Adjusted detrended version") +
-  theme_minimal() +
+  theme_bw() +
   coord_fixed(ratio=1)
 ```
 
