@@ -56,23 +56,13 @@ ggplot(data = rand_sample, mapping = aes(sample = rs)) +
   stat_qq_point(distribution = "lnorm") +
   ylab("Sample quantiles") +
   xlab("Lognormal quantiles") +
-<<<<<<< HEAD
-  # ggtitle("Lognormal Q-Q plot") +
-  theme_bw()
-=======
   theme_light()
->>>>>>> c90a6a85ad11bb5d02b523affe3b63716043556f
 
 ggplot(data = rand_sample, mapping = aes(sample = rs)) +
   stat_qq_point() +
   ylab("Sample quantiles") +
   xlab("Normal quantiles") +
-<<<<<<< HEAD
-  # ggtitle("Normal Q-Q plot") +
-  theme_bw()
-=======
   theme_light()
->>>>>>> c90a6a85ad11bb5d02b523affe3b63716043556f
 ```
 
 Additional graphical elements are often added to Q-Q plots in order to aid in distributional assessment. A reference line is often added to a Q-Q plot to help detection of departures from the proposed model. This line is often drawn either by tracing the identity line or by connecting two pairs of quantiles, such as the first and third quartiles, which is known as the Q-Q line. Pointwise or simultaneous confidence bands are also frequently built around the reference line to display the expected degree of sampling error for the proposed model. Such bands help gauge how troubling a departure from the proposed model may be. Figure \ref{fig:ex-qq2} adds Q-Q lines and 95% pointwise confidence bands to the Q-Q plots in Figure \ref{fig:ex-qq1}.
@@ -84,12 +74,7 @@ ggplot(data = rand_sample, mapping = aes(sample = rs)) +
   stat_qq_point(distribution = "lnorm") +
   ylab("Sample quantiles") +
   xlab("Lognormal quantiles") +
-<<<<<<< HEAD
-  # ggtitle("Lognormal Q-Q plot") +
-  theme_bw()
-=======
   theme_light()
->>>>>>> c90a6a85ad11bb5d02b523affe3b63716043556f
 
 ggplot(data = rand_sample, mapping = aes(sample = rs)) +
   stat_qq_band(fill = "#FC8D62", alpha = 0.4) +
@@ -97,12 +82,7 @@ ggplot(data = rand_sample, mapping = aes(sample = rs)) +
   stat_qq_point() +
   ylab("Sample quantiles") +
   xlab("Normal quantiles") +
-<<<<<<< HEAD
-  # ggtitle("Normal Q-Q plot") +
-  theme_bw()
-=======
   theme_light()
->>>>>>> c90a6a85ad11bb5d02b523affe3b63716043556f
 ```
 
 Different orientations of Q-Q plots have also been proposed, most notably the detrended Q-Q plot. To detrend a Q-Q plot, the $y$-axis is changed to show the difference between the observed quantile and the reference line. Consequently, the line representing agreement with the theoretical distribution is $x = 0$. \citet{Loy2016-fg} find that detrended Q-Q plots are more powerful than other designs, as long as the $x$- and $y$-axes are adjusted to ensure that distances in the $x$- and $y$-directions are on the same scale. This Q-Q plot design is called an *adjusted detrended Q-Q plot*. Without this adjustment to the range of the axes, *ordinary detrended Q-Q plots* are produced, which were found to have lower power than the standard Q-Q plot in some situations \citep{Loy2016-fg}, while the adjusted detrended Q-Q plots were found to be more powerful. Figure \ref{fig:ex-detrend} displays the Q-Q plot from Figure \ref{fig:ex-qq2} along with its adjusted detrended version.
@@ -117,12 +97,7 @@ ggplot(data = rand_sample, mapping = aes(sample = rs)) +
   stat_qq_point() +
   ylab("Sample quantiles") +
   xlab("Normal quantiles") +
-<<<<<<< HEAD
-  # ggtitle("Normal Q-Q plot") +
-  theme_bw()
-=======
   theme_light()
->>>>>>> c90a6a85ad11bb5d02b523affe3b63716043556f
 
 ggplot(data = rand_sample, mapping = aes(sample = rs)) +
   stat_qq_band(detrend = TRUE, fill = "#FC8D62", alpha = 0.4) +
@@ -130,14 +105,8 @@ ggplot(data = rand_sample, mapping = aes(sample = rs)) +
   stat_qq_point(detrend = TRUE) +
   ylab("Differences") +
   xlab("Normal quantiles") +
-<<<<<<< HEAD
-  # ggtitle("Adjusted detrended version") +
-  theme_bw() +
-  coord_fixed(ratio=1)
-=======
   theme_light() +
   coord_fixed(ratio = 1)
->>>>>>> c90a6a85ad11bb5d02b523affe3b63716043556f
 ```
 
 Various implementations of Q-Q plots exist in R. Normal Q-Q plots, where a sample is compared to the Standard Normal Distribution, are implemented using `qqplot` and `qqline` in \pkg{base} graphics \citep{R}. \pkg{lattice} package provides a general framework for Q-Q plots in the `qqmath` function, allowing one to compare a sample to any theoretical distribution by specifying the appropriate quantile function \citep{lattice}. `qqPlot` in the \pkg{car} package also allows for the assessment of non-normal distributions and adds pointwise confidence bands via normal theory or the parametric bootstrap \citep{car}. \pkg{ggplot2} package provides `geom_qq` and `geom_qq_line`, enabling the creation of Q-Q plots with a reference line, much like those created using `qqmath` \citep{ggplot2}. None of these general-use packages allow for easy construction of detrended Q-Q plots.
