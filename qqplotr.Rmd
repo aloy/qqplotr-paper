@@ -180,9 +180,11 @@ Nearly all of the parameters for `stat_qq_line` are identical to those for `stat
 a) When `identity = FALSE` (default), the *Q-Q line* is drawn. By default the Q-Q line is drawn through two points, the .25 and .75 quantiles of the theoretical and empirical distributions. This line provides a robust estimate of the empirical distribution, which is of particular advantage for small samples \citep{Loy2016-fg}.
 b) When `identity = TRUE`, the *identity line* is drawn. By definition of a Q-Q plot the *identity line* represents the theoretical distribution.
 
+**AL: I'm having trouble with the first sentence of this paragraph. When using the identity line the slope will be 1, which provides no link to the estimated location or scale parameters. The standardized Q-Q plot will provide graphical estimates of the location and scale parameters.**
+
 The intercept and slope of these lines relate to the mean and scale parameters of the empirical and theoretical distributions, respectively. By comparing these two lines we learn about how well the parameters estimated from the sample match the theoretical parameters. For a distributional family that is invariant to linear transformations, the parameters specified in the theoretical distribution only have an effect on the Q-Q line and the Q-Q points---that is, the parameters get shifted and scaled in the plot, but relative relationships do not change aside from a change of scale on the $x$-axis. For other distributions, such as a lognormal distribution, re-specifications of the parameters result in non-linear transformations of the Q-Q line and Q-Q points (see Figure \ref{fig:qqline} for an example).
 
-```{r qqline, echo=FALSE, message=FALSE, warning=FALSE, out.width='0.4\\linewidth', fig.width=3.5, fig.height=3.5, fig.show='hold', fig.align='center', fig.cap="Q-Q plots of (top-left) a mis-specified normal distribution, (top-right) a normal distribution with ML parameter estimates. Between these two plots only the scales on the axes change. The bottom two plots show Q-Q plots of the same sample from a lognormal distribution. On the left, the theoretical distribution is mis-specified with a mean of 0 and variance of 1. On the right, ML estimates for mean and variance are used."}
+```{r qqline, echo=FALSE, message=FALSE, warning=FALSE, out.width='0.4\\linewidth', fig.width=3.5, fig.height=3.5, fig.show='hold', fig.align='center', fig.cap="Q-Q plots of (top-left) a Standard Normal distribution, (top-right) a normal distribution with ML parameter estimates. Only the scales on the axes change between these plots. The bottom two plots show Q-Q plots of the same sample from a lognormal distribution. On the left, the mean and variance are 0 and 1, respectively, on the log scale. On the right, ML estimates for mean and variance are used."}
 dframe <- data.frame(xnorm = rnorm(50, mean = 10, sd = 2),
                      xlnorm = rlnorm(50, mean = 2, sd = .5))
 
@@ -283,6 +285,7 @@ To give a brief introduction on how to use \pkg{qqplotr} and its transformations
 We start by creating a normal Q-Q plot of the data. The top-left plot in Figure \ref{fig:urine-qq-bands} shows a Q-Q plot comparing the pH measurements to the normal distribution. The code used to create this plot is shown below. As previously noted, the parameters of the normal distribution are automatically estimated using the MLEs, since `dparams` is not specified. The shaded region represents the area between the normal pointwise confidence bands. As we can see, the distribution of urine pH measurements is somewhat right-skewed.
 
 ```{r eval=FALSE}
+data(urine, package = "boot")
 urine %>% 
   ggplot(aes(sample = ph)) + 
   stat_qq_band(bandType = "normal", fill = "#8DA0CB", alpha = 0.4) + 
@@ -295,13 +298,19 @@ urine %>%
   coord_cartesian(ylim = c(3.2, 8.7))
 ```
 
-The top row of plots in Figure \ref{fig:urine-qq-bands} shows the three different band types, and the bottom row shows the adjusted detrended versions of these plots. Comparing the Q-Q plots across the different band types reveals that the choice of confidence band can have substantial impact on the interpretation of a Q-Q plot...
+**AL: I'm not sure what to do here anymore---that is, I have lost the story that we are trying to tell in this subsection. Is our goal to clarify the difference between the bands? to provide a simply first example? to showcase the different designs/configurations? If our goal is to explore the bands, then perhaps cutting the detrending bit makes sense. Also, I am struggling to find a good way to discuss the different bands---is the discussion obvious so we can ditch it?**
+
+<!-- \al{Figure \ref{fig:urine-qq-bands} provides an overview of the different Q-Q plot designs that can be rendered using \pkg{qqplotr}.} -->
+
+
+
+<!-- The top row in Figure \ref{fig:urine-qq-bands} shows the three different band types and the bottom row shows the adjusted detrended versions of these plots. Comparing the Q-Q plots across the different band types reveals a few -->
 
 <!-- As previously discussed, three distinct approaches are availble in \pkg{qqplotr} to construct the confidence bands. The top row of plots in Figure \ref{fig:urine-qq-bands} presents three configurations with the different confidence bands constructed over the same normal Q-Q points and Q-Q lines. In contrast, the bottom row of plots presents the adjusted detrended versions of the corresponding plots directly above them. -->
 
-**AL: The below paragraph is not accurate. For each order statistic a 95% CI is built, so the familywise error rate is not expected to be 5% as is discussed below. I'll go through and refine this argument on my next pass.**
+<!-- **AL: The below paragraph is not accurate. For each order statistic a 95% CI is built, so the familywise error rate is not expected to be 5% as is discussed below. I'll go through and refine this argument on my next pass.** -->
 
-For the 95% pointwise confidence bands methods (Normal and Bootstrap, first and second columns of plots in Figure \ref{fig:urine-qq-bands}) it is expected that $79*0.05=4$ points at most are outside of the confidence region. We can see that divergent conclusions might be taken by simply evaluating the number of data points outside of those two distinct confidence bands---7 points outside the Normal bands implies that the distribution is not appropriate, whereas only 1 point outside of the Bootstrap bands is acceptable. If we, however, evaluate the 95% simultaneous Tail-sensitive confidence bands (third column of plots in Figure \ref{fig:urine-qq-bands}) we would expect that no data point at all would be outside of the confidence region, which is actually false. Thus, we may conclude that a normal distribution is not a good approximation for the pH urine data.
+<!-- For the 95% pointwise confidence bands methods (Normal and Bootstrap, first and second columns of plots in Figure \ref{fig:urine-qq-bands}) it is expected that $79*0.05=4$ points at most are outside of the confidence region. We can see that divergent conclusions might be taken by simply evaluating the number of data points outside of those two distinct confidence bands---7 points outside the Normal bands implies that the distribution is not appropriate, whereas only 1 point outside of the Bootstrap bands is acceptable. If we, however, evaluate the 95% simultaneous Tail-sensitive confidence bands (third column of plots in Figure \ref{fig:urine-qq-bands}) we would expect that no data point at all would be outside of the confidence region, which is actually false. Thus, we may conclude that a normal distribution is not a good approximation for the pH urine data. -->
 
 ```{r urine-qq-bands, echo=FALSE, message=FALSE, warning=FALSE, out.width='\\textwidth', fig.align='center', fig.width=9.5, fig.height=7.0, fig.cap="Normal Q-Q plots of pH measurements from urine samples using different confidence bands. Depending on the type of confidence band used, we come to different conclusions."}
 library(boot)
@@ -385,6 +394,93 @@ p23 <- urine %>% ggplot(aes(sample = ph)) +
 
 grid.arrange(p11, p12, p13,
              p21, p22, p23,
+             nrow = 2,
+             ncol = 3,
+             widths = c(1.11, 1, 1))
+```
+
+```{r urine-qq-bands-identity, echo=FALSE, message=FALSE, warning=FALSE, out.width='\\textwidth', fig.align='center', fig.width=9.5, fig.height=7.0, fig.cap="Normal Q-Q plots of pH measurements from urine samples using different confidence bands. Depending on the type of confidence band used, we come to different conclusions."}
+library(boot)
+set.seed(9)
+
+p31 <- urine %>% ggplot(aes(sample = ph)) + 
+  stat_qq_band(bandType = "normal", fill = "#8DA0CB", alpha = 0.4) + 
+  stat_qq_line(colour = "#8DA0CB") +
+  stat_qq_point() +
+  ggtitle("Normal") +
+  xlab("Normal quantiles") +
+  ylab("pH measurements quantiles") +
+  theme_light() +
+  coord_cartesian(ylim = c(3.2, 8.7))
+
+p32 <- urine %>% ggplot(aes(sample = ph)) + 
+  stat_qq_band(bandType = "boot", fill = "#FC8D62", alpha = 0.4, identity = TRUE) + 
+  stat_qq_line(colour = "#FC8D62", identity = TRUE)+
+  stat_qq_point() +
+  ggtitle("Bootstrap") +
+  xlab("Normal quantiles") +
+  ylab("pH measurements quantiles") +
+  theme_light() +
+  theme(axis.text.y = element_blank(), 
+          axis.ticks.y = element_blank(), 
+          axis.title.y = element_blank(),
+          plot.title = element_text(vjust = 0),
+          plot.margin = margin(t = 3.5, r = 5.5, b = 5.5, l = 5.5, unit = "pt")) +
+  coord_cartesian(ylim = c(3.2, 8.7))
+
+p33 <- urine %>% ggplot(aes(sample = ph)) + 
+  stat_qq_band(bandType = "ts", fill = "#66C2A5", alpha = 0.4, identity = TRUE) + 
+  stat_qq_line(colour = "#66C2A5", identity = TRUE) +
+  stat_qq_point() +
+  ggtitle("Tail-sensitive") +
+  xlab("Normal quantiles") +
+  ylab("Observed quantiles of pH measurements") +
+  theme_light() +
+  theme(axis.text.y = element_blank(), 
+        axis.ticks.y = element_blank(), 
+        axis.title.y = element_blank()) +
+  coord_cartesian(ylim = c(3.2, 8.7))
+
+p41 <- urine %>% ggplot(aes(sample = ph)) + 
+  stat_qq_band(bandType = "normal", fill = "#8DA0CB", alpha = 0.4, detrend = TRUE, identity = TRUE) + 
+  stat_qq_line(colour = "#8DA0CB", detrend = TRUE, identity = TRUE) +
+  stat_qq_point(detrend = TRUE, identity = TRUE) +
+  ggtitle("Normal (Detrended)") +
+  xlab("Normal quantiles") +
+  ylab("Differences") +
+  theme_light() +
+  coord_fixed(ratio=1, ylim = c(-1.5, 1.5))
+
+p42 <- urine %>% ggplot(aes(sample = ph)) + 
+  stat_qq_band(bandType = "boot", fill = "#FC8D62", alpha = 0.4, detrend = TRUE, identity = TRUE) + 
+  stat_qq_line(colour = "#FC8D62", detrend = TRUE, identity = TRUE)+
+  stat_qq_point(detrend = TRUE, identity = TRUE) +
+  ggtitle("Bootstrap (Detrended)") +
+  xlab("Normal quantiles") +
+  ylab("Differences") +
+  theme_light() +
+  theme(axis.text.y = element_blank(), 
+          axis.ticks.y = element_blank(), 
+          axis.title.y = element_blank(),
+          plot.title = element_text(vjust = 0),
+          plot.margin = margin(t = 3.5, r = 5.5, b = 5.5, l = 5.5, unit = "pt")) +
+  coord_fixed(ratio=1, ylim = c(-1.5, 1.5))
+
+p43 <- urine %>% ggplot(aes(sample = ph)) + 
+  stat_qq_band(bandType = "ts", fill = "#66C2A5", alpha = 0.4, detrend = TRUE, identity = TRUE) + 
+  stat_qq_line(colour = "#66C2A5", detrend = TRUE, identity = TRUE) +
+  stat_qq_point(detrend = TRUE, identity = TRUE) +
+  ggtitle("Tail-sensitive (Detrended)") +
+  xlab("Normal quantiles") +
+  ylab("Differences") +
+  theme_light() +
+  theme(axis.text.y = element_blank(), 
+        axis.ticks.y = element_blank(), 
+        axis.title.y = element_blank()) +
+  coord_fixed(ratio=1, ylim = c(-1.5, 1.5))
+
+grid.arrange(p31, p32, p33,
+             p41, p42, p43,
              nrow = 2,
              ncol = 3,
              widths = c(1.11, 1, 1))
@@ -616,7 +712,7 @@ sample_ia %>%
 
 \hh{todo: identity line matches hypothesis test, usually we don't use robust estimates but ML estimates}
 
-\al{Small attempt to the hypothesis test issue below---Is this enough? We do mention the lack of robust estimates briefly, I think it';'s enough.}
+\al{Small attempt to the hypothesis test issue below---Is this enough? We do mention the lack of robust estimates briefly, I think it's enough.}
 
 This paper presented the \pkg{qqplotr} package, an extension of \pkg{ggplot2} that implements Q-Q plots in both the standard and detrended orientations, along with reference lines and confidence bands. The examples illustrate how to create Q-Q plots for non-standard distributions found outside of the \pkg{stats} package, how to create detrended Q-Q plots, and how to create Q-Q plots when data are grouped. Further, in the BRFSS example, we illustrated how jittering can be used in Q-Q plots to better compare discretized data to a continuous distribution.
 

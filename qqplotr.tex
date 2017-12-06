@@ -273,6 +273,12 @@ parameter controls which reference line is drawn:
   theoretical distribution.
 \end{enumerate}
 
+\textbf{AL: I'm having trouble with the first sentence of this
+paragraph. When using the identity line the slope will be 1, which
+provides no link to the estimated location or scale parameters. The
+standardized Q-Q plot will provide graphical estimates of the location
+and scale parameters.}
+
 The intercept and slope of these lines relate to the mean and scale
 parameters of the empirical and theoretical distributions, respectively.
 By comparing these two lines we learn about how well the parameters
@@ -293,7 +299,7 @@ in non-linear transformations of the Q-Q line and Q-Q points (see Figure
 
 }
 
-\caption[Q-Q plots of (top-left) a mis-specified normal distribution, (top-right) a normal distribution with ML parameter estimates]{Q-Q plots of (top-left) a mis-specified normal distribution, (top-right) a normal distribution with ML parameter estimates. Between these two plots only the scales on the axes change. The bottom two plots show Q-Q plots of the same sample from a lognormal distribution. On the left, the theoretical distribution is mis-specified with a mean of 0 and variance of 1. On the right, ML estimates for mean and variance are used.}\label{fig:qqline}
+\caption[Q-Q plots of (top-left) a Standard Normal distribution, (top-right) a normal distribution with ML parameter estimates]{Q-Q plots of (top-left) a Standard Normal distribution, (top-right) a normal distribution with ML parameter estimates. Only the scales on the axes change between these plots. The bottom two plots show Q-Q plots of the same sample from a lognormal distribution. On the left, the mean and variance are 0 and 1, respectively, on the log scale. On the right, ML estimates for mean and variance are used.}\label{fig:qqline}
 \end{figure}
 \end{Schunk}
 
@@ -432,6 +438,7 @@ distribution of urine pH measurements is somewhat right-skewed.
 
 \begin{Schunk}
 \begin{Sinput}
+data(urine, package = "boot")
 urine %>% 
   ggplot(aes(sample = ph)) + 
   stat_qq_band(bandType = "normal", fill = "#8DA0CB", alpha = 0.4) + 
@@ -445,30 +452,13 @@ urine %>%
 \end{Sinput}
 \end{Schunk}
 
-The top row of plots in Figure \ref{fig:urine-qq-bands} shows the three
-different band types, and the bottom row shows the adjusted detrended
-versions of these plots. Comparing the Q-Q plots across the different
-band types reveals that the choice of confidence band can have
-substantial impact on the interpretation of a Q-Q plot\ldots{}
-
-\textbf{AL: The below paragraph is not accurate. For each order
-statistic a 95\% CI is built, so the familywise error rate is not
-expected to be 5\% as is discussed below. I'll go through and refine
-this argument on my next pass.}
-
-For the 95\% pointwise confidence bands methods (Normal and Bootstrap,
-first and second columns of plots in Figure \ref{fig:urine-qq-bands}) it
-is expected that \(79*0.05=4\) points at most are outside of the
-confidence region. We can see that divergent conclusions might be taken
-by simply evaluating the number of data points outside of those two
-distinct confidence bands---7 points outside the Normal bands implies
-that the distribution is not appropriate, whereas only 1 point outside
-of the Bootstrap bands is acceptable. If we, however, evaluate the 95\%
-simultaneous Tail-sensitive confidence bands (third column of plots in
-Figure \ref{fig:urine-qq-bands}) we would expect that no data point at
-all would be outside of the confidence region, which is actually false.
-Thus, we may conclude that a normal distribution is not a good
-approximation for the pH urine data.
+\textbf{AL: I'm not sure what to do here anymore---that is, I have lost
+the story that we are trying to tell in this subsection. Is our goal to
+clarify the difference between the bands? to provide a simply first
+example? to showcase the different designs/configurations? If our goal
+is to explore the bands, then perhaps cutting the detrending bit makes
+sense. Also, I am struggling to find a good way to discuss the different
+bands---is the discussion obvious so we can ditch it?}
 
 \begin{Schunk}
 \begin{figure}
@@ -478,6 +468,17 @@ approximation for the pH urine data.
 }
 
 \caption[Normal Q-Q plots of pH measurements from urine samples using different confidence bands]{Normal Q-Q plots of pH measurements from urine samples using different confidence bands. Depending on the type of confidence band used, we come to different conclusions.}\label{fig:urine-qq-bands}
+\end{figure}
+\end{Schunk}
+
+\begin{Schunk}
+\begin{figure}
+
+{\centering \includegraphics[width=\textwidth]{qqplotr_files/figure-latex/urine-qq-bands-identity-1} 
+
+}
+
+\caption[Normal Q-Q plots of pH measurements from urine samples using different confidence bands]{Normal Q-Q plots of pH measurements from urine samples using different confidence bands. Depending on the type of confidence band used, we come to different conclusions.}\label{fig:urine-qq-bands-identity}
 \end{figure}
 \end{Schunk}
 
@@ -842,7 +843,7 @@ sample_ia %>%
 
 \hh{todo: identity line matches hypothesis test, usually we don't use robust estimates but ML estimates}
 
-\al{Small attempt to the hypothesis test issue below---Is this enough? We do mention the lack of robust estimates briefly, I think it';'s enough.}
+\al{Small attempt to the hypothesis test issue below---Is this enough? We do mention the lack of robust estimates briefly, I think it's enough.}
 
 This paper presented the \pkg{qqplotr} package, an extension of
 \pkg{ggplot2} that implements Q-Q plots in both the standard and
