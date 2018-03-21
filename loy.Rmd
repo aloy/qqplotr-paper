@@ -39,6 +39,7 @@ library(knitr)
 library(qqplotr)
 library(tidyverse)
 knitr::opts_current$set(tidy=FALSE)
+knitr::opts_chunk$set(fig.path="loy-figures/")
 ```
 
 ## Background
@@ -48,7 +49,7 @@ Univariate distributional assessment is a common thread throughout statistical a
 
 Q-Q plots compare two distributions by matching a common set of quantiles. To compare a sample, $y_1, y_2, \ldots, y_n$, to a theoretical distribution, a Q-Q plot is simply a scatterplot of the sample quantiles, $y_{(i)}$, against the corresponding quantiles from the theoretical distribution, $F^{-1}\left( F_n(y_{(i)}) \right)$. If the empirical distribution is consistent with the theoretical distribution, then the points will fall on a line. For example, Figure \ref{fig:ex-qq1} shows two Q-Q plots: the left plot compares a sample drawn from a lognormal distribution to a lognormal distribution, while the right plot compares a sample drawn from a lognormal distribution to a normal distribution. As expected, the lognormal Q-Q plot is approximately linear, as the data and model are in agreement, while the normal Q-Q plot is curved, indicating disagreement between the data and the model.
 
-```{r ex-qq1, echo=FALSE, message=FALSE, out.width='0.4\\linewidth', fig.width=3.5, fig.height=3.5, fig.show='hold', fig.align='center', fig.cap="The left plot compares a sample drawn from a lognormal distribution to a lognormal distribution, while the right plot compares a sample drawn from a lognormal distribution to a normal distribution. The curvature in the normal Q-Q plot highlights the disagreement betweeen the data and the model."}
+```{r ex-qq1, echo=FALSE, message=FALSE, out.width='0.4\\linewidth', fig.width=3.5, fig.height=3.5, fig.show='hold', fig.align='center', fig.cap="The left plot compares a sample drawn from a lognormal distribution to a lognormal distribution, while the right plot compares a sample drawn from a lognormal distribution to a normal distribution. The curvature in the normal Q-Q plot highlights the disagreement betweeen the data and the model.", fig.keep = "all"}
 set.seed(952017)
 rand_sample <- data.frame(rs = rlnorm(20, meanlog = 0, sdlog = 1))
 
@@ -646,7 +647,7 @@ It is important to note that all of the probability plotting methods discussed--
 
 Finally, we have made design choices in \pkg{qqplotr} that we believe are in line with best practices for distributional assessment, but the implementation is flexible enough to allow for easy customization. For example, maximum likelihood is used to estimate the parameters of the proposed model, but if outliers are present robust estimators may be desirable, such as if you are comparing the empirical distribution to a normal distribution. In this scenario, robust estimates of the location and scale can be obtained using the \pkg{robustbase} package \citep{robustbase}, and specified using the `dparams` parameter directly. This is especially useful if you wish to use the parametric bootstrap to build confidence bands. Similarly, `stat_qq_line` implements two types of reference lines: the identity line, and the traditional Q-Q line that passes through two quantiles of the distributions, such as the first and third quartiles. While those are the most conventionally used reference lines, alternative ones can be quickly implemented using `ggplot2::geom_abline` by specifying the slope and intercept. By default, the Q-Q line is used; however, this is not always the most appropriate choice. In order to *test* whether the data follow a specific distribution, the reference line should be used rather than using the data twice: once to estimate the parameters, and once for comparison.
 
-\bibliography{RJreferences}
+\bibliography{loy}
 
 ## Acknowledgements
 

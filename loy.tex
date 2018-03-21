@@ -56,7 +56,7 @@ the model.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=0.4\linewidth]{qqplotr_files/figure-latex/ex-qq1-1} \includegraphics[width=0.4\linewidth]{qqplotr_files/figure-latex/ex-qq1-2} 
+{\centering \includegraphics[width=0.4\linewidth]{loy-figures/ex-qq1-1} \includegraphics[width=0.4\linewidth]{loy-figures/ex-qq1-2} 
 
 }
 
@@ -79,7 +79,7 @@ the Q-Q plots in Figure \ref{fig:ex-qq1}.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=.4\linewidth]{qqplotr_files/figure-latex/ex-qq2-1} \includegraphics[width=.4\linewidth]{qqplotr_files/figure-latex/ex-qq2-2} 
+{\centering \includegraphics[width=.4\linewidth]{loy-figures/ex-qq2-1} \includegraphics[width=.4\linewidth]{loy-figures/ex-qq2-2} 
 
 }
 
@@ -106,7 +106,7 @@ adjusted detrended version.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=.4\linewidth]{qqplotr_files/figure-latex/ex-detrend-1} \includegraphics[width=.4\linewidth]{qqplotr_files/figure-latex/ex-detrend-2} 
+{\centering \includegraphics[width=.4\linewidth]{loy-figures/ex-detrend-1} \includegraphics[width=.4\linewidth]{loy-figures/ex-detrend-2} 
 
 }
 
@@ -275,9 +275,7 @@ parameter controls which reference line is drawn:
 \end{enumerate}
 
 Both of these reference lines have a special meaning in the context of
-Q-Q plots. The intercept and slope of these lines relate to the mean and
-scale parameters of the empirical and theoretical distributions,
-respectively. By comparing these two lines we learn about how well the
+Q-Q plots. By comparing these two lines we learn about how well the
 parameters estimated from the sample match the theoretical parameters.
 For a distributional family that is invariant to linear transformations,
 the parameters specified in the theoretical distribution only have an
@@ -291,7 +289,7 @@ Figure \ref{fig:qqline} for an example).
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=0.4\linewidth]{qqplotr_files/figure-latex/qqline-1} \includegraphics[width=0.4\linewidth]{qqplotr_files/figure-latex/qqline-2} \includegraphics[width=0.4\linewidth]{qqplotr_files/figure-latex/qqline-3} \includegraphics[width=0.4\linewidth]{qqplotr_files/figure-latex/qqline-4} 
+{\centering \includegraphics[width=0.4\linewidth]{loy-figures/qqline-1} \includegraphics[width=0.4\linewidth]{loy-figures/qqline-2} \includegraphics[width=0.4\linewidth]{loy-figures/qqline-3} \includegraphics[width=0.4\linewidth]{loy-figures/qqline-4} 
 
 }
 
@@ -470,7 +468,7 @@ capabilities:
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=\textwidth]{qqplotr_files/figure-latex/urine-qq-bands-1} 
+{\centering \includegraphics[width=\textwidth]{loy-figures/urine-qq-bands-1} 
 
 }
 
@@ -522,7 +520,7 @@ longjump <- na.omit(longjump)
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=0.45\linewidth]{qqplotr_files/figure-latex/jump-density-1} 
+{\centering \includegraphics[width=0.45\linewidth]{loy-figures/jump-density-1} 
 
 }
 
@@ -584,7 +582,7 @@ ggplot(longjump, aes(sample = distance)) +
 \end{Sinput}
 \begin{figure}
 
-{\centering \includegraphics[width=0.45\linewidth]{qqplotr_files/figure-latex/sev-qq-1} 
+{\centering \includegraphics[width=0.45\linewidth]{loy-figures/sev-qq-1} 
 
 }
 
@@ -630,7 +628,7 @@ ggplot(longjump, aes(sample = distance)) +
 \end{Sinput}
 \begin{figure}
 
-{\centering \includegraphics[width=0.45\linewidth]{qqplotr_files/figure-latex/detrend-sev-1} 
+{\centering \includegraphics[width=0.45\linewidth]{loy-figures/detrend-sev-1} 
 
 }
 
@@ -712,7 +710,7 @@ sample_ia %>%
 \end{Sinput}
 \begin{figure}
 
-{\centering \includegraphics[width=0.4\linewidth]{qqplotr_files/figure-latex/heights-1} \includegraphics[width=0.4\linewidth]{qqplotr_files/figure-latex/heights-2} 
+{\centering \includegraphics[width=0.4\linewidth]{loy-figures/heights-1} \includegraphics[width=0.4\linewidth]{loy-figures/heights-2} 
 
 }
 
@@ -796,7 +794,7 @@ sample_ia %>%
 \end{Sinput}
 \begin{figure}
 
-{\centering \includegraphics[width=0.4\linewidth]{qqplotr_files/figure-latex/weights-1} \includegraphics[width=0.4\linewidth]{qqplotr_files/figure-latex/weights-2} 
+{\centering \includegraphics[width=0.4\linewidth]{loy-figures/weights-1} \includegraphics[width=0.4\linewidth]{loy-figures/weights-2} 
 
 }
 
@@ -826,7 +824,7 @@ sample_ia %>%
 \end{Sinput}
 \begin{figure}
 
-{\centering \includegraphics[width=0.9\linewidth]{qqplotr_files/figure-latex/weights-log-1} 
+{\centering \includegraphics[width=0.9\linewidth]{loy-figures/weights-log-1} 
 
 }
 
@@ -874,7 +872,7 @@ whether the data follow a specific distribution, the reference line
 should be used rather than using the data twice: once to estimate the
 parameters, and once for comparison.
 
-\bibliography{RJreferences}
+\bibliography{loy}
 
 \subsection{Acknowledgements}\label{acknowledgements}
 
