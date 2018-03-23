@@ -90,18 +90,20 @@ the Q-Q plots in Figure \ref{fig:ex-qq1}.
 Different orientations of Q-Q plots have also been proposed, most
 notably the detrended Q-Q plot. To detrend a Q-Q plot, the \(y\)-axis is
 changed to show the difference between the observed quantile and the
-reference line. Consequently, the \(x\)-axis represents agreement with
-the theoretical distribution. \citet{Loy2016-fg} find that detrended Q-Q
-plots are more powerful than other designs, as long as the \(x\)- and
-\(y\)-axes are adjusted to ensure that distances in the \(x\)- and
-\(y\)-directions are on the same scale. This Q-Q plot design is called
-an \emph{adjusted detrended Q-Q plot}. Without this adjustment to the
-range of the axes, \emph{ordinary detrended Q-Q plots} are produced,
-which were found to have lower power than the standard Q-Q plot in some
-situations \citep{Loy2016-fg}, while the adjusted detrended Q-Q plots
-were found to be consistently more powerful. Figure \ref{fig:ex-detrend}
-displays the normal Q-Q plot from Figure \ref{fig:ex-qq2} along with its
-adjusted detrended version.
+reference line. Consequently, the \(y\)-axis represents agreement with
+the theoretical distribution.
+\hh{This makes the de-trended version of a Q-Q plot  easier to process: cognitive research \citep{sineillusion, robbins, cleveland} suggests that onlookers have a tendency to intuitively assess the distance between points and lines based on the shortest distance (i.e. the orthogonal distance) rather than the vertical distance appropriate for the situation. In the de-trended Q-Q plot the line to compare to points  is rotated to be (parallel to) the $x$-axis, which makes assessing the vertical distance equal to assessing orthogonal distance. }
+\hh{This is further investigated in} \citet{Loy2016-fg}, who find that
+detrended Q-Q plots are more powerful than other designs, as long as the
+\(x\)- and \(y\)-axes are adjusted to ensure that distances in the
+\(x\)- and \(y\)-directions are on the same scale. This Q-Q plot design
+is called an \emph{adjusted detrended Q-Q plot}. Without this adjustment
+to the range of the axes, \emph{ordinary detrended Q-Q plots} are
+produced, which were found to have lower power than the standard Q-Q
+plot in some situations \citep{Loy2016-fg}, while the adjusted detrended
+Q-Q plots were found to be consistently more powerful. Figure
+\ref{fig:ex-detrend} displays the normal Q-Q plot from Figure
+\ref{fig:ex-qq2} along with its adjusted detrended version.
 
 \begin{Schunk}
 \begin{figure}
@@ -300,8 +302,9 @@ Figure \ref{fig:qqline} for an example).
 \subsubsection{\texorpdfstring{\texttt{stat\_qq\_band}}{stat\_qq\_band}}\label{stat_qq_band}
 
 Confidence bands can be drawn around the reference line using one of
-three methods: a pointwise normal approximation, the parametric
-bootstrap, or the tail-sensitive procedure \citep{Aldor-Noiman2013-xw}.
+three methods: a pointwise normal approximation \citep{Davison:1997},
+the parametric bootstrap, or the tail-sensitive procedure
+\citep{Aldor-Noiman2013-xw}.
 
 \begin{Schunk}
 \begin{Sinput}
@@ -433,6 +436,7 @@ somewhat right-skewed.
 
 \begin{Schunk}
 \begin{Sinput}
+library(dplyr) # for using `%>%` and some data transformation later
 data(urine, package = "boot")
 urine %>% 
   ggplot(aes(sample = ph)) + 
@@ -700,7 +704,6 @@ sample_ia %>%
 sample_ia %>% 
   mutate(HTIN4.jitter = jitter(HTIN4, factor = 2)) %>% 
   ggplot(aes(sample = HTIN4.jitter, colour = Gender, fill = Gender)) + 
-  geom_abline(slope = 1, intercept = 0, colour = "grey40") +
   stat_qq_band(alpha = 0.4,
                dparams = list(mean = params$m, sd = params$s)) +
   stat_qq_line(dparams = list(mean = params$m, sd = params$s)) + 
@@ -735,12 +738,7 @@ inches shorter than men in this dataset). Interestingly, the slope of
 the two genders is similar, indicating that the same scale parameter
 fits both genders' distributions (the standard deviation of height in
 the data set is 2.97 inch for men and 2.91 inch for women, see Table
-\ref{tab:heights}). The dark line between the two groups in the right
-panel of Figure \ref{fig:heights} is the identity line, representing the
-theoretical distribution each group is compared to. While the mean is
-about half way between the gender means, the standard deviation of the
-height based on the whole population is larger, as seen by the steeper
-slope of the identity compared to the lines for each group.
+\ref{tab:heights}).
 
 \begin{table}
 
@@ -759,6 +757,7 @@ Total & 66.99 & 4.18 & 8.98 & 0.24\\
 
 Unlike respondents' heights, their weights do not seem to be normally
 distributed. Figure \ref{fig:weights} shows two Q-Q plots of these data.
+\hh{For both, distributional parameters are estimated separately for each group. This means that each group compares againsta different distribution when comparing  against the identity line as `the' theoretical distribution   XXX bit awkwardly phrased}
 The Q-Q plot on the left compares raw weights to a normal distribution.
 We see that tails of the observed distribution are heavier than expected
 under a normal distribution. On the right, weights are log-transformed.
@@ -768,27 +767,28 @@ to create Figure \ref{fig:weights} is shown below:
 
 \begin{Schunk}
 \begin{Sinput}
-params <- iowa %>% 
-  filter(!is.na(WTKG3)) %>% 
-  summarize(
-    m = mean(WTKG3/100),
-    s = sd(WTKG3/100)
-  )
+# params <- iowa %>% 
+#   filter(!is.na(WTKG3)) %>% 
+#   summarize(
+#     m = mean(WTKG3/100),
+#     s = sd(WTKG3/100)
+#   )
 
 sample_ia %>% 
   ggplot(aes(sample = WTKG3 / 100, colour = Gender, fill = Gender)) + 
-  stat_qq_band(alpha = 0.4,
-               dparams = list(mean = params$m, sd = params$s)) + 
-  stat_qq_line(dparams = list(mean = params$m, sd = params$s)) + 
-  stat_qq_point(dparams = list(mean = params$m, sd = params$s)) +
+  geom_abline(colour="grey40") +
+  stat_qq_band(alpha = 0.4) + 
+  stat_qq_line() + 
+  stat_qq_point() +
   customization +
   ylab("Weight (kg.)")
 
 sample_ia %>% 
   ggplot(aes(sample = log(WTKG3/100), colour=Gender, fill=Gender)) + 
-  stat_qq_band(alpha = 0.4,dparams = list(mean = params$m, sd = params$s)) + 
-  stat_qq_line(dparams = list(mean = params$m, sd = params$s)) + 
-  stat_qq_point(dparams = list(mean = params$m, sd = params$s)) +
+  geom_abline(colour="grey40") +
+  stat_qq_band(alpha = 0.4) + 
+  stat_qq_line() + 
+  stat_qq_point() +
   customization +
   ylab("log Weight (kg.)")
 \end{Sinput}
@@ -883,7 +883,15 @@ This work was partially funded by Google Summer of Code 2017.
 \begin{itemize}
 \tightlist
 \item
+  changed sample size in the first couple of examples from 20 to 35
+\item
   added Davison reference for point-wise confidence intervals
+\item
+  added references to sine illusion, robbins and cleveland for detrended
+  plots (argument in favor of detrended version wrt to assessment of
+  distances)
+\item
+  removed the comparison to the dark line in Fig 9
 \end{itemize}
 
 \address{%
