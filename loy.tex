@@ -60,7 +60,7 @@ the model.
 
 }
 
-\caption[The left plot compares a sample drawn from a lognormal distribution to a lognormal distribution, while the right plot compares a sample drawn from a lognormal distribution to a normal distribution]{The left plot compares a sample drawn from a lognormal distribution to a lognormal distribution, while the right plot compares a sample drawn from a lognormal distribution to a normal distribution. The curvature in the normal Q-Q plot highlights the disagreement betweeen the data and the model.}\label{fig:ex-qq1}
+\caption[The left plot compares a sample drawn from a lognormal distribution to a lognormal distribution, while the right plot compares this sample to a normal distribution]{The left plot compares a sample drawn from a lognormal distribution to a lognormal distribution, while the right plot compares this sample to a normal distribution. The curvature in the normal Q-Q plot highlights the disagreement betweeen the data and the model.}\label{fig:ex-qq1}
 \end{figure}
 \end{Schunk}
 
@@ -90,7 +90,7 @@ the Q-Q plots in Figure \ref{fig:ex-qq1}.
 Different orientations of Q-Q plots have also been proposed, most
 notably the detrended Q-Q plot. To detrend a Q-Q plot, the \(y\)-axis is
 changed to show the difference between the observed quantile and the
-reference line. Consequently, the \(x\)-axis represents agreement with
+reference line. Consequently, the \(y\)-axis represents agreement with
 the theoretical distribution. \citet{Loy2016-fg} find that detrended Q-Q
 plots are more powerful than other designs, as long as the \(x\)- and
 \(y\)-axes are adjusted to ensure that distances in the \(x\)- and
@@ -286,16 +286,27 @@ such as a lognormal distribution, re-specifications of the parameters
 result in non-linear transformations of the Q-Q line and Q-Q points (see
 Figure \ref{fig:qqline} for an example).
 
-\begin{Schunk}
-\begin{figure}
+\textbackslash{}begin\{Schunk\} \textbackslash{}begin\{figure\}
 
-{\centering \includegraphics[width=0.4\linewidth]{loy-figures/qqline-1} \includegraphics[width=0.4\linewidth]{loy-figures/qqline-2} \includegraphics[width=0.4\linewidth]{loy-figures/qqline-3} \includegraphics[width=0.4\linewidth]{loy-figures/qqline-4} 
+\{\centering \includegraphics[width=0.4\linewidth]{loy-figures/qqline-1}
+\includegraphics[width=0.4\linewidth]{loy-figures/qqline-2}
+\includegraphics[width=0.4\linewidth]{loy-figures/qqline-3}
+\includegraphics[width=0.4\linewidth]{loy-figures/qqline-4}
 
-}
+\}
 
-\caption[Q-Q plots of (top-left) a Standard Normal distribution, (top-right) a normal distribution with ML parameter estimates]{Q-Q plots of (top-left) a Standard Normal distribution, (top-right) a normal distribution with ML parameter estimates. Only the scales on the axes change between these plots. The bottom two plots show Q-Q plots of the same sample from a lognormal distribution. On the left, the mean and variance are 0 and 1, respectively, on the log scale. On the right, ML estimates for mean and variance are used.}\label{fig:qqline}
-\end{figure}
-\end{Schunk}
+\textbackslash{}caption{[}Q-Q plots of a sample of size \(n=50\) drawn
+from a normal distribution Standard Normal distribution (top-left) and a
+normal distribution with ML parameter estimates (top-right){]}\{Q-Q
+plots of a sample of size \(n=50\) drawn from a normal distribution
+Standard Normal distribution (top-left) and a normal distribution with
+ML parameter estimates (top-right). Only the scales on the axes change
+between these plots. The bottom two plots show Q-Q plots of a sample of
+size \(n=50\) drawn from a lognormal distribution. On the left, the mean
+and variance are 0 and 1, respectively, on the log scale. On the right,
+ML estimates for mean and variance are used. 95\% pointwise confidence
+bands are displayed on all Q-Q plots.\}\label{fig:qqline}
+\textbackslash{}end\{figure\} \textbackslash{}end\{Schunk\}
 
 \subsubsection{\texorpdfstring{\texttt{stat\_qq\_band}}{stat\_qq\_band}}\label{stat_qq_band}
 
