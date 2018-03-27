@@ -51,7 +51,7 @@ Q-Q plots compare two distributions by matching a common set of quantiles. To co
 
 ```{r ex-qq1, echo=FALSE, message=FALSE, out.width='0.4\\linewidth', fig.width=3.5, fig.height=3.5, fig.show='hold', fig.align='center', fig.cap="The left plot compares a sample drawn from a lognormal distribution to a lognormal distribution, while the right plot compares this sample to a normal distribution. The curvature in the normal Q-Q plot highlights the disagreement betweeen the data and the model.", fig.keep = "all"}
 set.seed(952017)
-rand_sample <- data.frame(rs = rlnorm(20, meanlog = 0, sdlog = 1))
+rand_sample <- data.frame(rs = rlnorm(35, meanlog = 0, sdlog = 1))
 
 ggplot(data = rand_sample, mapping = aes(sample = rs)) +
   stat_qq_point(distribution = "lnorm") +
@@ -86,11 +86,15 @@ ggplot(data = rand_sample, mapping = aes(sample = rs)) +
   theme_light()
 ```
 
-Different orientations of Q-Q plots have also been proposed, most notably the detrended Q-Q plot. To detrend a Q-Q plot, the $y$-axis is changed to show the difference between the observed quantile and the reference line. Consequently, the $y$-axis represents agreement with the theoretical distribution. \citet{Loy2016-fg} find that detrended Q-Q plots are more powerful than other designs, as long as the $x$- and $y$-axes are adjusted to ensure that distances in the $x$- and $y$-directions are on the same scale. This Q-Q plot design is called an *adjusted detrended Q-Q plot*. Without this adjustment to the range of the axes, *ordinary detrended Q-Q plots* are produced, which were found to have lower power than the standard Q-Q plot in some situations \citep{Loy2016-fg}, while the adjusted detrended Q-Q plots were found to be consistently more powerful. Figure \ref{fig:ex-detrend} displays the normal Q-Q plot from Figure \ref{fig:ex-qq2} along with its adjusted detrended version.
+
+Different orientations of Q-Q plots have also been proposed, most notably the detrended Q-Q plot. To detrend a Q-Q plot, the $y$-axis is changed to show the difference between the observed quantile and the reference line. Consequently, the $y$-axis represents agreement with the theoretical distribution.
+\hh{This makes the de-trended version of a Q-Q plot  easier to process: cognitive research \citep{sineillusion, robbins, cleveland} suggests that onlookers have a tendency to intuitively assess the distance between points and lines based on the shortest distance (i.e. the orthogonal distance) rather than the vertical distance appropriate for the situation. In the de-trended Q-Q plot the line to compare to points  is rotated to be (parallel to) the $x$-axis, which makes assessing the vertical distance equal to assessing orthogonal distance. }
+\hh{This is further investigated in} \citet{Loy2016-fg}, who find that detrended Q-Q plots are more powerful than other designs,
+as long as the $x$- and $y$-axes are adjusted to ensure that distances in the $x$- and $y$-directions are on the same scale. This Q-Q plot design is called an *adjusted detrended Q-Q plot*. Without this adjustment to the range of the axes, *ordinary detrended Q-Q plots* are produced, which were found to have lower power than the standard Q-Q plot in some situations \citep{Loy2016-fg}, while the adjusted detrended Q-Q plots were found to be consistently more powerful. Figure \ref{fig:ex-detrend} displays the normal Q-Q plot from Figure \ref{fig:ex-qq2} along with its adjusted detrended version.
 
 ```{r ex-detrend, echo=FALSE, message = FALSE, out.width='.4\\linewidth', fig.width=3.5, fig.height=3.5, fig.show='hold', fig.align='center', fig.cap="The left plot displays a traditional normal Q-Q plot for data simulated from a lognormal distribution. The right plot displays an adjusted detrended Q-Q plot of the same data, created by plotting the differences between the sample quantiles and the proposed model on the $y$-axis."}
 set.seed(952017)
-rand_sample <- data.frame(rs = rlnorm(20, meanlog = 0, sdlog = 1))
+rand_sample <- data.frame(rs = rlnorm(35, meanlog = 0, sdlog = 1))
 
 ggplot(data = rand_sample, mapping = aes(sample = rs)) +
   stat_qq_band(fill = "#FC8D62", alpha = 0.4) +
@@ -226,7 +230,7 @@ dframe %>% ggplot(aes(sample = xlnorm)) +
  
 ### `stat_qq_band`
 
-Confidence bands can be drawn around the reference line using one of three methods: a pointwise normal approximation, the parametric bootstrap, or the tail-sensitive procedure \citep{Aldor-Noiman2013-xw}.
+Confidence bands can be drawn around the reference line using one of three methods: a pointwise normal approximation \citep{Davison:1997}, the parametric bootstrap, or the tail-sensitive procedure \citep{Aldor-Noiman2013-xw}.
 
 ```{r eval=FALSE}
 stat_qq_band(data = NULL,
@@ -284,7 +288,7 @@ To give a brief introduction on how to use \pkg{qqplotr} and its transformations
 We start by creating a normal Q-Q plot of the data. The top-left plot in Figure \ref{fig:urine-qq-bands} shows a Q-Q plot comparing the pH measurements to the normal distribution. The code used to create this plot is shown below. As previously noted, the parameters of the normal distribution are automatically estimated using the MLEs, when the parameters are not specified otherwise in `dparams`. The shaded region represents the area between the normal pointwise confidence bands. As we can see, the distribution of urine pH measurements is somewhat right-skewed.
 
 ```{r eval=FALSE}
-library(dplyr)
+library(dplyr) # for using `%>%` and some data transformation later
 data(urine, package = "boot")
 urine %>% 
   ggplot(aes(sample = ph)) + 
@@ -551,7 +555,6 @@ sample_ia %>%
 sample_ia %>% 
   mutate(HTIN4.jitter = jitter(HTIN4, factor = 2)) %>% 
   ggplot(aes(sample = HTIN4.jitter, colour = Gender, fill = Gender)) + 
-  geom_abline(slope = 1, intercept = 0, colour = "grey40") +
   stat_qq_band(alpha = 0.4,
                dparams = list(mean = params$m, sd = params$s)) +
   stat_qq_line(dparams = list(mean = params$m, sd = params$s)) + 
@@ -562,7 +565,8 @@ sample_ia %>%
 
 Notice that the same theoretical normal distribution was fit to both genders as specified in `dparams`. If we had used the default, then the MLEs for each gender would be used. As a result, we would be comparing the two genders over a different range of theoretical quantiles. By explicity providing parameter estimates for the mean and standard deviation via `dparams`, we force the Q-Q plots to use the same $x$-coordinates (theoretical quantiles), which is more useful when comparing the distribution of these groups.
 
-As seen in Figure \ref{fig:heights}, by using jittering we diminish the effect that discreteness has on the distribution and brings the observed distribution much closer to a normal distribution. Unsurprisingly, the resulting distributions have different means (women are, on average, 6 inches shorter than men in this dataset). Interestingly, the slope of the two genders is similar, indicating that the same scale parameter fits both genders' distributions (the standard deviation of height in the data set is 2.97 inch for men and 2.91 inch for women, see Table \ref{tab:heights}). The dark line between the two groups in the right panel of Figure \ref{fig:heights} is the identity line, representing the theoretical distribution each group is compared to. While the mean is about half way between the gender means, the standard deviation of the height based on the whole population is larger, as seen by the steeper slope of the identity compared to the lines for each group.
+As seen in Figure \ref{fig:heights}, by using jittering we diminish the effect that discreteness has on the distribution and brings the observed distribution much closer to a normal distribution. Unsurprisingly, the resulting distributions have different means (women are, on average, 6 inches shorter than men in this dataset). Interestingly, the slope of the two genders is similar, indicating that the same scale parameter fits both genders' distributions (the standard deviation of height in the data set is 2.97 inch for men and 2.91 inch for women, see Table \ref{tab:heights}). 
+<!--The dark line between the two groups in the right panel of Figure \ref{fig:heights} is the identity line, representing the theoretical distribution each group is compared to. While the mean is about half way between the gender means, the standard deviation of the height based on the whole population is larger, as seen by the steeper slope of the identity compared to the lines for each group.-->
 
 ```{r heights-table, echo=FALSE, results='asis'}
 bygender <- iowa %>% group_by(SEX) %>%
@@ -587,30 +591,32 @@ knitr::kable(bygender,
              booktabs = TRUE)
 ```
 
-Unlike respondents' heights, their weights do not seem to be normally distributed. Figure \ref{fig:weights} shows two Q-Q plots of these data. The Q-Q plot on the left compares raw weights to a normal distribution. We see that tails of the observed distribution are heavier than expected under a normal distribution. On the right, weights are log-transformed. We see that using a normal distribution for each gender appears to be reasonable, with the exception of a few extreme outliers. The code used to create Figure \ref{fig:weights} is shown below:
+Unlike respondents' heights, their weights do not seem to be normally distributed. Figure \ref{fig:weights} shows two Q-Q plots of these data. \hh{For both, distributional parameters are estimated separately for each group. This means that each group compares againsta different distribution when comparing  against the identity line as `the' theoretical distribution   XXX bit awkwardly phrased} The Q-Q plot on the left compares raw weights to a normal distribution. 
+We see that tails of the observed distribution are heavier than expected under a normal distribution. On the right, weights are log-transformed. We see that using a normal distribution for each gender appears to be reasonable, with the exception of a few extreme outliers.  The code used to create Figure \ref{fig:weights} is shown below:
 
-```{r weights, echo=TRUE, message=FALSE, warning = FALSE, out.width='0.4\\linewidth', fig.width=3.5, fig.height=3.5, fig.show='hold', fig.align='center', fig.cap = "Q-Q plots comparing weights to a normal distribution for a sample of 200 men and 200 women. Unlike people's height, weight seems to be right skewed with some additional outliers in the left tail (left plot). On the right, weight was log-transfomed before its distribution is compared to a theoretical normal."}
-params <- iowa %>% 
-  filter(!is.na(WTKG3)) %>% 
-  summarize(
-    m = mean(WTKG3/100),
-    s = sd(WTKG3/100)
-  )
+```{r weights, echo=TRUE, message=FALSE, warning = FALSE, out.width='0.4\\linewidth', fig.width=3.5, fig.height=3.5, fig.show='hold', fig.align='center', fig.cap = "Q-Q plots comparing weights to a normal distribution for a sample of 200 men and 200 women. Unlike people's height, weight seems to be right skewed with some additional outliers in the left tail (left plot). On the right, weight was log-transfomed before its distribution is compared to a theoretical normal. "}
+# params <- iowa %>% 
+#   filter(!is.na(WTKG3)) %>% 
+#   summarize(
+#     m = mean(WTKG3/100),
+#     s = sd(WTKG3/100)
+#   )
 
 sample_ia %>% 
   ggplot(aes(sample = WTKG3 / 100, colour = Gender, fill = Gender)) + 
-  stat_qq_band(alpha = 0.4,
-               dparams = list(mean = params$m, sd = params$s)) + 
-  stat_qq_line(dparams = list(mean = params$m, sd = params$s)) + 
-  stat_qq_point(dparams = list(mean = params$m, sd = params$s)) +
+  geom_abline(colour="grey40") +
+  stat_qq_band(alpha = 0.4) + 
+  stat_qq_line() + 
+  stat_qq_point() +
   customization +
   ylab("Weight (kg.)")
 
 sample_ia %>% 
   ggplot(aes(sample = log(WTKG3/100), colour=Gender, fill=Gender)) + 
-  stat_qq_band(alpha = 0.4,dparams = list(mean = params$m, sd = params$s)) + 
-  stat_qq_line(dparams = list(mean = params$m, sd = params$s)) + 
-  stat_qq_point(dparams = list(mean = params$m, sd = params$s)) +
+  geom_abline(colour="grey40") +
+  stat_qq_band(alpha = 0.4) + 
+  stat_qq_line() + 
+  stat_qq_point() +
   customization +
   ylab("log Weight (kg.)")
 ```
@@ -767,3 +773,12 @@ ggplot(data.frame(x = chisq1), aes(sample = x)) +
   xlab("Theoretical quantiles") +
   xlab("Sample quantiles")
 ``` --->
+
+
+# Changes
+
+- changed sample size in the first couple of examples from 20 to 35
+- added Davison reference for point-wise confidence intervals
+- added references to sine illusion, robbins and cleveland for detrended plots (argument in favor of detrended version wrt to assessment of distances)
+- removed the comparison to the dark line in Fig 9
+- first stab at changing figure 10 - needs some more work
