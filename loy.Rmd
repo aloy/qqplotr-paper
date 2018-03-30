@@ -593,17 +593,10 @@ knitr::kable(bygender,
              booktabs = TRUE)
 ```
 
-Unlike respondents' heights, their weights do not seem to be normally distributed. Figure \ref{fig:weights} shows two Q-Q plots of these data. \hh{For both, distributional parameters are estimated separately for each group. This means that each group compares againsta different distribution when comparing  against the identity line as `the' theoretical distribution   XXX bit awkwardly phrased} The Q-Q plot on the left compares raw weights to a normal distribution. 
+Unlike respondents' heights, their weights do not seem to be normally distributed. Figure \ref{fig:weights} shows two Q-Q plots of these data. \hh{For both, distributional parameters are estimated separately for each group. This means that for each group we compare against its theoretical distribution shown as the identity line.} The Q-Q plot on the left compares raw weights to a normal distribution. 
 We see that tails of the observed distribution are heavier than expected under a normal distribution. On the right, weights are log-transformed. We see that using a normal distribution for each gender appears to be reasonable, with the exception of a few extreme outliers.  The code used to create Figure \ref{fig:weights} is shown below:
 
 ```{r weights, echo=TRUE, message=FALSE, warning = FALSE, out.width='0.4\\linewidth', fig.width=3.5, fig.height=3.5, fig.show='hold', fig.align='center', fig.cap = "Q-Q plots comparing weights to a normal distribution for a sample of 200 men and 200 women. Unlike people's height, weight seems to be right skewed with some additional outliers in the left tail (left plot). On the right, weight was log-transfomed before its distribution is compared to a theoretical normal. "}
-# params <- iowa %>% 
-#   filter(!is.na(WTKG3)) %>% 
-#   summarize(
-#     m = mean(WTKG3/100),
-#     s = sd(WTKG3/100)
-#   )
-
 sample_ia %>% 
   ggplot(aes(sample = WTKG3 / 100, colour = Gender, fill = Gender)) + 
   geom_abline(colour="grey40") +
@@ -783,4 +776,4 @@ ggplot(data.frame(x = chisq1), aes(sample = x)) +
 - added Davison reference for point-wise confidence intervals
 - added references to sine illusion, robbins and cleveland for detrended plots (argument in favor of detrended version wrt to assessment of distances)
 - removed the comparison to the dark line in Fig 9
-- first stab at changing figure 10 - needs some more work
+- first stab at changing figure 10 
