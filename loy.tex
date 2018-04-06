@@ -767,13 +767,6 @@ to create Figure \ref{fig:weights} is shown below:
 
 \begin{Schunk}
 \begin{Sinput}
-# params <- iowa %>% 
-#   filter(!is.na(WTKG3)) %>% 
-#   summarize(
-#     m = mean(WTKG3/100),
-#     s = sd(WTKG3/100)
-#   )
-
 sample_ia %>% 
   ggplot(aes(sample = WTKG3 / 100, colour = Gender, fill = Gender)) + 
   geom_abline(colour="grey40") +
@@ -893,7 +886,7 @@ This work was partially funded by Google Summer of Code 2017.
 \item
   removed the comparison to the dark line in Fig 9
 \item
-  first stab at changing figure 10 - needs some more work
+  first stab at changing figure 10
 \end{itemize}
 
 \address{%
