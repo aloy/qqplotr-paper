@@ -22,7 +22,6 @@ author:
 abstract: >
  Q-Q plots allow us to assess univariate distributional assumptions by comparing a set of quantiles from the empirical and the theoretical distributions in the form of a scatterplot. To aid in the interpretation of Q-Q plots, reference lines and confidence bands are often added. We can also detrend the Q-Q plot so the vertical comparisons of interest come into focus. Various implementations of Q-Q plots exist in R, but none implements all of these features. \pkg{qqplotr} extends \pkg{ggplot2} to provide a complete implementation of Q-Q plots. This paper introduces the plotting framework provided by \pkg{qqplotr} and provides multiple examples of how it can be used. 
 preamble: >
-  % Any extra latex you need in the preamble
   \usepackage{nameref}
   \usepackage{color}
 output: rticles::rjournal_article

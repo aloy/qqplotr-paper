@@ -17,11 +17,10 @@ paper introduces the plotting framework provided by \pkg{qqplotr} and
 provides multiple examples of how it can be used.
 }
 
-\newcommand{\hh}[1]{{\textcolor{orange}{#1}}}
-\newcommand{\al}[1]{{\textcolor{violet}{#1}}}
-\newcommand{\Aa}[1]{{\textcolor{olive}{#1}}}
+\newcommand{\hh}[1]{{\textcolor{orange}{#1}}}\newcommand{\al}[1]{{\textcolor{violet}{#1}}}\newcommand{\Aa}[1]{{\textcolor{olive}{#1}}}
 
-\subsection{Background}\label{background}
+\hypertarget{background}{%
+\subsection{Background}\label{background}}
 
 \label{sec:background}
 
@@ -141,8 +140,9 @@ of all Q-Q plot designs without sacrificing the flexibility of the
 the plotting framework provided by \pkg{qqplotr} and provide multiple
 examples of how it can be used.
 
+\hypertarget{implementing-q-q-plots-in-the-framework}{%
 \subsection{\texorpdfstring{Implementing Q-Q plots in the \pkg{ggplot2}
-framework}{Implementing Q-Q plots in the  framework}}\label{implementing-q-q-plots-in-the-framework}
+framework}{Implementing Q-Q plots in the  framework}}\label{implementing-q-q-plots-in-the-framework}}
 
 \label{sec:implementing}
 
@@ -151,7 +151,8 @@ points, reference lines, and confidence bands by implementing separate
 statistical transformations (\texttt{stat}s). In this section, we
 describe each transformation.
 
-\subsubsection{\texorpdfstring{\texttt{stat\_qq\_point}}{stat\_qq\_point}}\label{stat_qq_point}
+\hypertarget{stat_qq_point}{%
+\subsubsection{\texorpdfstring{\texttt{stat\_qq\_point}}{stat\_qq\_point}}\label{stat_qq_point}}
 
 This modified version of \texttt{stat\_qq}/\texttt{geom\_qq} (from
 \pkg{ggplot2}) plots the sample quantiles against the theoretical
@@ -161,24 +162,12 @@ transformations in \pkg{qqplotr} also allow for the detrend option.
 Below we present a complete call to \texttt{stat\_qq\_point} and
 highlight the default values of its parameters:
 
-\begin{Schunk}
-\begin{Sinput}
-stat_qq_point(data = NULL,
-              mapping = NULL,
-              geom = "point",
-              position = "identity",
-              na.rm = TRUE,
-              show.legend = NA,
-              inherit.aes = TRUE,
-              distribution = "norm",
-              dparams = list(),
-              detrend = FALSE,
-              identity = FALSE,
-              qtype = 7,
-              qprobs = c(0.25, 0.75),
-              ...)
-\end{Sinput}
-\end{Schunk}
+\textbackslash{}begin\{Schunk\} \textbackslash{}begin\{Sinput\}
+stat\_qq\_point(data = NULL, mapping = NULL, geom = ``point'', position
+= ``identity'', na.rm = TRUE, show.legend = NA, inherit.aes = TRUE,
+distribution = ``norm'', dparams = list(), detrend = FALSE, identity =
+FALSE, qtype = 7, qprobs = c(0.25, 0.75), \ldots{})
+\textbackslash{}end\{Sinput\} \textbackslash{}end\{Schunk\}
 
 \begin{itemize}
 \item
@@ -230,29 +219,18 @@ stat_qq_point(data = NULL,
   line.
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\texttt{stat\_qq\_line}}{stat\_qq\_line}}\label{stat_qq_line}
+\hypertarget{stat_qq_line}{%
+\subsubsection{\texorpdfstring{\texttt{stat\_qq\_line}}{stat\_qq\_line}}\label{stat_qq_line}}
 
 The \texttt{stat\_qq\_line} statistical transformation draws a reference
 line in a Q-Q plot.
 
-\begin{Schunk}
-\begin{Sinput}
-stat_qq_line(data = NULL,
-             mapping = NULL,
-             geom = "path",
-             position = "identity",
-             na.rm = TRUE,
-             show.legend = NA,
-             inherit.aes = TRUE,
-             distribution = "norm",
-             dparams = list(),
-             detrend = FALSE,
-             identity = FALSE,
-             qtype = 7,
-             qprobs = c(0.25, 0.75),
-             ...)
-\end{Sinput}
-\end{Schunk}
+\textbackslash{}begin\{Schunk\} \textbackslash{}begin\{Sinput\}
+stat\_qq\_line(data = NULL, mapping = NULL, geom = ``path'', position =
+``identity'', na.rm = TRUE, show.legend = NA, inherit.aes = TRUE,
+distribution = ``norm'', dparams = list(), detrend = FALSE, identity =
+FALSE, qtype = 7, qprobs = c(0.25, 0.75), \ldots{})
+\textbackslash{}end\{Sinput\} \textbackslash{}end\{Schunk\}
 
 Nearly all of the parameters for \texttt{stat\_qq\_line} are identical
 to those for \texttt{stat\_qq\_point}. Hence, with the exception of
@@ -299,36 +277,21 @@ Figure \ref{fig:qqline} for an example).
 \end{figure}
 \end{Schunk}
 
-\subsubsection{\texorpdfstring{\texttt{stat\_qq\_band}}{stat\_qq\_band}}\label{stat_qq_band}
+\hypertarget{stat_qq_band}{%
+\subsubsection{\texorpdfstring{\texttt{stat\_qq\_band}}{stat\_qq\_band}}\label{stat_qq_band}}
 
 Confidence bands can be drawn around the reference line using one of
 three methods: a pointwise normal approximation \citep{Davison:1997},
 the parametric bootstrap, or the tail-sensitive procedure
 \citep{Aldor-Noiman2013-xw}.
 
-\begin{Schunk}
-\begin{Sinput}
-stat_qq_band(data = NULL,
-             mapping = NULL,
-             geom = "qq_band",
-             position = "identity",
-             show.legend = NA,
-             inherit.aes = TRUE,
-             na.rm = TRUE,
-             distribution = "norm",
-             dparams = list(),
-             detrend = FALSE,
-             identity = FALSE,
-             qtype = 7,
-             qprobs = c(0.25, 0.75),
-             bandType = "normal",
-             B = 1000,
-             conf = 0.95,
-             mu = NULL,
-             sigma = NULL,
-             ...)
-\end{Sinput}
-\end{Schunk}
+\textbackslash{}begin\{Schunk\} \textbackslash{}begin\{Sinput\}
+stat\_qq\_band(data = NULL, mapping = NULL, geom = ``qq\_band'',
+position = ``identity'', show.legend = NA, inherit.aes = TRUE, na.rm =
+TRUE, distribution = ``norm'', dparams = list(), detrend = FALSE,
+identity = FALSE, qtype = 7, qprobs = c(0.25, 0.75), bandType =
+``normal'', B = 1000, conf = 0.95, mu = NULL, sigma = NULL, \ldots{})
+\textbackslash{}end\{Sinput\} \textbackslash{}end\{Schunk\}
 
 \begin{itemize}
 \item
@@ -379,8 +342,9 @@ stat_qq_band(data = NULL,
   discussed by \citet{Aldor-Noiman2013-xw}.
 \end{itemize}
 
+\hypertarget{groups-in-qqplotr}{%
 \subsubsection{\texorpdfstring{Groups in
-\texttt{qqplotr}}{Groups in qqplotr}}\label{groups-in-qqplotr}
+\texttt{qqplotr}}{Groups in qqplotr}}\label{groups-in-qqplotr}}
 
 \texttt{qqplotr} is implemented in accordance with the \pkg{ggplot2}
 concept of groups. When the user maps values to aesthetics that
@@ -399,7 +363,8 @@ The use of groups is illustrated in more detail in the
 
 \FloatBarrier
 
-\subsection{Examples}\label{examples}
+\hypertarget{examples}{%
+\subsection{Examples}\label{examples}}
 
 \label{sec:examples}
 
@@ -413,8 +378,9 @@ library(qqplotr)
 \end{Sinput}
 \end{Schunk}
 
+\hypertarget{constructing-q-q-plots-with-qqplotr}{%
 \subsubsection{\texorpdfstring{Constructing Q-Q plots with
-\texttt{qqplotr}}{Constructing Q-Q plots with qqplotr}}\label{constructing-q-q-plots-with-qqplotr}
+\texttt{qqplotr}}{Constructing Q-Q plots with qqplotr}}\label{constructing-q-q-plots-with-qqplotr}}
 
 To give a brief introduction on how to use \pkg{qqplotr} and its
 transformations, consider the \texttt{urine} dataset from the \pkg{boot}
@@ -434,22 +400,15 @@ region represents the area between the normal pointwise confidence
 bands. As we can see, the distribution of urine pH measurements is
 somewhat right-skewed.
 
-\begin{Schunk}
-\begin{Sinput}
-library(dplyr) # for using `%>%` and some data transformation later
-data(urine, package = "boot")
-urine %>% 
-  ggplot(aes(sample = ph)) + 
-  stat_qq_band(bandType = "normal", fill = "#8DA0CB", alpha = 0.4) + 
-  stat_qq_line(colour = "#8DA0CB") +
-  stat_qq_point() +
-  ggtitle("Normal") +
-  xlab("Normal quantiles") +
-  ylab("pH measurements quantiles") +
-  theme_light() +
-  ylim(3.2, 8.7)
-\end{Sinput}
-\end{Schunk}
+\textbackslash{}begin\{Schunk\} \textbackslash{}begin\{Sinput\}
+library(dplyr) \# for using \texttt{\%\textgreater{}\%} and some data
+transformation later data(urine, package = ``boot'') urine
+\%\textgreater{}\% ggplot(aes(sample = ph)) + stat\_qq\_band(bandType =
+``normal'', fill = ``\#8DA0CB'', alpha = 0.4) + stat\_qq\_line(colour =
+``\#8DA0CB'') + stat\_qq\_point() + ggtitle(``Normal'') + xlab(``Normal
+quantiles'') + ylab(``pH measurements quantiles'') + theme\_light() +
+ylim(3.2, 8.7) \textbackslash{}end\{Sinput\}
+\textbackslash{}end\{Schunk\}
 
 Figure \ref{fig:urine-qq-bands} provides an overview of \pkg{qqplotr}'s
 capabilities:
@@ -482,8 +441,9 @@ capabilities:
 
 \FloatBarrier
 
+\hypertarget{user-provided-distributions}{%
 \subsubsection{User-provided
-distributions}\label{user-provided-distributions}
+distributions}\label{user-provided-distributions}}
 
 \label{sec:user-dists}
 
@@ -568,22 +528,15 @@ substantially deviate from the SEV model, so we have found an adequate
 representation of the distances. The code used to create Figure
 \ref{fig:sev-qq} is given below:
 
-\begin{Schunk}
-\begin{Sinput}
-ggplot(longjump, aes(sample = distance)) +
-  stat_qq_band(distribution = "sev", 
-               dparams = list(mu = 0, sigma = 1),
-               fill = "#8DA0CB",
-               alpha = 0.4) +
-  stat_qq_line(distribution = "sev", 
-               colour = "#8DA0CB",
-               dparams = list(mu = 0, sigma = 1)) +
-  stat_qq_point(distribution = "sev", 
-                dparams = list(mu = 0, sigma = 1)) +
-  xlab("SEV quantiles") +
-  ylab("Jump distance (in m)") +
-  theme_light()
-\end{Sinput}
+\textbackslash{}begin\{Schunk\} \textbackslash{}begin\{Sinput\}
+ggplot(longjump, aes(sample = distance)) + stat\_qq\_band(distribution =
+``sev'', dparams = list(mu = 0, sigma = 1), fill = ``\#8DA0CB'', alpha =
+0.4) + stat\_qq\_line(distribution = ``sev'', colour = ``\#8DA0CB'',
+dparams = list(mu = 0, sigma = 1)) + stat\_qq\_point(distribution =
+``sev'', dparams = list(mu = 0, sigma = 1)) + xlab(``SEV quantiles'') +
+ylab(``Jump distance (in m)'') + theme\_light()
+\textbackslash{}end\{Sinput\}
+
 \begin{figure}
 
 {\centering \includegraphics[width=0.45\linewidth]{loy-figures/sev-qq-1} 
@@ -592,11 +545,13 @@ ggplot(longjump, aes(sample = distance)) +
 
 \caption[Q-Q plot comparing the long jump distances to the standard SEV distribution with 95\% pointwise confidence bands]{Q-Q plot comparing the long jump distances to the standard SEV distribution with 95\% pointwise confidence bands. The SEV distribution appears to adequately model the distances.}\label{fig:sev-qq}
 \end{figure}
-\end{Schunk}
+
+\textbackslash{}end\{Schunk\}
 
 \FloatBarrier
 
-\subsubsection{Detrending Q-Q plots}\label{detrending-q-q-plots}
+\hypertarget{detrending-q-q-plots}{%
+\subsubsection{Detrending Q-Q plots}\label{detrending-q-q-plots}}
 
 \label{sec:detrending}
 
@@ -610,26 +565,16 @@ vertical and horizontal distances are on the same scale we further add
 the \(y\)-axis limits on a case-by-case basis. The full command to
 construct Figure \ref{fig:detrend-sev} is given below:
 
-\begin{Schunk}
-\begin{Sinput}
-ggplot(longjump, aes(sample = distance)) +
-  stat_qq_band(distribution = "sev",
-               detrend = TRUE,
-               dparams = list(mu = 0, sigma = 1),
-               fill = "#8DA0CB",
-               alpha = 0.4) +
-  stat_qq_line(distribution = "sev",
-               detrend = TRUE,
-               dparams = list(mu = 0, sigma = 1),
-               colour = "#8DA0CB") +
-  stat_qq_point(distribution = "sev",
-                detrend = TRUE,
-                dparams = list(mu = 0, sigma = 1)) +
-  xlab("SEV quantiles") +
-  ylab("Differences") +
-  theme_light() + 
-  coord_fixed(ratio = 1, ylim = c(-2, 2))
-\end{Sinput}
+\textbackslash{}begin\{Schunk\} \textbackslash{}begin\{Sinput\}
+ggplot(longjump, aes(sample = distance)) + stat\_qq\_band(distribution =
+``sev'', detrend = TRUE, dparams = list(mu = 0, sigma = 1), fill =
+``\#8DA0CB'', alpha = 0.4) + stat\_qq\_line(distribution = ``sev'',
+detrend = TRUE, dparams = list(mu = 0, sigma = 1), colour =
+``\#8DA0CB'') + stat\_qq\_point(distribution = ``sev'', detrend = TRUE,
+dparams = list(mu = 0, sigma = 1)) + xlab(``SEV quantiles'') +
+ylab(``Differences'') + theme\_light() + coord\_fixed(ratio = 1, ylim =
+c(-2, 2)) \textbackslash{}end\{Sinput\}
+
 \begin{figure}
 
 {\centering \includegraphics[width=0.45\linewidth]{loy-figures/detrend-sev-1} 
@@ -638,9 +583,11 @@ ggplot(longjump, aes(sample = distance)) +
 
 \caption[An adjusted detrended Q-Q plot assessing the appropriateness of the SEV distribution for the long jump data]{An adjusted detrended Q-Q plot assessing the appropriateness of the SEV distribution for the long jump data.}\label{fig:detrend-sev}
 \end{figure}
-\end{Schunk}
 
-\subsubsection{BRFSS example}\label{brfss-example}
+\textbackslash{}end\{Schunk\}
+
+\hypertarget{brfss-example}{%
+\subsubsection{BRFSS example}\label{brfss-example}}
 
 \label{sec:brfss}
 
@@ -666,51 +613,37 @@ height to the nearest inch. On the right-hand side of Figure
 we add a random number generated from a random uniform distribution on
 \(\pm 0.5\) inch to the reported height, as shown in the code below:
 
-\begin{Schunk}
-\begin{Sinput}
-data("iowa", package = "qqplotr")
-set.seed(3145)
+\textbackslash{}begin\{Schunk\} \textbackslash{}begin\{Sinput\}
+data(``iowa'', package = ``qqplotr'') set.seed(3145)
 
-sample_ia <- iowa %>% 
-  tidyr::nest(-SEX) %>% 
-  mutate(
-    data = data %>% 
-    purrr::map(.f = function(x) sample_n(x, size = 200))
-    ) %>% 
-  tidyr::unnest(data) %>% 
-  dplyr::select(SEX, WTKG3, HTIN4) %>%
-  mutate(Gender = c("Male", "Female")[SEX])
+sample\_ia \textless{}- iowa \%\textgreater{}\% tidyr::nest(-SEX)
+\%\textgreater{}\% mutate( data = data \%\textgreater{}\% purrr::map(.f
+= function(x) sample\_n(x, size = 200)) ) \%\textgreater{}\%
+tidyr::unnest(data) \%\textgreater{}\% dplyr::select(SEX, WTKG3, HTIN4)
+\%\textgreater{}\% mutate(Gender = c(``Male'', ``Female''){[}SEX{]})
 
-params <- iowa %>% 
-  filter(!is.na(HTIN4)) %>% 
-  summarize(m = mean(HTIN4), s = sd(HTIN4))
+params \textless{}- iowa \%\textgreater{}\% filter(!is.na(HTIN4))
+\%\textgreater{}\% summarize(m = mean(HTIN4), s = sd(HTIN4))
 
-customization <- list(scale_fill_brewer(palette = "Set2"),
-                      scale_colour_brewer(palette = "Set2"),
-                      xlab("Normal quantiles"),
-                      ylab("Height (in.)"),
-                      coord_equal(),
-                      theme_light(),
-                      theme(legend.position = c(0.8, 0.2), aspect.ratio = 1))
+customization \textless{}- list(scale\_fill\_brewer(palette = ``Set2''),
+scale\_colour\_brewer(palette = ``Set2''), xlab(``Normal quantiles''),
+ylab(``Height (in.)''), coord\_equal(), theme\_light(),
+theme(legend.position = c(0.8, 0.2), aspect.ratio = 1))
 
-sample_ia %>% 
-  ggplot(aes(sample = HTIN4, colour=Gender, fill=Gender)) + 
-  stat_qq_band(alpha = 0.4,
-               dparams = list(mean = params$m, sd = params$s)) + 
-  stat_qq_line(dparams = list(mean = params$m, sd = params$s)) + 
-  stat_qq_point(dparams = list(mean = params$m, sd = params$s)) +
-  customization
+sample\_ia \%\textgreater{}\% ggplot(aes(sample = HTIN4, colour=Gender,
+fill=Gender)) + stat\_qq\_band(alpha = 0.4, dparams = list(mean =
+params\(m, sd = params\)s)) + stat\_qq\_line(dparams = list(mean =
+params\(m, sd = params\)s)) + stat\_qq\_point(dparams = list(mean =
+params\(m, sd = params\)s)) + customization
 
-sample_ia %>% 
-  mutate(HTIN4.jitter = jitter(HTIN4, factor = 2)) %>% 
-  ggplot(aes(sample = HTIN4.jitter, colour = Gender, fill = Gender)) + 
-  stat_qq_band(alpha = 0.4,
-               dparams = list(mean = params$m, sd = params$s)) +
-  stat_qq_line(dparams = list(mean = params$m, sd = params$s)) + 
-  stat_qq_point(dparams = list(mean = params$m, sd = params$s)) +
-  customization +
-  ylab("Jittered Height (in.)") 
-\end{Sinput}
+sample\_ia \%\textgreater{}\% mutate(HTIN4.jitter = jitter(HTIN4, factor
+= 2)) \%\textgreater{}\% ggplot(aes(sample = HTIN4.jitter, colour =
+Gender, fill = Gender)) + stat\_qq\_band(alpha = 0.4, dparams =
+list(mean = params\(m, sd = params\)s)) + stat\_qq\_line(dparams =
+list(mean = params\(m, sd = params\)s)) + stat\_qq\_point(dparams =
+list(mean = params\(m, sd = params\)s)) + customization +
+ylab(``Jittered Height (in.)'') \textbackslash{}end\{Sinput\}
+
 \begin{figure}
 
 {\centering \includegraphics[width=0.4\linewidth]{loy-figures/heights-1} \includegraphics[width=0.4\linewidth]{loy-figures/heights-2} 
@@ -719,7 +652,8 @@ sample_ia %>%
 
 \caption[Q-Q plots comparing the raw (left) and jittered (right) heights to a normal distribution for a sample of 200 men and 200 women]{Q-Q plots comparing the raw (left) and jittered (right) heights to a normal distribution for a sample of 200 men and 200 women. The distribution on the left is dominated by the discreteness of the data. On the right, using a normal distribution to model people's height is not completely absurd, except for a few extreme outliers.}\label{fig:heights}
 \end{figure}
-\end{Schunk}
+
+\textbackslash{}end\{Schunk\}
 
 Notice that the same theoretical normal distribution was fit to both
 genders as specified in \texttt{dparams}. If we had used the default,
@@ -765,26 +699,17 @@ We see that using a normal distribution for each gender appears to be
 reasonable, with the exception of a few extreme outliers. The code used
 to create Figure \ref{fig:weights} is shown below:
 
-\begin{Schunk}
-\begin{Sinput}
-sample_ia %>% 
-  ggplot(aes(sample = WTKG3 / 100, colour = Gender, fill = Gender)) + 
-  geom_abline(colour="grey40") +
-  stat_qq_band(alpha = 0.4) + 
-  stat_qq_line() + 
-  stat_qq_point() +
-  customization +
-  ylab("Weight (kg.)")
+\textbackslash{}begin\{Schunk\} \textbackslash{}begin\{Sinput\}
+sample\_ia \%\textgreater{}\% ggplot(aes(sample = WTKG3 / 100, colour =
+Gender, fill = Gender)) + geom\_abline(colour=``grey40'') +
+stat\_qq\_band(alpha = 0.4) + stat\_qq\_line() + stat\_qq\_point() +
+customization + ylab(``Weight (kg.)'')
 
-sample_ia %>% 
-  ggplot(aes(sample = log(WTKG3/100), colour=Gender, fill=Gender)) + 
-  geom_abline(colour="grey40") +
-  stat_qq_band(alpha = 0.4) + 
-  stat_qq_line() + 
-  stat_qq_point() +
-  customization +
-  ylab("log Weight (kg.)")
-\end{Sinput}
+sample\_ia \%\textgreater{}\% ggplot(aes(sample = log(WTKG3/100),
+colour=Gender, fill=Gender)) + geom\_abline(colour=``grey40'') +
+stat\_qq\_band(alpha = 0.4) + stat\_qq\_line() + stat\_qq\_point() +
+customization + ylab(``log Weight (kg.)'') \textbackslash{}end\{Sinput\}
+
 \begin{figure}
 
 {\centering \includegraphics[width=0.4\linewidth]{loy-figures/weights-1} \includegraphics[width=0.4\linewidth]{loy-figures/weights-2} 
@@ -793,7 +718,8 @@ sample_ia %>%
 
 \caption[Q-Q plots comparing weights to a normal distribution for a sample of 200 men and 200 women]{Q-Q plots comparing weights to a normal distribution for a sample of 200 men and 200 women. Unlike people's height, weight seems to be right skewed with some additional outliers in the left tail (left plot). On the right, weight was log-transfomed before its distribution is compared to a theoretical normal. }\label{fig:weights}
 \end{figure}
-\end{Schunk}
+
+\textbackslash{}end\{Schunk\}
 
 Instead of log-transforming the observed weights, we can change the
 theoretical distribution to a lognormal. Figure \ref{fig:weights-log}
@@ -801,20 +727,15 @@ shows two lognormal Q-Q plots, one for each gender. Note the MLEs are
 used to parameterize the lognormal distribution for each group since
 \texttt{dparams} is not specified:
 
-\begin{Schunk}
-\begin{Sinput}
-sample_ia %>% 
-  ggplot(aes(sample = WTKG3 / 100, colour = Gender, fill = Gender)) +
-  geom_abline(colour = "grey40") +
-  stat_qq_band(distribution = "lnorm", alpha = 0.4) +
-  stat_qq_line(distribution = "lnorm") +
-  stat_qq_point(distribution = "lnorm") +
-  customization +
-  facet_grid(. ~ Gender) +
-  xlab("Lognormal quantiles") +
-  ylab("Weight (kg.)") +
-  theme(legend.position = c(0.9, 0.2))
-\end{Sinput}
+\textbackslash{}begin\{Schunk\} \textbackslash{}begin\{Sinput\}
+sample\_ia \%\textgreater{}\% ggplot(aes(sample = WTKG3 / 100, colour =
+Gender, fill = Gender)) + geom\_abline(colour = ``grey40'') +
+stat\_qq\_band(distribution = ``lnorm'', alpha = 0.4) +
+stat\_qq\_line(distribution = ``lnorm'') + stat\_qq\_point(distribution
+= ``lnorm'') + customization + facet\_grid(. \textasciitilde{} Gender) +
+xlab(``Lognormal quantiles'') + ylab(``Weight (kg.)'') +
+theme(legend.position = c(0.9, 0.2)) \textbackslash{}end\{Sinput\}
+
 \begin{figure}
 
 {\centering \includegraphics[width=0.9\linewidth]{loy-figures/weights-log-1} 
@@ -823,9 +744,11 @@ sample_ia %>%
 
 \caption[Q-Q plots comparing weights to a lognormal distribution for a sample of 200 men and 200 women]{Q-Q plots comparing weights to a lognormal distribution for a sample of 200 men and 200 women. The parameters are estimated separately for each gender to specify the lognormal reference distribution for each gender.}\label{fig:weights-log}
 \end{figure}
-\end{Schunk}
 
-\subsection{Discussion}\label{discussion}
+\textbackslash{}end\{Schunk\}
+
+\hypertarget{discussion}{%
+\subsection{Discussion}\label{discussion}}
 
 This paper presented the \pkg{qqplotr} package, an extension of
 \pkg{ggplot2} that implements Q-Q plots in both the standard and
@@ -867,11 +790,13 @@ parameters, and once for comparison.
 
 \bibliography{loy}
 
-\subsection{Acknowledgements}\label{acknowledgements}
+\hypertarget{acknowledgements}{%
+\subsection{Acknowledgements}\label{acknowledgements}}
 
 This work was partially funded by Google Summer of Code 2017.
 
-\section{Changes}\label{changes}
+\hypertarget{changes}{%
+\section{Changes}\label{changes}}
 
 \begin{itemize}
 \tightlist
