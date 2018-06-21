@@ -22,7 +22,6 @@ author:
 abstract: >
  Q-Q plots allow us to assess univariate distributional assumptions by comparing a set of quantiles from the empirical and the theoretical distributions in the form of a scatterplot. To aid in the interpretation of Q-Q plots, reference lines and confidence bands are often added. We can also detrend the Q-Q plot so the vertical comparisons of interest come into focus. Various implementations of Q-Q plots exist in R, but none implements all of these features. \pkg{qqplotr} extends \pkg{ggplot2} to provide a complete implementation of Q-Q plots. This paper introduces the plotting framework provided by \pkg{qqplotr} and provides multiple examples of how it can be used. 
 preamble: >
-  % Any extra latex you need in the preamble
   \usepackage{nameref}
   \usepackage{color}
 output: rticles::rjournal_article
@@ -232,7 +231,7 @@ dframe %>% ggplot(aes(sample = xlnorm)) +
  
 ### `stat_qq_band`
 
-Confidence bands can be drawn around the reference line using one of three methods: a pointwise normal approximation \citep{Davison:1997}, the parametric bootstrap, or the tail-sensitive procedure \citep{Aldor-Noiman2013-xw}.
+Confidence bands can be drawn around the reference line using one of four methods: simultaneous Kolmogorov-type bounds, a pointwise normal approximation \citep{Davison:1997}, the parametric bootstrap, or the tail-sensitive procedure \citep{Aldor-Noiman2013-xw}.
 
 ```{r eval=FALSE}
 stat_qq_band(data = NULL,
@@ -257,7 +256,8 @@ stat_qq_band(data = NULL,
 ```
 
 * `bandType` is a character string controlling the method used to construct the confidence bands:
-    + **Normal:** Specifying `bandType = "normal"` constructs pointwise confidence bands based on a normal approximation to the distribution of the order statistics. For example, an approximate 95\% confidence interval for the $i$th order statistic is  $\widehat{X}_{(i)}~\pm~\Phi^{-1}(.975)~\cdot~SE(X_{(i)})$, where $\widehat{X}_{(i)}$ denotes the value along the fitted reference line, $\Phi^{-1}(\cdot)$ denotes the quantile function for the Standard Normal Distribution, and $SE(X_{(i)})$ is the standard error of the $i$th order statistic.
+    + \al{**Simultaneous**: Specifying `bandType = "dkw"` constructs simultaneous confidence bands based on an inversion of the Kolmogorov-Smirnov test. For an i.i.d. sample from CDF $F$, the Dvoretzky-Kiefer-Wolfowitz (DKW) inequality \citep{dkw, massart-dkw} states that $P(\sup_{x} | F(x) - \widehat{F}(x)| \ge \varepsilon) \le 2 \exp(-2n\varepsilon^2)$. Thus, lower and upper $(1-\alpha)100\%$ confidence bounds for $\widehat{F}(n)$ are given by $L(x) = \max\{ \widehat{F}(n) - \varepsilon, 0 \}$ and $U(x) = \min\{ \widehat{F}(n) + \varepsilon, 1 \}$, respectively. Confidence bounds for the points on a Q-Q plot are then given by $F^{-1} (L(x))$ and $F^{-1} (U(x))$.}
+    + **Pointwise:** Specifying `bandType = "pointwise"` constructs pointwise confidence bands based on a normal approximation to the distribution of the order statistics. For example, an approximate 95\% confidence interval for the $i$th order statistic is  $\widehat{X}_{(i)}~\pm~\Phi^{-1}(.975)~\cdot~SE(X_{(i)})$, where $\widehat{X}_{(i)}$ denotes the value along the fitted reference line, $\Phi^{-1}(\cdot)$ denotes the quantile function for the Standard Normal Distribution, and $SE(X_{(i)})$ is the standard error of the $i$th order statistic.
     + **Bootstrap:** Specifying `bandType = "boot"` constructs pointwise confidence bands using percentile confidence intervals from the parametric bootstrap.
     + **Tail-sensitive:** Specifying `bandType = "ts"` constructs the simulation-based tail-sensitive simultaneous confidence bands proposed by \citet{Aldor-Noiman2013-xw}. Currently, tail-sensitive bands are *only* implemented for `distribution = "norm"`.
 

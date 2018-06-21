@@ -302,9 +302,9 @@ Figure \ref{fig:qqline} for an example).
 \subsubsection{\texorpdfstring{\texttt{stat\_qq\_band}}{stat\_qq\_band}}\label{stat_qq_band}
 
 Confidence bands can be drawn around the reference line using one of
-three methods: a pointwise normal approximation \citep{Davison:1997},
-the parametric bootstrap, or the tail-sensitive procedure
-\citep{Aldor-Noiman2013-xw}.
+four methods: simultaneous Kolmogorov-type bounds, a pointwise normal
+approximation \citep{Davison:1997}, the parametric bootstrap, or the
+tail-sensitive procedure \citep{Aldor-Noiman2013-xw}.
 
 \begin{Schunk}
 \begin{Sinput}
@@ -338,7 +338,9 @@ stat_qq_band(data = NULL,
   \begin{itemize}
   \tightlist
   \item
-    \textbf{Normal:} Specifying \texttt{bandType\ =\ "normal"}
+    \al{**Simultaneous**: Specifying `bandType = "dkw"` constructs simultaneous confidence bands based on an inversion of the Kolmogorov-Smirnov test. For an i.i.d. sample from CDF $F$, the Dvoretzky-Kiefer-Wolfowitz (DKW) inequality \citep{dkw, massart-dkw} states that $P(\sup_{x} | F(x) - \widehat{F}(x)| \ge \varepsilon) \le 2 \exp(-2n\varepsilon^2)$. Thus, lower and upper $(1-\alpha)100\%$ confidence bounds for $\widehat{F}(n)$ are given by $L(x) = \max\{ \widehat{F}(n) - \varepsilon, 0 \}$ and $U(x) = \min\{ \widehat{F}(n) + \varepsilon, 1 \}$, respectively. Confidence bounds for the points on a Q-Q plot are then given by $F^{-1} (L(x))$ and $F^{-1} (U(x))$.}
+  \item
+    \textbf{Pointwise:} Specifying \texttt{bandType\ =\ "pointwise"}
     constructs pointwise confidence bands based on a normal
     approximation to the distribution of the order statistics. For
     example, an approximate 95\% confidence interval for the \(i\)th
