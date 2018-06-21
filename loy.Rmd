@@ -784,3 +784,4 @@ ggplot(data.frame(x = chisq1), aes(sample = x)) +
 - removed the comparison to the dark line in Fig 9
 - first stab at changing figure 10 
 - Added details for the Kolmogorov-type simultaneous confidence band
+- Using more simultaneous bands in the paper, as suggested

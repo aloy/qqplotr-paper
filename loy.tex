@@ -704,7 +704,8 @@ customization <- list(scale_fill_brewer(palette = "Set2"),
 
 sample_ia %>% 
   ggplot(aes(sample = HTIN4, colour=Gender, fill=Gender)) + 
-  stat_qq_band(alpha = 0.4,
+  stat_qq_band(bandType = "ts",
+               alpha = 0.4,
                dparams = list(mean = params$m, sd = params$s)) + 
   stat_qq_line(dparams = list(mean = params$m, sd = params$s)) + 
   stat_qq_point(dparams = list(mean = params$m, sd = params$s)) +
@@ -713,7 +714,8 @@ sample_ia %>%
 sample_ia %>% 
   mutate(HTIN4.jitter = jitter(HTIN4, factor = 2)) %>% 
   ggplot(aes(sample = HTIN4.jitter, colour = Gender, fill = Gender)) + 
-  stat_qq_band(alpha = 0.4,
+  stat_qq_band(bandType = "ts",
+               alpha = 0.4,
                dparams = list(mean = params$m, sd = params$s)) +
   stat_qq_line(dparams = list(mean = params$m, sd = params$s)) + 
   stat_qq_point(dparams = list(mean = params$m, sd = params$s)) +
