@@ -303,7 +303,7 @@ Figure \ref{fig:qqline} for an example).
 
 Confidence bands can be drawn around the reference line using one of
 four methods: simultaneous Kolmogorov-type bounds, a pointwise normal
-approximation \citep{Davison:1997}, the parametric bootstrap, or the
+approximation, the parametric bootstrap \citep{Davison:1997}, or the
 tail-sensitive procedure \citep{Aldor-Noiman2013-xw}.
 
 \begin{Schunk}
@@ -453,19 +453,24 @@ urine %>%
 \end{Sinput}
 \end{Schunk}
 
-Figure \ref{fig:urine-qq-bands} provides an overview of \pkg{qqplotr}'s
-capabilities:
+Figure \ref{fig:urine-qq-bands} \al{also} provides an overview of
+\pkg{qqplotr}'s capabilities:
 
 \begin{itemize}
+\tightlist
 \item
   The left column displays Q-Q plots with 95\% pointwise confidence
   bands obtained from a normal approximation.
+\end{itemize}
+
+\begin{itemize}
 \item
-  The center column displays Q-Q plots with 95\% pointwise confidence
-  bands constructed using a parametric bootstrap.
+  The center column displays Q-Q plots with 95\%
+  \al{Kolmogorov-type simultaneous confidence bands.}
 \item
   The right column displays Q-Q plots with 95\% tail-sensitive
-  confidence bands.
+  \al{simultaneous} confidence bands.
+  \al{Notice that these are substantially narrower in the tails than the Kolmogorov-type bands.}
 \item
   The bottom row shows the detrended versions of the Q-Q plots in the
   top row.
@@ -574,6 +579,7 @@ representation of the distances. The code used to create Figure
 \begin{Sinput}
 ggplot(longjump, aes(sample = distance)) +
   stat_qq_band(distribution = "sev", 
+               bandType = "ks",
                dparams = list(mu = 0, sigma = 1),
                fill = "#8DA0CB",
                alpha = 0.4) +
@@ -592,7 +598,7 @@ ggplot(longjump, aes(sample = distance)) +
 
 }
 
-\caption[Q-Q plot comparing the long jump distances to the standard SEV distribution with 95\% pointwise confidence bands]{Q-Q plot comparing the long jump distances to the standard SEV distribution with 95\% pointwise confidence bands. The SEV distribution appears to adequately model the distances.}\label{fig:sev-qq}
+\caption[Q-Q plot comparing the long jump distances to the standard SEV distribution with 95\% simultaneous confidence bands]{Q-Q plot comparing the long jump distances to the standard SEV distribution with 95\% simultaneous confidence bands. The SEV distribution appears to adequately model the distances.}\label{fig:sev-qq}
 \end{figure}
 \end{Schunk}
 
@@ -616,6 +622,7 @@ construct Figure \ref{fig:detrend-sev} is given below:
 \begin{Sinput}
 ggplot(longjump, aes(sample = distance)) +
   stat_qq_band(distribution = "sev",
+               bandType = "ks",
                detrend = TRUE,
                dparams = list(mu = 0, sigma = 1),
                fill = "#8DA0CB",
@@ -772,7 +779,7 @@ to create Figure \ref{fig:weights} is shown below:
 sample_ia %>% 
   ggplot(aes(sample = WTKG3 / 100, colour = Gender, fill = Gender)) + 
   geom_abline(colour="grey40") +
-  stat_qq_band(alpha = 0.4) + 
+  stat_qq_band(bandType = "ts", alpha = 0.4) + 
   stat_qq_line() + 
   stat_qq_point() +
   customization +
@@ -781,7 +788,7 @@ sample_ia %>%
 sample_ia %>% 
   ggplot(aes(sample = log(WTKG3/100), colour=Gender, fill=Gender)) + 
   geom_abline(colour="grey40") +
-  stat_qq_band(alpha = 0.4) + 
+  stat_qq_band(bandType = "ts", alpha = 0.4) + 
   stat_qq_line() + 
   stat_qq_point() +
   customization +
@@ -808,7 +815,7 @@ used to parameterize the lognormal distribution for each group since
 sample_ia %>% 
   ggplot(aes(sample = WTKG3 / 100, colour = Gender, fill = Gender)) +
   geom_abline(colour = "grey40") +
-  stat_qq_band(distribution = "lnorm", alpha = 0.4) +
+  stat_qq_band(bandType = "ks", distribution = "lnorm", alpha = 0.4) +
   stat_qq_line(distribution = "lnorm") +
   stat_qq_point(distribution = "lnorm") +
   customization +
@@ -889,6 +896,8 @@ This work was partially funded by Google Summer of Code 2017.
   removed the comparison to the dark line in Fig 9
 \item
   first stab at changing figure 10
+\item
+  Added details for the Kolmogorov-type simultaneous confidence band
 \end{itemize}
 
 \address{%

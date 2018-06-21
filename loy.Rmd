@@ -231,7 +231,7 @@ dframe %>% ggplot(aes(sample = xlnorm)) +
  
 ### `stat_qq_band`
 
-Confidence bands can be drawn around the reference line using one of four methods: simultaneous Kolmogorov-type bounds, a pointwise normal approximation \citep{Davison:1997}, the parametric bootstrap, or the tail-sensitive procedure \citep{Aldor-Noiman2013-xw}.
+Confidence bands can be drawn around the reference line using one of four methods: simultaneous Kolmogorov-type bounds, a pointwise normal approximation, the parametric bootstrap \citep{Davison:1997}, or the tail-sensitive procedure \citep{Aldor-Noiman2013-xw}.
 
 ```{r eval=FALSE}
 stat_qq_band(data = NULL,
@@ -304,13 +304,15 @@ urine %>%
   ylim(3.2, 8.7)
 ```
 
-Figure \ref{fig:urine-qq-bands} provides an overview of \pkg{qqplotr}'s capabilities: 
+Figure \ref{fig:urine-qq-bands} \al{also} provides an overview of \pkg{qqplotr}'s capabilities: 
 
 * The left column displays Q-Q plots with 95% pointwise confidence bands obtained from a normal approximation.
 
-* The center column displays Q-Q plots with 95% pointwise confidence bands constructed using a parametric bootstrap.
+<!-- * The center column displays Q-Q plots with 95% pointwise confidence bands constructed using a parametric bootstrap. -->
 
-* The right column displays Q-Q plots with 95% tail-sensitive confidence bands.
+* The center column displays Q-Q plots with 95% \al{Kolmogorov-type simultaneous confidence bands.}
+
+* The right column displays Q-Q plots with 95% tail-sensitive \al{simultaneous} confidence bands. \al{Notice that these are substantially narrower in the tails than the Kolmogorov-type bands.}
 
 * The bottom row shows the detrended versions of the Q-Q plots in the top row.
 
@@ -335,17 +337,17 @@ p11 <- urine %>% ggplot(aes(sample = ph)) +
   stat_qq_band(bandType = "normal", fill = "#8DA0CB", alpha = 0.4) + 
   stat_qq_line(colour = "#8DA0CB") +
   stat_qq_point() +
-  ggtitle("Normal") +
+  ggtitle("Pointwise") +
   xlab("Normal quantiles") +
   ylab("pH measurements quantiles") +
   theme_light() +
   coord_cartesian(ylim = c(3.2, 8.7))
 
 p12 <- urine %>% ggplot(aes(sample = ph)) + 
-  stat_qq_band(bandType = "boot", fill = "#FC8D62", alpha = 0.4) + 
+  stat_qq_band(bandType = "ks", fill = "#FC8D62", alpha = 0.4) + 
   stat_qq_line(colour = "#FC8D62")+
   stat_qq_point() +
-  ggtitle("Bootstrap") +
+  ggtitle("Kolmogorov-type") +
   xlab("Normal quantiles") +
   ylab("pH measurements quantiles") +
   theme_light() +
@@ -373,17 +375,17 @@ p21 <- urine %>% ggplot(aes(sample = ph)) +
   stat_qq_band(bandType = "normal", fill = "#8DA0CB", alpha = 0.4, detrend = TRUE) + 
   stat_qq_line(colour = "#8DA0CB", detrend = TRUE) +
   stat_qq_point(detrend = TRUE) +
-  ggtitle("Normal (Detrended)") +
+  ggtitle("Pointwise (Detrended)") +
   xlab("Normal quantiles") +
   ylab("Differences") +
   theme_light() +
   coord_fixed(ratio=1, ylim = c(-1.5, 1.5))
 
 p22 <- urine %>% ggplot(aes(sample = ph)) + 
-  stat_qq_band(bandType = "boot", fill = "#FC8D62", alpha = 0.4, detrend = TRUE) + 
+  stat_qq_band(bandType = "ks", fill = "#FC8D62", alpha = 0.4, detrend = TRUE) + 
   stat_qq_line(colour = "#FC8D62", detrend = TRUE)+
   stat_qq_point(detrend = TRUE) +
-  ggtitle("Bootstrap (Detrended)") +
+  ggtitle("Kolmogorov-type (Detrended)") +
   xlab("Normal quantiles") +
   ylab("Differences") +
   theme_light() +
@@ -468,9 +470,10 @@ rsev <- function(n, mu = 0, sigma = 1) {
 
 With the `*sev` distribution functions in hand, we can create a Q-Q plot to assess the appropriateness of the SEV model (Figure \ref{fig:sev-qq}). The Q-Q plot shows that the distances do not substantially deviate from the SEV model, so we have found an adequate representation of the distances. The code used to create Figure \ref{fig:sev-qq} is given below:
 
-```{r sev-qq, message=FALSE, warning=FALSE, out.width='0.45\\linewidth', fig.width=3.5, fig.height=3.5, fig.align='center', fig.cap="Q-Q plot comparing the long jump distances to the standard SEV distribution with 95\\% pointwise confidence bands. The SEV distribution appears to adequately model the distances."}
+```{r sev-qq, message=FALSE, warning=FALSE, out.width='0.45\\linewidth', fig.width=3.5, fig.height=3.5, fig.align='center', fig.cap="Q-Q plot comparing the long jump distances to the standard SEV distribution with 95\\% simultaneous confidence bands. The SEV distribution appears to adequately model the distances."}
 ggplot(longjump, aes(sample = distance)) +
   stat_qq_band(distribution = "sev", 
+               bandType = "ks",
                dparams = list(mu = 0, sigma = 1),
                fill = "#8DA0CB",
                alpha = 0.4) +
@@ -494,6 +497,7 @@ To illustrate how to construct an adjusted detrended Q-Q plot using \pkg{qqplotr
 ```{r detrend-sev, message=FALSE, warning=FALSE, out.width='0.45\\linewidth', fig.width=3.5, fig.height=3.5, fig.align='center', fig.cap="An adjusted detrended Q-Q plot assessing the appropriateness of the SEV distribution for the long jump data."}
 ggplot(longjump, aes(sample = distance)) +
   stat_qq_band(distribution = "sev",
+               bandType = "ks",
                detrend = TRUE,
                dparams = list(mu = 0, sigma = 1),
                fill = "#8DA0CB",
@@ -548,7 +552,8 @@ customization <- list(scale_fill_brewer(palette = "Set2"),
 
 sample_ia %>% 
   ggplot(aes(sample = HTIN4, colour=Gender, fill=Gender)) + 
-  stat_qq_band(alpha = 0.4,
+  stat_qq_band(bandType = "ts",
+               alpha = 0.4,
                dparams = list(mean = params$m, sd = params$s)) + 
   stat_qq_line(dparams = list(mean = params$m, sd = params$s)) + 
   stat_qq_point(dparams = list(mean = params$m, sd = params$s)) +
@@ -557,7 +562,8 @@ sample_ia %>%
 sample_ia %>% 
   mutate(HTIN4.jitter = jitter(HTIN4, factor = 2)) %>% 
   ggplot(aes(sample = HTIN4.jitter, colour = Gender, fill = Gender)) + 
-  stat_qq_band(alpha = 0.4,
+  stat_qq_band(bandType = "ts",
+               alpha = 0.4,
                dparams = list(mean = params$m, sd = params$s)) +
   stat_qq_line(dparams = list(mean = params$m, sd = params$s)) + 
   stat_qq_point(dparams = list(mean = params$m, sd = params$s)) +
@@ -600,7 +606,7 @@ We see that tails of the observed distribution are heavier than expected under a
 sample_ia %>% 
   ggplot(aes(sample = WTKG3 / 100, colour = Gender, fill = Gender)) + 
   geom_abline(colour="grey40") +
-  stat_qq_band(alpha = 0.4) + 
+  stat_qq_band(bandType = "ts", alpha = 0.4) + 
   stat_qq_line() + 
   stat_qq_point() +
   customization +
@@ -609,7 +615,7 @@ sample_ia %>%
 sample_ia %>% 
   ggplot(aes(sample = log(WTKG3/100), colour=Gender, fill=Gender)) + 
   geom_abline(colour="grey40") +
-  stat_qq_band(alpha = 0.4) + 
+  stat_qq_band(bandType = "ts", alpha = 0.4) + 
   stat_qq_line() + 
   stat_qq_point() +
   customization +
@@ -622,7 +628,7 @@ Instead of log-transforming the observed weights, we can change the theoretical 
 sample_ia %>% 
   ggplot(aes(sample = WTKG3 / 100, colour = Gender, fill = Gender)) +
   geom_abline(colour = "grey40") +
-  stat_qq_band(distribution = "lnorm", alpha = 0.4) +
+  stat_qq_band(bandType = "ks", distribution = "lnorm", alpha = 0.4) +
   stat_qq_line(distribution = "lnorm") +
   stat_qq_point(distribution = "lnorm") +
   customization +
@@ -777,3 +783,4 @@ ggplot(data.frame(x = chisq1), aes(sample = x)) +
 - added references to sine illusion, robbins and cleveland for detrended plots (argument in favor of detrended version wrt to assessment of distances)
 - removed the comparison to the dark line in Fig 9
 - first stab at changing figure 10 
+- Added details for the Kolmogorov-type simultaneous confidence band
