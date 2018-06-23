@@ -155,11 +155,12 @@ describe each transformation.
 
 This modified version of \texttt{stat\_qq}/\texttt{geom\_qq} (from
 \pkg{ggplot2}) plots the sample quantiles against the theoretical
-quantiles, as shown in Figure \ref{fig:ex-qq1}. The novelty of this
-implementation is an option to detrend the plotted points. All other
-transformations in \pkg{qqplotr} also allow for the detrend option.
-Below we present a complete call to \texttt{stat\_qq\_point} and
-highlight the default values of its parameters:
+quantiles (as in Figure \ref{fig:ex-qq1}). The novelty of this
+implementation is the ability to create a detrend version of the plotted
+points. All other transformations in \pkg{qqplotr} also allow for the
+detrend option. Below we present a complete call to
+\texttt{stat\_qq\_point} and highlight the default values of its
+parameters:
 
 \begin{Schunk}
 \begin{Sinput}
@@ -209,10 +210,10 @@ stat_qq_point(data = NULL,
   must be estimated and passed as a named list to \texttt{dparams}.
 \item
   \texttt{detrend} is a logical that controls whether the points should
-  be detrended (as shown in Figure \ref{fig:ex-detrend}), producing
-  ordinary detrended Q-Q plots. For additional details on how to use
-  this parameter and produce the more powerful adjusted detrended Q-Q
-  plots, see the \nameref{sec:detrending} section.
+  be detrended (as in Figure \ref{fig:ex-detrend}), producing ordinary
+  detrended Q-Q plots. For additional details on how to use this
+  parameter and produce the more powerful adjusted detrended Q-Q plots,
+  see the \nameref{sec:detrending} section.
 \item
   \texttt{identity} is a logical value used in the case of detrending,
   i.e.~\texttt{detrend\ =\ TRUE}. If \texttt{identity\ =\ FALSE}
@@ -900,6 +901,8 @@ This work was partially funded by Google Summer of Code 2017.
   first stab at changing figure 10
 \item
   Added details for the Kolmogorov-type simultaneous confidence band
+\item
+  Using more simultaneous bands in the paper, as suggested
 \end{itemize}
 
 \address{%
