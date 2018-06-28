@@ -163,7 +163,7 @@ stat_qq_point(data = NULL,
 
 The `stat_qq_line` statistical transformation draws a reference line in a Q-Q plot.
 
-```{r eval=FALSE}
+```{r, eval=FALSE}
 stat_qq_line(data = NULL,
              mapping = NULL,
              geom = "path",
@@ -234,7 +234,7 @@ dframe %>% ggplot(aes(sample = xlnorm)) +
 
 Confidence bands can be drawn around the reference line using one of four methods: simultaneous Kolmogorov-type bounds, a pointwise normal approximation, the parametric bootstrap \citep{Davison:1997}, or the tail-sensitive procedure \citep{Aldor-Noiman2013-xw}.
 
-```{r eval=FALSE}
+```{r, eval=FALSE}
 stat_qq_band(data = NULL,
              mapping = NULL,
              geom = "qq_band",
@@ -280,7 +280,7 @@ The use of groups is illustrated in more detail in the \nameref{sec:brfss} secti
 
 In this section, we demonstrate the capabilities of \pkg{qqplotr} by providing multiple examples on how the package can be used. We start by loading the package:
 
-```{r message=FALSE}
+```{r, message=FALSE}
 library(qqplotr)
 ```
 
@@ -290,7 +290,7 @@ To give a brief introduction on how to use \pkg{qqplotr} and its transformations
 
 We start by creating a normal Q-Q plot of the data. The top-left plot in Figure \ref{fig:urine-qq-bands} shows a Q-Q plot comparing the pH measurements to the normal distribution. The code used to create this plot is shown below. As previously noted, the parameters of the normal distribution are automatically estimated using the MLEs when the parameters are not specified otherwise in `dparams`. The shaded region represents the area between the normal pointwise confidence bands. As we can see, the distribution of urine pH measurements is somewhat right-skewed.
 
-```{r eval=FALSE}
+```{r, eval=FALSE}
 library(dplyr) # for using `%>%` and some data transformation later
 data(urine, package = "boot")
 urine %>% 
@@ -429,7 +429,7 @@ To qualify for the 2012 Olympics in the men's long jump, athletes had to meet/ex
 
 We start by loading the `longjump` dataset included in \pkg{qqplotr} and removing any `NA`s:
 
-```{r message=FALSE}
+```{r, message=FALSE}
 data("longjump", package = "qqplotr")
 longjump <- na.omit(longjump)
 ```
