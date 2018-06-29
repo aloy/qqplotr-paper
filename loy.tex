@@ -93,19 +93,26 @@ Different orientations of Q-Q plots have also been proposed, most
 notably the detrended Q-Q plot. To detrend a Q-Q plot, the \(y\)-axis is
 changed to show the difference between the observed quantile and the
 reference line. Consequently, the \(y\)-axis represents agreement with
-the theoretical distribution.
-{\textcolor{orange}{This makes the de-trended version of a Q-Q plot  easier to process: cognitive research \citep{sineillusion, robbins, cleveland} suggests that onlookers have a tendency to intuitively assess the distance between points and lines based on the shortest distance (i.e. the orthogonal distance) rather than the vertical distance appropriate for the situation. In the de-trended Q-Q plot the line to compare to points  is rotated to be (parallel to) the $x$-axis, which makes assessing the vertical distance equal to assessing orthogonal distance. }}
-{\textcolor{orange}{This is further investigated in}}
-\citet{Loy2016-fg}, who find that detrended Q-Q plots are more powerful
-than other designs, as long as the \(x\)- and \(y\)-axes are adjusted to
-ensure that distances in the \(x\)- and \(y\)-directions are on the same
-scale. This Q-Q plot design is called an \emph{adjusted detrended Q-Q
-plot}. Without this adjustment to the range of the axes, \emph{ordinary
-detrended Q-Q plots} are produced, which were found to have lower power
-than the standard Q-Q plot in some situations \citep{Loy2016-fg}, while
-the adjusted detrended Q-Q plots were found to be consistently more
-powerful. Figure \ref{fig:ex-detrend} displays the normal Q-Q plot from
-Figure \ref{fig:ex-qq2} along with its adjusted detrended version.
+the theoretical distribution. This makes the de-trended version of a Q-Q
+plot easier to process: cognitive research
+\citep{sineillusion, robbins, cleveland} suggests that onlookers have a
+tendency to intuitively assess the distance between points and lines
+based on the shortest distance (i.e.~the orthogonal distance) rather
+than the vertical distance appropriate for the situation. In the
+de-trended Q-Q plot the line to compare to points is rotated to be
+(parallel to) the \(x\)-axis, which makes assessing the vertical
+distance equal to assessing orthogonal distance. This is further
+investigated in \citet{Loy2016-fg}, who find that detrended Q-Q plots
+are more powerful than other designs, as long as the \(x\)- and
+\(y\)-axes are adjusted to ensure that distances in the \(x\)- and
+\(y\)-directions are on the same scale. This Q-Q plot design is called
+an \emph{adjusted detrended Q-Q plot}. Without this adjustment to the
+range of the axes, \emph{ordinary detrended Q-Q plots} are produced,
+which were found to have lower power than the standard Q-Q plot in some
+situations \citep{Loy2016-fg}, while the adjusted detrended Q-Q plots
+were found to be consistently more powerful. Figure \ref{fig:ex-detrend}
+displays the normal Q-Q plot from Figure \ref{fig:ex-qq2} along with its
+adjusted detrended version.
 
 \begin{Schunk}
 \begin{figure}
@@ -166,12 +173,22 @@ detrend option. Below we present a complete call to
 \texttt{stat\_qq\_point} and highlight the default values of its
 parameters:
 
-\textbackslash{}begin\{Schunk\} \textbackslash{}begin\{Sinput\}
-stat\_qq\_point(data = NULL, mapping = NULL, geom = ``point'', position
-= ``identity'', na.rm = TRUE, show.legend = NA, inherit.aes = TRUE,
-distribution = ``norm'', dparams = list(), detrend = FALSE, identity =
-FALSE, qtype = 7, qprobs = c(0.25, 0.75), \ldots{})
-\textbackslash{}end\{Sinput\} \textbackslash{}end\{Schunk\}
+\begin{verbatim}
+stat_qq_point(data = NULL,
+              mapping = NULL,
+              geom = "point",
+              position = "identity",
+              na.rm = TRUE,
+              show.legend = NA,
+              inherit.aes = TRUE,
+              distribution = "norm",
+              dparams = list(),
+              detrend = FALSE,
+              identity = FALSE,
+              qtype = 7,
+              qprobs = c(0.25, 0.75),
+              ...)
+\end{verbatim}
 
 \begin{itemize}
 \item
@@ -230,12 +247,22 @@ FALSE, qtype = 7, qprobs = c(0.25, 0.75), \ldots{})
 The \texttt{stat\_qq\_line} statistical transformation draws a reference
 line in a Q-Q plot.
 
-\textbackslash{}begin\{Schunk\} \textbackslash{}begin\{Sinput\}
-stat\_qq\_line(data = NULL, mapping = NULL, geom = ``path'', position =
-``identity'', na.rm = TRUE, show.legend = NA, inherit.aes = TRUE,
-distribution = ``norm'', dparams = list(), detrend = FALSE, identity =
-FALSE, qtype = 7, qprobs = c(0.25, 0.75), \ldots{})
-\textbackslash{}end\{Sinput\} \textbackslash{}end\{Schunk\}
+\begin{verbatim}
+stat_qq_line(data = NULL,
+             mapping = NULL,
+             geom = "path",
+             position = "identity",
+             na.rm = TRUE,
+             show.legend = NA,
+             inherit.aes = TRUE,
+             distribution = "norm",
+             dparams = list(),
+             detrend = FALSE,
+             identity = FALSE,
+             qtype = 7,
+             qprobs = c(0.25, 0.75),
+             ...)
+\end{verbatim}
 
 Nearly all of the parameters for \texttt{stat\_qq\_line} are identical
 to those for \texttt{stat\_qq\_point}. Hence, with the exception of
@@ -290,13 +317,27 @@ four methods: simultaneous Kolmogorov-type bounds, a pointwise normal
 approximation, the parametric bootstrap \citep{Davison:1997}, or the
 tail-sensitive procedure \citep{Aldor-Noiman2013-xw}.
 
-\textbackslash{}begin\{Schunk\} \textbackslash{}begin\{Sinput\}
-stat\_qq\_band(data = NULL, mapping = NULL, geom = ``qq\_band'',
-position = ``identity'', show.legend = NA, inherit.aes = TRUE, na.rm =
-TRUE, distribution = ``norm'', dparams = list(), detrend = FALSE,
-identity = FALSE, qtype = 7, qprobs = c(0.25, 0.75), bandType =
-``normal'', B = 1000, conf = 0.95, mu = NULL, sigma = NULL, \ldots{})
-\textbackslash{}end\{Sinput\} \textbackslash{}end\{Schunk\}
+\begin{verbatim}
+stat_qq_band(data = NULL,
+             mapping = NULL,
+             geom = "qq_band",
+             position = "identity",
+             show.legend = NA,
+             inherit.aes = TRUE,
+             na.rm = TRUE,
+             distribution = "norm",
+             dparams = list(),
+             detrend = FALSE,
+             identity = FALSE,
+             qtype = 7,
+             qprobs = c(0.25, 0.75),
+             bandType = "normal",
+             B = 1000,
+             conf = 0.95,
+             mu = NULL,
+             sigma = NULL,
+             ...)
+\end{verbatim}
 
 \begin{itemize}
 \item
@@ -304,8 +345,20 @@ identity = FALSE, qtype = 7, qprobs = c(0.25, 0.75), bandType =
   construct the confidence bands:
 
   \begin{itemize}
+  \tightlist
   \item
-    {\textcolor{violet}{**Simultaneous**: Specifying `bandType = "dkw"` constructs simultaneous confidence bands based on an inversion of the Kolmogorov-Smirnov test. For an i.i.d. sample from CDF $F$, the Dvoretzky-Kiefer-Wolfowitz (DKW) inequality \citep{dkw, massart-dkw} states that $P(\sup_{x} | F(x) - \widehat{F}(x)| \ge \varepsilon) \le 2 \exp(-2n\varepsilon^2)$. Thus, lower and upper $(1-\alpha)100\%$ confidence bounds for $\widehat{F}(n)$ are given by $L(x) = \max\{ \widehat{F}(n) - \varepsilon, 0 \}$ and $U(x) = \min\{ \widehat{F}(n) + \varepsilon, 1 \}$, respectively. Confidence bounds for the points on a Q-Q plot are then given by $F^{-1} (L(x))$ and $F^{-1} (U(x))$.}}
+    \textbf{Simultaneous}: Specifying \texttt{bandType\ =\ "dkw"}
+    constructs simultaneous confidence bands based on an inversion of
+    the Kolmogorov-Smirnov test. For an i.i.d. sample from CDF \(F\),
+    the Dvoretzky-Kiefer-Wolfowitz (DKW) inequality
+    \citep{dkw, massart-dkw} states that
+    \(P(\sup_{x} | F(x) - \widehat{F}(x)| \ge \varepsilon) \le 2 \exp(-2n\varepsilon^2)\).
+    Thus, lower and upper \((1-\alpha)100\%\) confidence bounds for
+    \(\widehat{F}(n)\) are given by
+    \(L(x) = \max\{ \widehat{F}(n) - \varepsilon, 0 \}\) and
+    \(U(x) = \min\{ \widehat{F}(n) + \varepsilon, 1 \}\), respectively.
+    Confidence bounds for the points on a Q-Q plot are then given by
+    \(F^{-1} (L(x))\) and \(F^{-1} (U(x))\).
   \item
     \textbf{Pointwise:} Specifying \texttt{bandType\ =\ "pointwise"}
     constructs pointwise confidence bands based on a normal
@@ -406,18 +459,23 @@ region represents the area between the normal pointwise confidence
 bands. As we can see, the distribution of urine pH measurements is
 somewhat right-skewed.
 
-\textbackslash{}begin\{Schunk\} \textbackslash{}begin\{Sinput\}
-library(dplyr) \# for using \texttt{\%\textgreater{}\%} and some data
-transformation later data(urine, package = ``boot'') urine
-\%\textgreater{}\% ggplot(aes(sample = ph)) + stat\_qq\_band(bandType =
-``normal'', fill = ``\#8DA0CB'', alpha = 0.4) + stat\_qq\_line(colour =
-``\#8DA0CB'') + stat\_qq\_point() + ggtitle(``Normal'') + xlab(``Normal
-quantiles'') + ylab(``pH measurements quantiles'') + theme\_light() +
-ylim(3.2, 8.7) \textbackslash{}end\{Sinput\}
-\textbackslash{}end\{Schunk\}
+\begin{verbatim}
+library(dplyr) # for using `%>%` and some data transformation later
+data(urine, package = "boot")
+urine %>% 
+  ggplot(aes(sample = ph)) + 
+  stat_qq_band(bandType = "normal", fill = "#8DA0CB", alpha = 0.4) + 
+  stat_qq_line(colour = "#8DA0CB") +
+  stat_qq_point() +
+  ggtitle("Normal") +
+  xlab("Normal quantiles") +
+  ylab("pH measurements quantiles") +
+  theme_light() +
+  ylim(3.2, 8.7)
+\end{verbatim}
 
-Figure \ref{fig:urine-qq-bands} {\textcolor{violet}{also}} provides an
-overview of \pkg{qqplotr}'s capabilities:
+Figure \ref{fig:urine-qq-bands} also provides an overview of
+\pkg{qqplotr}'s capabilities:
 
 \begin{itemize}
 \tightlist
@@ -428,12 +486,12 @@ overview of \pkg{qqplotr}'s capabilities:
 
 \begin{itemize}
 \item
-  The center column displays Q-Q plots with 95\%
-  {\textcolor{violet}{Kolmogorov-type simultaneous confidence bands.}}
+  The center column displays Q-Q plots with 95\% Kolmogorov-type
+  simultaneous confidence bands.
 \item
   The right column displays Q-Q plots with 95\% tail-sensitive
-  {\textcolor{violet}{simultaneous}} confidence bands.
-  {\textcolor{violet}{Notice that these are substantially narrower in the tails than the Kolmogorov-type bands.}}
+  simultaneous confidence bands. Notice that these are substantially
+  narrower in the tails than the Kolmogorov-type bands.
 \item
   The bottom row shows the detrended versions of the Q-Q plots in the
   top row.
@@ -703,13 +761,15 @@ Total & 66.99 & 4.18 & 8.98 & 0.24\\
 
 Unlike respondents' heights, their weights do not seem to be normally
 distributed. Figure \ref{fig:weights} shows two Q-Q plots of these data.
-{\textcolor{orange}{For both, distributional parameters are estimated separately for each group. This means that for each group we compare against its theoretical distribution shown as the identity line.}}
-The Q-Q plot on the left compares raw weights to a normal distribution.
-We see that tails of the observed distribution are heavier than expected
-under a normal distribution. On the right, weights are log-transformed.
-We see that using a normal distribution for each gender appears to be
-reasonable, with the exception of a few extreme outliers. The code used
-to create Figure \ref{fig:weights} is shown below:
+For both, distributional parameters are estimated separately for each
+group. This means that for each group we compare against its theoretical
+distribution shown as the identity line. The Q-Q plot on the left
+compares raw weights to a normal distribution. We see that tails of the
+observed distribution are heavier than expected under a normal
+distribution. On the right, weights are log-transformed. We see that
+using a normal distribution for each gender appears to be reasonable,
+with the exception of a few extreme outliers. The code used to create
+Figure \ref{fig:weights} is shown below:
 
 \textbackslash{}begin\{Schunk\} \textbackslash{}begin\{Sinput\}
 sample\_ia \%\textgreater{}\% ggplot(aes(sample = WTKG3 / 100, colour =
