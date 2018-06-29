@@ -556,7 +556,6 @@ sample_ia %>%
   stat_qq_band(bandType = "ts",
                alpha = 0.4,
                dparams = list(mean = params$m, sd = params$s)) + 
-  stat_qq_line(dparams = list(mean = params$m, sd = params$s)) + 
   stat_qq_point(dparams = list(mean = params$m, sd = params$s)) +
   customization
 
@@ -566,7 +565,7 @@ sample_ia %>%
   stat_qq_band(bandType = "ts",
                alpha = 0.4,
                dparams = list(mean = params$m, sd = params$s)) +
-  stat_qq_line(dparams = list(mean = params$m, sd = params$s)) + 
+  stat_qq_line(dparams = list(mean = params$m, sd = params$s)) +
   stat_qq_point(dparams = list(mean = params$m, sd = params$s)) +
   customization +
   ylab("Jittered Height (in.)") 
