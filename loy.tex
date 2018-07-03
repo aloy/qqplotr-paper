@@ -17,11 +17,13 @@ paper introduces the plotting framework provided by \pkg{qqplotr} and
 provides multiple examples of how it can be used.
 }
 
+
 \newcommand{\hh}[1]{{\textcolor{orange}{#1}}}
 \newcommand{\al}[1]{{\textcolor{violet}{#1}}}
 \newcommand{\Aa}[1]{{\textcolor{olive}{#1}}}
 
-\subsection{Background}\label{background}
+\hypertarget{background}{%
+\subsection{Background}\label{background}}
 
 \label{sec:background}
 
@@ -91,19 +93,26 @@ Different orientations of Q-Q plots have also been proposed, most
 notably the detrended Q-Q plot. To detrend a Q-Q plot, the \(y\)-axis is
 changed to show the difference between the observed quantile and the
 reference line. Consequently, the \(y\)-axis represents agreement with
-the theoretical distribution.
-\hh{This makes the de-trended version of a Q-Q plot  easier to process: cognitive research \citep{sineillusion, robbins, cleveland} suggests that onlookers have a tendency to intuitively assess the distance between points and lines based on the shortest distance (i.e. the orthogonal distance) rather than the vertical distance appropriate for the situation. In the de-trended Q-Q plot the line to compare to points  is rotated to be (parallel to) the $x$-axis, which makes assessing the vertical distance equal to assessing orthogonal distance. }
-\hh{This is further investigated in} \citet{Loy2016-fg}, who find that
-detrended Q-Q plots are more powerful than other designs, as long as the
-\(x\)- and \(y\)-axes are adjusted to ensure that distances in the
-\(x\)- and \(y\)-directions are on the same scale. This Q-Q plot design
-is called an \emph{adjusted detrended Q-Q plot}. Without this adjustment
-to the range of the axes, \emph{ordinary detrended Q-Q plots} are
-produced, which were found to have lower power than the standard Q-Q
-plot in some situations \citep{Loy2016-fg}, while the adjusted detrended
-Q-Q plots were found to be consistently more powerful. Figure
-\ref{fig:ex-detrend} displays the normal Q-Q plot from Figure
-\ref{fig:ex-qq2} along with its adjusted detrended version.
+the theoretical distribution. This makes the de-trended version of a Q-Q
+plot easier to process: cognitive research
+\citep{sineillusion, robbins, cleveland} suggests that onlookers have a
+tendency to intuitively assess the distance between points and lines
+based on the shortest distance (i.e.~the orthogonal distance) rather
+than the vertical distance appropriate for the situation. In the
+de-trended Q-Q plot the line to compare to points is rotated to be
+(parallel to) the \(x\)-axis, which makes assessing the vertical
+distance equal to assessing orthogonal distance. This is further
+investigated in \citet{Loy2016-fg}, who find that detrended Q-Q plots
+are more powerful than other designs, as long as the \(x\)- and
+\(y\)-axes are adjusted to ensure that distances in the \(x\)- and
+\(y\)-directions are on the same scale. This Q-Q plot design is called
+an \emph{adjusted detrended Q-Q plot}. Without this adjustment to the
+range of the axes, \emph{ordinary detrended Q-Q plots} are produced,
+which were found to have lower power than the standard Q-Q plot in some
+situations \citep{Loy2016-fg}, while the adjusted detrended Q-Q plots
+were found to be consistently more powerful. Figure \ref{fig:ex-detrend}
+displays the normal Q-Q plot from Figure \ref{fig:ex-qq2} along with its
+adjusted detrended version.
 
 \begin{Schunk}
 \begin{figure}
@@ -141,8 +150,9 @@ of all Q-Q plot designs without sacrificing the flexibility of the
 the plotting framework provided by \pkg{qqplotr} and provide multiple
 examples of how it can be used.
 
+\hypertarget{implementing-q-q-plots-in-the-framework}{%
 \subsection{\texorpdfstring{Implementing Q-Q plots in the \pkg{ggplot2}
-framework}{Implementing Q-Q plots in the  framework}}\label{implementing-q-q-plots-in-the-framework}
+framework}{Implementing Q-Q plots in the  framework}}\label{implementing-q-q-plots-in-the-framework}}
 
 \label{sec:implementing}
 
@@ -151,18 +161,19 @@ points, reference lines, and confidence bands by implementing separate
 statistical transformations (\texttt{stat}s). In this section, we
 describe each transformation.
 
-\subsubsection{\texorpdfstring{\texttt{stat\_qq\_point}}{stat\_qq\_point}}\label{stat_qq_point}
+\hypertarget{stat_qq_point}{%
+\subsubsection{\texorpdfstring{\texttt{stat\_qq\_point}}{stat\_qq\_point}}\label{stat_qq_point}}
 
 This modified version of \texttt{stat\_qq}/\texttt{geom\_qq} (from
 \pkg{ggplot2}) plots the sample quantiles against the theoretical
-quantiles, as shown in Figure \ref{fig:ex-qq1}. The novelty of this
-implementation is an option to detrend the plotted points. All other
-transformations in \pkg{qqplotr} also allow for the detrend option.
-Below we present a complete call to \texttt{stat\_qq\_point} and
-highlight the default values of its parameters:
+quantiles (as in Figure \ref{fig:ex-qq1}). The novelty of this
+implementation is the ability to create a detrend version of the plotted
+points. All other transformations in \pkg{qqplotr} also allow for the
+detrend option. Below we present a complete call to
+\texttt{stat\_qq\_point} and highlight the default values of its
+parameters:
 
-\begin{Schunk}
-\begin{Sinput}
+\begin{verbatim}
 stat_qq_point(data = NULL,
               mapping = NULL,
               geom = "point",
@@ -177,8 +188,7 @@ stat_qq_point(data = NULL,
               qtype = 7,
               qprobs = c(0.25, 0.75),
               ...)
-\end{Sinput}
-\end{Schunk}
+\end{verbatim}
 
 \begin{itemize}
 \item
@@ -206,37 +216,38 @@ stat_qq_point(data = NULL,
   MLEs. Please note that MLEs are currently only supported for
   distributions available in \pkg{stats}, so if a custom distribution is
   provided to \texttt{distribution}, then \emph{all} of its parameters
-  must be estimated and passed as a named list to \texttt{dparams}.
+  must be estimated and passed on to as a named list to
+  \texttt{dparams}.
 \item
   \texttt{detrend} is a logical that controls whether the points should
-  be detrended (as shown in Figure \ref{fig:ex-detrend}), producing
-  ordinary detrended Q-Q plots. For additional details on how to use
-  this parameter and produce the more powerful adjusted detrended Q-Q
+  be detrended (as in Figure \ref{fig:ex-detrend}), producing ordinary
+  detrended Q-Q plots. For additional details on how to use this
+  parameter and produce the more powerful \emph{adjusted} detrended Q-Q
   plots, see the \nameref{sec:detrending} section.
 \item
-  \texttt{identity} is a logical value used in the case of detrending,
-  i.e.~\texttt{detrend\ =\ TRUE}. If \texttt{identity\ =\ FALSE}
-  (default), then the points will be detrended according to the
-  traditional Q-Q line that intersects the two data quantiles specified
-  by \code{qprobs} (see below). If \texttt{identity\ =\ TRUE}, the
-  identity line will be used instead as the reference line when
-  constructing the detrended Q-Q plot.
+  \texttt{identity} is a logical value only used in the case of
+  detrending i.e., if \texttt{detrend\ =\ TRUE}. If
+  \texttt{identity\ =\ FALSE} (default), then the points will be
+  detrended according to the traditional Q-Q line that intersects the
+  two data quantiles specified by \code{qprobs} (see below). If
+  \texttt{identity\ =\ TRUE}, the identity line will be used instead as
+  the reference line when constructing the detrended Q-Q plot.
 \item
   \texttt{qtype} and \texttt{qprobs} are only used when
   \texttt{detrend\ =\ TRUE} \emph{and} \texttt{identity\ =\ FALSE}.
-  These parameters are passed to the \texttt{type} and \texttt{probs}
+  These parameters are passed on to the \texttt{type} and \texttt{probs}
   parameters of the \texttt{quantile} function from \pkg{stats}, both of
   which are used to specify which quantiles are used to form the Q-Q
   line.
 \end{itemize}
 
-\subsubsection{\texorpdfstring{\texttt{stat\_qq\_line}}{stat\_qq\_line}}\label{stat_qq_line}
+\hypertarget{stat_qq_line}{%
+\subsubsection{\texorpdfstring{\texttt{stat\_qq\_line}}{stat\_qq\_line}}\label{stat_qq_line}}
 
 The \texttt{stat\_qq\_line} statistical transformation draws a reference
 line in a Q-Q plot.
 
-\begin{Schunk}
-\begin{Sinput}
+\begin{verbatim}
 stat_qq_line(data = NULL,
              mapping = NULL,
              geom = "path",
@@ -251,8 +262,7 @@ stat_qq_line(data = NULL,
              qtype = 7,
              qprobs = c(0.25, 0.75),
              ...)
-\end{Sinput}
-\end{Schunk}
+\end{verbatim}
 
 Nearly all of the parameters for \texttt{stat\_qq\_line} are identical
 to those for \texttt{stat\_qq\_point}. Hence, with the exception of
@@ -295,19 +305,19 @@ Figure \ref{fig:qqline} for an example).
 
 }
 
-\caption[Q-Q plots of a sample of size $n=50$ drawn from a normal distribution Standard Normal distribution (top-left) and a normal distribution with ML parameter estimates (top-right)]{Q-Q plots of a sample of size $n=50$ drawn from a normal distribution Standard Normal distribution (top-left) and a normal distribution with ML parameter estimates (top-right). Only the scales on the axes change between these plots. The bottom two plots show Q-Q plots of a sample of size $n=50$ drawn from a lognormal distribution. On the left, the mean and variance are 0 and 1, respectively, on the log scale. On the right, ML estimates for mean and variance are used. 95\% pointwise confidence bands are displayed on all Q-Q plots. }\label{fig:qqline}
+\caption[Q-Q plots of a sample of size $n=50$ drawn from a normal distribution setting as theoretical the Standard Normal distribution (top-left) and a normal distribution with ML parameter estimates (top-right)]{Q-Q plots of a sample of size $n=50$ drawn from a normal distribution setting as theoretical the Standard Normal distribution (top-left) and a normal distribution with ML parameter estimates (top-right). Note how only the scales on the axes change between those plots. The bottom two plots show Q-Q plots of a sample of size $n=50$ drawn from a lognormal distribution. On the left, the mean and variance of the theoretical are 0 and 1, respectively, on the log scale. On the right, ML estimates for mean and variance are used. 95\% pointwise confidence bands are displayed on all Q-Q plots. }\label{fig:qqline}
 \end{figure}
 \end{Schunk}
 
-\subsubsection{\texorpdfstring{\texttt{stat\_qq\_band}}{stat\_qq\_band}}\label{stat_qq_band}
+\hypertarget{stat_qq_band}{%
+\subsubsection{\texorpdfstring{\texttt{stat\_qq\_band}}{stat\_qq\_band}}\label{stat_qq_band}}
 
 Confidence bands can be drawn around the reference line using one of
 four methods: simultaneous Kolmogorov-type bounds, a pointwise normal
 approximation, the parametric bootstrap \citep{Davison:1997}, or the
 tail-sensitive procedure \citep{Aldor-Noiman2013-xw}.
 
-\begin{Schunk}
-\begin{Sinput}
+\begin{verbatim}
 stat_qq_band(data = NULL,
              mapping = NULL,
              geom = "qq_band",
@@ -327,8 +337,7 @@ stat_qq_band(data = NULL,
              mu = NULL,
              sigma = NULL,
              ...)
-\end{Sinput}
-\end{Schunk}
+\end{verbatim}
 
 \begin{itemize}
 \item
@@ -338,7 +347,18 @@ stat_qq_band(data = NULL,
   \begin{itemize}
   \tightlist
   \item
-    \al{**Simultaneous**: Specifying `bandType = "dkw"` constructs simultaneous confidence bands based on an inversion of the Kolmogorov-Smirnov test. For an i.i.d. sample from CDF $F$, the Dvoretzky-Kiefer-Wolfowitz (DKW) inequality \citep{dkw, massart-dkw} states that $P(\sup_{x} | F(x) - \widehat{F}(x)| \ge \varepsilon) \le 2 \exp(-2n\varepsilon^2)$. Thus, lower and upper $(1-\alpha)100\%$ confidence bounds for $\widehat{F}(n)$ are given by $L(x) = \max\{ \widehat{F}(n) - \varepsilon, 0 \}$ and $U(x) = \min\{ \widehat{F}(n) + \varepsilon, 1 \}$, respectively. Confidence bounds for the points on a Q-Q plot are then given by $F^{-1} (L(x))$ and $F^{-1} (U(x))$.}
+    \textbf{Simultaneous}: Specifying \texttt{bandType\ =\ "dkw"}
+    constructs simultaneous confidence bands based on an inversion of
+    the Kolmogorov-Smirnov test. For an i.i.d. sample from CDF \(F\),
+    the Dvoretzky-Kiefer-Wolfowitz (DKW) inequality
+    \citep{dkw, massart-dkw} states that
+    \(P(\sup_{x} | F(x) - \widehat{F}(x)| \ge \varepsilon) \le 2 \exp(-2n\varepsilon^2)\).
+    Thus, lower and upper \((1-\alpha)100\%\) confidence bounds for
+    \(\widehat{F}(n)\) are given by
+    \(L(x) = \max\{ \widehat{F}(n) - \varepsilon, 0 \}\) and
+    \(U(x) = \min\{ \widehat{F}(n) + \varepsilon, 1 \}\), respectively.
+    Confidence bounds for the points on a Q-Q plot are then given by
+    \(F^{-1} (L(x))\) and \(F^{-1} (U(x))\).
   \item
     \textbf{Pointwise:} Specifying \texttt{bandType\ =\ "pointwise"}
     constructs pointwise confidence bands based on a normal
@@ -381,13 +401,14 @@ stat_qq_band(data = NULL,
   discussed by \citet{Aldor-Noiman2013-xw}.
 \end{itemize}
 
+\hypertarget{groups-in-qqplotr}{%
 \subsubsection{\texorpdfstring{Groups in
-\texttt{qqplotr}}{Groups in qqplotr}}\label{groups-in-qqplotr}
+\texttt{qqplotr}}{Groups in qqplotr}}\label{groups-in-qqplotr}}
 
 \texttt{qqplotr} is implemented in accordance with the \pkg{ggplot2}
 concept of groups. When the user maps values to aesthetics that
 explicitly (by using \texttt{group}) or implicitly (such as
-\texttt{shape} or discrete values of \texttt{colour}, \texttt{size},
+\texttt{shape} or discrete values of \texttt{colour}, \texttt{size}
 etc.) introduce groups, the corresponding calculations respect the
 grouping in the data. All groups are compared to the same distributional
 family, but the parameters are estimated \emph{separately} for each of
@@ -401,12 +422,13 @@ The use of groups is illustrated in more detail in the
 
 \FloatBarrier
 
-\subsection{Examples}\label{examples}
+\hypertarget{examples}{%
+\subsection{Examples}\label{examples}}
 
 \label{sec:examples}
 
 In this section, we demonstrate the capabilities of \pkg{qqplotr} by
-providing multiple examples of how the package can be used. We start by
+providing multiple examples on how the package can be used. We start by
 loading the package:
 
 \begin{Schunk}
@@ -415,8 +437,9 @@ library(qqplotr)
 \end{Sinput}
 \end{Schunk}
 
+\hypertarget{constructing-q-q-plots-with-qqplotr}{%
 \subsubsection{\texorpdfstring{Constructing Q-Q plots with
-\texttt{qqplotr}}{Constructing Q-Q plots with qqplotr}}\label{constructing-q-q-plots-with-qqplotr}
+\texttt{qqplotr}}{Constructing Q-Q plots with qqplotr}}\label{constructing-q-q-plots-with-qqplotr}}
 
 To give a brief introduction on how to use \pkg{qqplotr} and its
 transformations, consider the \texttt{urine} dataset from the \pkg{boot}
@@ -430,14 +453,13 @@ We start by creating a normal Q-Q plot of the data. The top-left plot in
 Figure \ref{fig:urine-qq-bands} shows a Q-Q plot comparing the pH
 measurements to the normal distribution. The code used to create this
 plot is shown below. As previously noted, the parameters of the normal
-distribution are automatically estimated using the MLEs, when the
+distribution are automatically estimated using the MLEs when the
 parameters are not specified otherwise in \texttt{dparams}. The shaded
 region represents the area between the normal pointwise confidence
 bands. As we can see, the distribution of urine pH measurements is
 somewhat right-skewed.
 
-\begin{Schunk}
-\begin{Sinput}
+\begin{verbatim}
 library(dplyr) # for using `%>%` and some data transformation later
 data(urine, package = "boot")
 urine %>% 
@@ -450,10 +472,9 @@ urine %>%
   ylab("pH measurements quantiles") +
   theme_light() +
   ylim(3.2, 8.7)
-\end{Sinput}
-\end{Schunk}
+\end{verbatim}
 
-Figure \ref{fig:urine-qq-bands} \al{also} provides an overview of
+Figure \ref{fig:urine-qq-bands} also provides an overview of
 \pkg{qqplotr}'s capabilities:
 
 \begin{itemize}
@@ -465,12 +486,12 @@ Figure \ref{fig:urine-qq-bands} \al{also} provides an overview of
 
 \begin{itemize}
 \item
-  The center column displays Q-Q plots with 95\%
-  \al{Kolmogorov-type simultaneous confidence bands.}
+  The center column displays Q-Q plots with 95\% Kolmogorov-type
+  simultaneous confidence bands.
 \item
   The right column displays Q-Q plots with 95\% tail-sensitive
-  \al{simultaneous} confidence bands.
-  \al{Notice that these are substantially narrower in the tails than the Kolmogorov-type bands.}
+  simultaneous confidence bands. Notice that these are substantially
+  narrower in the tails than the Kolmogorov-type bands.
 \item
   The bottom row shows the detrended versions of the Q-Q plots in the
   top row.
@@ -489,8 +510,9 @@ Figure \ref{fig:urine-qq-bands} \al{also} provides an overview of
 
 \FloatBarrier
 
+\hypertarget{user-provided-distributions}{%
 \subsubsection{User-provided
-distributions}\label{user-provided-distributions}
+distributions}\label{user-provided-distributions}}
 
 \label{sec:user-dists}
 
@@ -575,23 +597,15 @@ substantially deviate from the SEV model, so we have found an adequate
 representation of the distances. The code used to create Figure
 \ref{fig:sev-qq} is given below:
 
-\begin{Schunk}
-\begin{Sinput}
-ggplot(longjump, aes(sample = distance)) +
-  stat_qq_band(distribution = "sev", 
-               bandType = "ks",
-               dparams = list(mu = 0, sigma = 1),
-               fill = "#8DA0CB",
-               alpha = 0.4) +
-  stat_qq_line(distribution = "sev", 
-               colour = "#8DA0CB",
-               dparams = list(mu = 0, sigma = 1)) +
-  stat_qq_point(distribution = "sev", 
-                dparams = list(mu = 0, sigma = 1)) +
-  xlab("SEV quantiles") +
-  ylab("Jump distance (in m)") +
-  theme_light()
-\end{Sinput}
+\textbackslash{}begin\{Schunk\} \textbackslash{}begin\{Sinput\}
+ggplot(longjump, aes(sample = distance)) + stat\_qq\_band(distribution =
+``sev'', bandType = ``ks'', dparams = list(mu = 0, sigma = 1), fill =
+``\#8DA0CB'', alpha = 0.4) + stat\_qq\_line(distribution = ``sev'',
+colour = ``\#8DA0CB'', dparams = list(mu = 0, sigma = 1)) +
+stat\_qq\_point(distribution = ``sev'', dparams = list(mu = 0, sigma =
+1)) + xlab(``SEV quantiles'') + ylab(``Jump distance (in m)'') +
+theme\_light() \textbackslash{}end\{Sinput\}
+
 \begin{figure}
 
 {\centering \includegraphics[width=0.45\linewidth]{loy-figures/sev-qq-1} 
@@ -600,11 +614,13 @@ ggplot(longjump, aes(sample = distance)) +
 
 \caption[Q-Q plot comparing the long jump distances to the standard SEV distribution with 95\% simultaneous confidence bands]{Q-Q plot comparing the long jump distances to the standard SEV distribution with 95\% simultaneous confidence bands. The SEV distribution appears to adequately model the distances.}\label{fig:sev-qq}
 \end{figure}
-\end{Schunk}
+
+\textbackslash{}end\{Schunk\}
 
 \FloatBarrier
 
-\subsubsection{Detrending Q-Q plots}\label{detrending-q-q-plots}
+\hypertarget{detrending-q-q-plots}{%
+\subsubsection{Detrending Q-Q plots}\label{detrending-q-q-plots}}
 
 \label{sec:detrending}
 
@@ -618,27 +634,16 @@ vertical and horizontal distances are on the same scale we further add
 the \(y\)-axis limits on a case-by-case basis. The full command to
 construct Figure \ref{fig:detrend-sev} is given below:
 
-\begin{Schunk}
-\begin{Sinput}
-ggplot(longjump, aes(sample = distance)) +
-  stat_qq_band(distribution = "sev",
-               bandType = "ks",
-               detrend = TRUE,
-               dparams = list(mu = 0, sigma = 1),
-               fill = "#8DA0CB",
-               alpha = 0.4) +
-  stat_qq_line(distribution = "sev",
-               detrend = TRUE,
-               dparams = list(mu = 0, sigma = 1),
-               colour = "#8DA0CB") +
-  stat_qq_point(distribution = "sev",
-                detrend = TRUE,
-                dparams = list(mu = 0, sigma = 1)) +
-  xlab("SEV quantiles") +
-  ylab("Differences") +
-  theme_light() + 
-  coord_fixed(ratio = 1, ylim = c(-2, 2))
-\end{Sinput}
+\textbackslash{}begin\{Schunk\} \textbackslash{}begin\{Sinput\}
+ggplot(longjump, aes(sample = distance)) + stat\_qq\_band(distribution =
+``sev'', bandType = ``ks'', detrend = TRUE, dparams = list(mu = 0, sigma
+= 1), fill = ``\#8DA0CB'', alpha = 0.4) + stat\_qq\_line(distribution =
+``sev'', detrend = TRUE, dparams = list(mu = 0, sigma = 1), colour =
+``\#8DA0CB'') + stat\_qq\_point(distribution = ``sev'', detrend = TRUE,
+dparams = list(mu = 0, sigma = 1)) + xlab(``SEV quantiles'') +
+ylab(``Differences'') + theme\_light() + coord\_fixed(ratio = 1, ylim =
+c(-2, 2)) \textbackslash{}end\{Sinput\}
+
 \begin{figure}
 
 {\centering \includegraphics[width=0.45\linewidth]{loy-figures/detrend-sev-1} 
@@ -647,9 +652,11 @@ ggplot(longjump, aes(sample = distance)) +
 
 \caption[An adjusted detrended Q-Q plot assessing the appropriateness of the SEV distribution for the long jump data]{An adjusted detrended Q-Q plot assessing the appropriateness of the SEV distribution for the long jump data.}\label{fig:detrend-sev}
 \end{figure}
-\end{Schunk}
 
-\subsubsection{BRFSS example}\label{brfss-example}
+\textbackslash{}end\{Schunk\}
+
+\hypertarget{brfss-example}{%
+\subsubsection{BRFSS example}\label{brfss-example}}
 
 \label{sec:brfss}
 
@@ -675,53 +682,37 @@ height to the nearest inch. On the right-hand side of Figure
 we add a random number generated from a random uniform distribution on
 \(\pm 0.5\) inch to the reported height, as shown in the code below:
 
-\begin{Schunk}
-\begin{Sinput}
-data("iowa", package = "qqplotr")
-set.seed(3145)
+\textbackslash{}begin\{Schunk\} \textbackslash{}begin\{Sinput\}
+data(``iowa'', package = ``qqplotr'') set.seed(3145)
 
-sample_ia <- iowa %>% 
-  tidyr::nest(-SEX) %>% 
-  mutate(
-    data = data %>% 
-    purrr::map(.f = function(x) sample_n(x, size = 200))
-    ) %>% 
-  tidyr::unnest(data) %>% 
-  dplyr::select(SEX, WTKG3, HTIN4) %>%
-  mutate(Gender = c("Male", "Female")[SEX])
+sample\_ia \textless{}- iowa \%\textgreater{}\% tidyr::nest(-SEX)
+\%\textgreater{}\% mutate( data = data \%\textgreater{}\% purrr::map(.f
+= function(x) sample\_n(x, size = 200)) ) \%\textgreater{}\%
+tidyr::unnest(data) \%\textgreater{}\% dplyr::select(SEX, WTKG3, HTIN4)
+\%\textgreater{}\% mutate(Gender = c(``Male'', ``Female''){[}SEX{]})
 
-params <- iowa %>% 
-  filter(!is.na(HTIN4)) %>% 
-  summarize(m = mean(HTIN4), s = sd(HTIN4))
+params \textless{}- iowa \%\textgreater{}\% filter(!is.na(HTIN4))
+\%\textgreater{}\% summarize(m = mean(HTIN4), s = sd(HTIN4))
 
-customization <- list(scale_fill_brewer(palette = "Set2"),
-                      scale_colour_brewer(palette = "Set2"),
-                      xlab("Normal quantiles"),
-                      ylab("Height (in.)"),
-                      coord_equal(),
-                      theme_light(),
-                      theme(legend.position = c(0.8, 0.2), aspect.ratio = 1))
+customization \textless{}- list(scale\_fill\_brewer(palette = ``Set2''),
+scale\_colour\_brewer(palette = ``Set2''), xlab(``Normal quantiles''),
+ylab(``Height (in.)''), coord\_equal(), theme\_light(),
+theme(legend.position = c(0.8, 0.2), aspect.ratio = 1))
 
-sample_ia %>% 
-  ggplot(aes(sample = HTIN4, colour=Gender, fill=Gender)) + 
-  stat_qq_band(bandType = "ts",
-               alpha = 0.4,
-               dparams = list(mean = params$m, sd = params$s)) + 
-  stat_qq_line(dparams = list(mean = params$m, sd = params$s)) + 
-  stat_qq_point(dparams = list(mean = params$m, sd = params$s)) +
-  customization
+sample\_ia \%\textgreater{}\% ggplot(aes(sample = HTIN4, colour=Gender,
+fill=Gender)) + stat\_qq\_band(bandType = ``ts'', alpha = 0.4, dparams =
+list(mean = params\(m, sd = params\)s)) + stat\_qq\_point(dparams =
+list(mean = params\(m, sd = params\)s)) + customization
 
-sample_ia %>% 
-  mutate(HTIN4.jitter = jitter(HTIN4, factor = 2)) %>% 
-  ggplot(aes(sample = HTIN4.jitter, colour = Gender, fill = Gender)) + 
-  stat_qq_band(bandType = "ts",
-               alpha = 0.4,
-               dparams = list(mean = params$m, sd = params$s)) +
-  stat_qq_line(dparams = list(mean = params$m, sd = params$s)) + 
-  stat_qq_point(dparams = list(mean = params$m, sd = params$s)) +
-  customization +
-  ylab("Jittered Height (in.)") 
-\end{Sinput}
+sample\_ia \%\textgreater{}\% mutate(HTIN4.jitter = jitter(HTIN4, factor
+= 2)) \%\textgreater{}\% ggplot(aes(sample = HTIN4.jitter, colour =
+Gender, fill = Gender)) + stat\_qq\_band(bandType = ``ts'', alpha = 0.4,
+dparams = list(mean = params\(m, sd = params\)s)) +
+stat\_qq\_line(dparams = list(mean = params\(m, sd = params\)s)) +
+stat\_qq\_point(dparams = list(mean = params\(m, sd = params\)s)) +
+customization + ylab(``Jittered Height (in.)'')
+\textbackslash{}end\{Sinput\}
+
 \begin{figure}
 
 {\centering \includegraphics[width=0.4\linewidth]{loy-figures/heights-1} \includegraphics[width=0.4\linewidth]{loy-figures/heights-2} 
@@ -730,7 +721,8 @@ sample_ia %>%
 
 \caption[Q-Q plots comparing the raw (left) and jittered (right) heights to a normal distribution for a sample of 200 men and 200 women]{Q-Q plots comparing the raw (left) and jittered (right) heights to a normal distribution for a sample of 200 men and 200 women. The distribution on the left is dominated by the discreteness of the data. On the right, using a normal distribution to model people's height is not completely absurd, except for a few extreme outliers.}\label{fig:heights}
 \end{figure}
-\end{Schunk}
+
+\textbackslash{}end\{Schunk\}
 
 Notice that the same theoretical normal distribution was fit to both
 genders as specified in \texttt{dparams}. If we had used the default,
@@ -768,34 +760,28 @@ Total & 66.99 & 4.18 & 8.98 & 0.24\\
 
 Unlike respondents' heights, their weights do not seem to be normally
 distributed. Figure \ref{fig:weights} shows two Q-Q plots of these data.
-\hh{For both, distributional parameters are estimated separately for each group. This means that for each group we compare against its theoretical distribution shown as the identity line.}
-The Q-Q plot on the left compares raw weights to a normal distribution.
-We see that tails of the observed distribution are heavier than expected
-under a normal distribution. On the right, weights are log-transformed.
-We see that using a normal distribution for each gender appears to be
-reasonable, with the exception of a few extreme outliers. The code used
-to create Figure \ref{fig:weights} is shown below:
+For both, distributional parameters are estimated separately for each
+group. This means that for each group we compare against its theoretical
+distribution shown as the identity line. The Q-Q plot on the left
+compares raw weights to a normal distribution. We see that tails of the
+observed distribution are heavier than expected under a normal
+distribution. On the right, weights are log-transformed. We see that
+using a normal distribution for each gender appears to be reasonable,
+with the exception of a few extreme outliers. The code used to create
+Figure \ref{fig:weights} is shown below:
 
-\begin{Schunk}
-\begin{Sinput}
-sample_ia %>% 
-  ggplot(aes(sample = WTKG3 / 100, colour = Gender, fill = Gender)) + 
-  geom_abline(colour="grey40") +
-  stat_qq_band(bandType = "ts", alpha = 0.4) + 
-  stat_qq_line() + 
-  stat_qq_point() +
-  customization +
-  ylab("Weight (kg.)")
+\textbackslash{}begin\{Schunk\} \textbackslash{}begin\{Sinput\}
+sample\_ia \%\textgreater{}\% ggplot(aes(sample = WTKG3 / 100, colour =
+Gender, fill = Gender)) + geom\_abline(colour = ``grey40'') +
+stat\_qq\_band(bandType = ``ts'', alpha = 0.4) + stat\_qq\_line() +
+stat\_qq\_point() + customization + ylab(``Weight (kg.)'')
 
-sample_ia %>% 
-  ggplot(aes(sample = log(WTKG3/100), colour=Gender, fill=Gender)) + 
-  geom_abline(colour="grey40") +
-  stat_qq_band(bandType = "ts", alpha = 0.4) + 
-  stat_qq_line() + 
-  stat_qq_point() +
-  customization +
-  ylab("log Weight (kg.)")
-\end{Sinput}
+sample\_ia \%\textgreater{}\% ggplot(aes(sample = log(WTKG3/100),
+colour=Gender, fill=Gender)) + geom\_abline(colour = ``grey40'') +
+stat\_qq\_band(bandType = ``ts'', alpha = 0.4) + stat\_qq\_line() +
+stat\_qq\_point() + customization + ylab(``log Weight (kg.)'')
+\textbackslash{}end\{Sinput\}
+
 \begin{figure}
 
 {\centering \includegraphics[width=0.4\linewidth]{loy-figures/weights-1} \includegraphics[width=0.4\linewidth]{loy-figures/weights-2} 
@@ -804,7 +790,8 @@ sample_ia %>%
 
 \caption[Q-Q plots comparing weights to a normal distribution for a sample of 200 men and 200 women]{Q-Q plots comparing weights to a normal distribution for a sample of 200 men and 200 women. Unlike people's height, weight seems to be right skewed with some additional outliers in the left tail (left plot). On the right, weight was log-transfomed before its distribution is compared to a theoretical normal. }\label{fig:weights}
 \end{figure}
-\end{Schunk}
+
+\textbackslash{}end\{Schunk\}
 
 Instead of log-transforming the observed weights, we can change the
 theoretical distribution to a lognormal. Figure \ref{fig:weights-log}
@@ -812,20 +799,16 @@ shows two lognormal Q-Q plots, one for each gender. Note the MLEs are
 used to parameterize the lognormal distribution for each group since
 \texttt{dparams} is not specified:
 
-\begin{Schunk}
-\begin{Sinput}
-sample_ia %>% 
-  ggplot(aes(sample = WTKG3 / 100, colour = Gender, fill = Gender)) +
-  geom_abline(colour = "grey40") +
-  stat_qq_band(bandType = "ks", distribution = "lnorm", alpha = 0.4) +
-  stat_qq_line(distribution = "lnorm") +
-  stat_qq_point(distribution = "lnorm") +
-  customization +
-  facet_grid(. ~ Gender) +
-  xlab("Lognormal quantiles") +
-  ylab("Weight (kg.)") +
-  theme(legend.position = c(0.9, 0.2))
-\end{Sinput}
+\textbackslash{}begin\{Schunk\} \textbackslash{}begin\{Sinput\}
+sample\_ia \%\textgreater{}\% ggplot(aes(sample = WTKG3 / 100, colour =
+Gender, fill = Gender)) + geom\_abline(colour = ``grey40'') +
+stat\_qq\_band(bandType = ``ks'', distribution = ``lnorm'', alpha = 0.4)
++ stat\_qq\_line(distribution = ``lnorm'') +
+stat\_qq\_point(distribution = ``lnorm'') + customization +
+facet\_grid(. \textasciitilde{} Gender) + xlab(``Lognormal quantiles'')
++ ylab(``Weight (kg.)'') + theme(legend.position = c(0.9, 0.2))
+\textbackslash{}end\{Sinput\}
+
 \begin{figure}
 
 {\centering \includegraphics[width=0.9\linewidth]{loy-figures/weights-log-1} 
@@ -834,9 +817,11 @@ sample_ia %>%
 
 \caption[Q-Q plots comparing weights to a lognormal distribution for a sample of 200 men and 200 women]{Q-Q plots comparing weights to a lognormal distribution for a sample of 200 men and 200 women. The parameters are estimated separately for each gender to specify the lognormal reference distribution for each gender.}\label{fig:weights-log}
 \end{figure}
-\end{Schunk}
 
-\subsection{Discussion}\label{discussion}
+\textbackslash{}end\{Schunk\}
+
+\hypertarget{discussion}{%
+\subsection{Discussion}\label{discussion}}
 
 This paper presented the \pkg{qqplotr} package, an extension of
 \pkg{ggplot2} that implements Q-Q plots in both the standard and
@@ -878,11 +863,13 @@ parameters, and once for comparison.
 
 \bibliography{loy}
 
-\subsection{Acknowledgements}\label{acknowledgements}
+\hypertarget{acknowledgements}{%
+\subsection{Acknowledgements}\label{acknowledgements}}
 
 This work was partially funded by Google Summer of Code 2017.
 
-\section{Changes}\label{changes}
+\hypertarget{changes}{%
+\section{Changes}\label{changes}}
 
 \begin{itemize}
 \tightlist
