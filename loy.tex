@@ -69,12 +69,18 @@ aid in distributional assessment. A reference line is often added to a
 Q-Q plot to help detection of departures from the proposed model. This
 line is often drawn either by tracing the identity line or by connecting
 two pairs of quantiles, such as the first and third quartiles, which is
-known as the Q-Q line. Pointwise or simultaneous confidence bands are
-also frequently built around the reference line to display the expected
-degree of sampling error for the proposed model. Such bands help gauge
-how troubling a departure from the proposed model may be. Figure
+known as the Q-Q line. Pointwise or simultaneous confidence bands can be
+built around the reference line to display the expected degree of
+sampling error for the proposed model. Such bands help gauge how
+troubling a departure from the proposed model may be. Figure
 \ref{fig:ex-qq2} adds Q-Q lines and 95\% pointwise confidence bands to
-the Q-Q plots in Figure \ref{fig:ex-qq1}.
+the Q-Q plots in Figure \ref{fig:ex-qq1}. While confidence bands help
+analysts interpret Q-Q plots, this practice is less commonplace than it
+ought to be. One possible cause is that confidence bands are not
+implemented in all statistical software packages. Further, manual
+implementation can be tedious for the analyst, breaking the
+data-analytic flow---for example, a common simultaneous confidence band
+relies on an inversion of the Kolmogorov-Smirnov test.
 
 \begin{Schunk}
 \begin{figure}
@@ -163,9 +169,9 @@ describe each transformation.
 This modified version of \texttt{stat\_qq}/\texttt{geom\_qq} (from
 \pkg{ggplot2}) plots the sample quantiles against the theoretical
 quantiles (as in Figure \ref{fig:ex-qq1}). The novelty of this
-implementation is the ability to create a detrend version of the plotted
-points. All other transformations in \pkg{qqplotr} also allow for the
-detrend option. Below we present a complete call to
+implementation is the ability to create a detrended version of the
+plotted points. All other transformations in \pkg{qqplotr} also allow
+for the detrend option. Below we present a complete call to
 \texttt{stat\_qq\_point} and highlight the default values of its
 parameters:
 
@@ -214,8 +220,7 @@ stat_qq_point(data = NULL,
   MLEs. Please note that MLEs are currently only supported for
   distributions available in \pkg{stats}, so if a custom distribution is
   provided to \texttt{distribution}, then \emph{all} of its parameters
-  must be estimated and passed on to as a named list to
-  \texttt{dparams}.
+  must be estimated and passed as a named list to \texttt{dparams}.
 \item
   \texttt{detrend} is a logical that controls whether the points should
   be detrended (as in Figure \ref{fig:ex-detrend}), producing ordinary
@@ -224,7 +229,7 @@ stat_qq_point(data = NULL,
   plots, see the \nameref{sec:detrending} section.
 \item
   \texttt{identity} is a logical value only used in the case of
-  detrending i.e., if \texttt{detrend\ =\ TRUE}. If
+  detrending---that is, if \texttt{detrend\ =\ TRUE}. If
   \texttt{identity\ =\ FALSE} (default), then the points will be
   detrended according to the traditional Q-Q line that intersects the
   two data quantiles specified by \code{qprobs} (see below). If
@@ -327,7 +332,7 @@ stat_qq_band(data = NULL,
              identity = FALSE,
              qtype = 7,
              qprobs = c(0.25, 0.75),
-             bandType = "normal",
+             bandType = "pointwise",
              B = 1000,
              conf = 0.95,
              mu = NULL,
@@ -343,7 +348,7 @@ stat_qq_band(data = NULL,
   \begin{itemize}
   \tightlist
   \item
-    \textbf{Simultaneous}: Specifying \texttt{bandType\ =\ "dkw"}
+    \textbf{Simultaneous}: Specifying \texttt{bandType\ =\ "ks"}
     constructs simultaneous confidence bands based on an inversion of
     the Kolmogorov-Smirnov test. For an i.i.d. sample from CDF \(F\),
     the Dvoretzky-Kiefer-Wolfowitz (DKW) inequality
@@ -422,7 +427,7 @@ The use of groups is illustrated in more detail in the
 \label{sec:examples}
 
 In this section, we demonstrate the capabilities of \pkg{qqplotr} by
-providing multiple examples on how the package can be used. We start by
+providing multiple examples of how the package can be used. We start by
 loading the package:
 
 \begin{Schunk}
@@ -452,12 +457,13 @@ region represents the area between the normal pointwise confidence
 bands. As we can see, the distribution of urine pH measurements is
 somewhat right-skewed.
 
-\begin{verbatim}
-library(dplyr) # for using `%>%` and some data transformation later
+\begin{Schunk}
+\begin{Sinput}
+library(dplyr) # for using `%>%` and later data transformation
 data(urine, package = "boot")
 urine %>% 
   ggplot(aes(sample = ph)) + 
-  stat_qq_band(bandType = "normal", fill = "#8DA0CB", alpha = 0.4) + 
+  stat_qq_band(bandType = "pointwise", fill = "#8DA0CB", alpha = 0.4) + 
   stat_qq_line(colour = "#8DA0CB") +
   stat_qq_point() +
   ggtitle("Normal") +
@@ -465,7 +471,8 @@ urine %>%
   ylab("pH measurements quantiles") +
   theme_light() +
   ylim(3.2, 8.7)
-\end{verbatim}
+\end{Sinput}
+\end{Schunk}
 
 Figure \ref{fig:urine-qq-bands} also provides an overview of
 \pkg{qqplotr}'s capabilities:
@@ -510,20 +517,19 @@ distributions}\label{user-provided-distributions}
 
 Using the capabilities of \pkg{qqplotr} with the distributions
 implemented in \pkg{stats} is relatively straightfoward, since the
-implementation allows you to specify the suffix (i.e., distribution and
-or abbreviation) via the \texttt{distribution} argument and the
-parameter estimates via the \texttt{dparams} argument. However, there
-are times when the distributions in \pkg{stats} are not sufficient for
-the demands of the analysis. For example, there is no left-skewed
-distribution listed aside from the Beta Distribution, which has a
-restrictive support. User-coded distributions, or distributions from
-other packages, can be used with \pkg{qqplotr} as long as the
-distributions are defined following the conventions laid out in
-\pkg{stats}. Specfically, for some distribution there must be
-density/mass (\texttt{d} prefix), CDF (\texttt{p} prefix), quantile
-(\texttt{q} prefix), and simulation (\texttt{r} prefix) functions. In
-this section, we illustrate the use of the smallest extreme value
-distribution (SEV).
+implementation allows you to specify the suffix (i.e., distribution or
+abbreviation) via the \texttt{distribution} argument and the parameter
+estimates via the \texttt{dparams} argument. However, there are times
+when the distributions in \pkg{stats} are not sufficient for the demands
+of the analysis. For example, there is no left-skewed distribution
+listed aside from the Beta Distribution, which has a restrictive
+support. User-coded distributions, or distributions from other packages,
+can be used with \pkg{qqplotr} as long as the distributions are defined
+following the conventions laid out in \pkg{stats}. Specfically, for some
+distribution there must be density/mass (\texttt{d} prefix), CDF
+(\texttt{p} prefix), quantile (\texttt{q} prefix), and simulation
+(\texttt{r} prefix) functions. In this section, we illustrate the use of
+the smallest extreme value distribution (SEV).
 
 To qualify for the 2012 Olympics in the men's long jump, athletes had to
 meet/exceed the 8.1 meter standard or place in the top twelve. During
@@ -863,7 +869,7 @@ Further, in the BRFSS example, we illustrated how jittering can be used
 in Q-Q plots to better compare discretized data to a continuous
 distribution.
 
-While \pkg{qqplotr} provides a complete implementation of Q-Q plot,
+While \pkg{qqplotr} provides a complete implementation of the Q-Q plot,
 there is room for development in future versions. For example, Q-Q plots
 are members of the larger probability plotting family, so future
 versions of \pkg{qqplotr} will likely include additional members of that
@@ -895,29 +901,8 @@ parameters, and once for comparison.
 
 \subsection{Acknowledgements}\label{acknowledgements}
 
-This work was partially funded by Google Summer of Code 2017.
-
-\section{Changes}\label{changes}
-
-\begin{itemize}
-\tightlist
-\item
-  changed sample size in the first couple of examples from 20 to 35
-\item
-  added Davison reference for point-wise confidence intervals
-\item
-  added references to sine illusion, robbins and cleveland for detrended
-  plots (argument in favor of detrended version wrt to assessment of
-  distances)
-\item
-  removed the comparison to the dark line in Fig 9
-\item
-  first stab at changing figure 10
-\item
-  Added details for the Kolmogorov-type simultaneous confidence band
-\item
-  Using more simultaneous bands in the paper, as suggested
-\end{itemize}
+This work was partially funded by Google Summer of Code 2017. We thank
+the reviewers for their helpful comments and suggestions.
 
 \address{%
 Alexandre Almeida\\

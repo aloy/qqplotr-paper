@@ -65,7 +65,7 @@ ggplot(data = rand_sample, mapping = aes(sample = rs)) +
   theme_light()
 ```
 
-Additional graphical elements are often added to Q-Q plots in order to aid in distributional assessment. A reference line is often added to a Q-Q plot to help detection of departures from the proposed model. This line is often drawn either by tracing the identity line or by connecting two pairs of quantiles, such as the first and third quartiles, which is known as the Q-Q line. Pointwise or simultaneous confidence bands are also frequently built around the reference line to display the expected degree of sampling error for the proposed model. Such bands help gauge how troubling a departure from the proposed model may be. Figure \ref{fig:ex-qq2} adds Q-Q lines and 95% pointwise confidence bands to the Q-Q plots in Figure \ref{fig:ex-qq1}.
+Additional graphical elements are often added to Q-Q plots in order to aid in distributional assessment. A reference line is often added to a Q-Q plot to help detection of departures from the proposed model. This line is often drawn either by tracing the identity line or by connecting two pairs of quantiles, such as the first and third quartiles, which is known as the Q-Q line. Pointwise or simultaneous confidence bands can be built around the reference line to display the expected degree of sampling error for the proposed model. Such bands help gauge how troubling a departure from the proposed model may be. Figure \ref{fig:ex-qq2} adds Q-Q lines and 95% pointwise confidence bands to the Q-Q plots in Figure \ref{fig:ex-qq1}. While confidence bands help analysts interpret Q-Q plots, this practice is less commonplace than it ought to be. One possible cause is that confidence bands are not implemented in all statistical software packages. Further, manual implementation can be tedious for the analyst, breaking the data-analytic flow---for example, a common simultaneous confidence band relies on an inversion of the Kolmogorov-Smirnov test.
 
 ```{r ex-qq2, echo=FALSE, message=FALSE, out.width='.4\\linewidth', fig.width=3.5, fig.height=3.5, fig.show='hold', fig.align='center', fig.cap="Adding reference lines and $95\\%$ pointwise confidence bands to the Q-Q plots in Figure 1."}
 ggplot(data = rand_sample, mapping = aes(sample = rs)) +
@@ -127,7 +127,7 @@ The \pkg{qqplotr} package extends \pkg{ggplot2} to provide a complete implementa
 
 ### `stat_qq_point`
 
-This modified version of `stat_qq`/`geom_qq` (from \pkg{ggplot2}) plots the sample quantiles against the theoretical quantiles (as in Figure \ref{fig:ex-qq1}). The novelty of this implementation is the ability to create a detrend version of the plotted points. All other transformations in \pkg{qqplotr} also allow for the detrend option. 
+This modified version of `stat_qq`/`geom_qq` (from \pkg{ggplot2}) plots the sample quantiles against the theoretical quantiles (as in Figure \ref{fig:ex-qq1}). The novelty of this implementation is the ability to create a detrended version of the plotted points. All other transformations in \pkg{qqplotr} also allow for the detrend option. 
 Below we present a complete call to `stat_qq_point` and highlight the default values of its parameters:
 
 ```{r eval=FALSE}
@@ -151,11 +151,11 @@ stat_qq_point(data = NULL,
 
 * `distribution` is a character string that sets the theoretical probability distribution. Here, we followed the nomenclature from the \pkg{stats} package, but rather than requiring the full function name for a distribution (e.g., `"dnorm"`), only the suffix is required (e.g., `"norm"`). If you wish to provide a custom distribution, then you must first create its density (PDF), distribution (CDF), quantile, and simulation functions, following the nomenclature outlined in \pkg{stats}. For example, to create the `"custom"` distribution, you must provide the appropriate `dcustom`, `pcustom`, `qcustom`, and `rcustom` functions. A detailed example is given in the \nameref{sec:user-dists} section.
 
-* `dparams` is a named list specifying the parameters of the proposed `distribution`. By default, maximum likelihood etimates (MLEs) are used, so specifying this argument overrides the MLEs. Please note that MLEs are currently only supported for distributions available in \pkg{stats}, so if a custom distribution is provided to `distribution`, then *all* of its parameters must be estimated and passed on to as a named list to `dparams`.
+* `dparams` is a named list specifying the parameters of the proposed `distribution`. By default, maximum likelihood etimates (MLEs) are used, so specifying this argument overrides the MLEs. Please note that MLEs are currently only supported for distributions available in \pkg{stats}, so if a custom distribution is provided to `distribution`, then *all* of its parameters must be estimated and passed as a named list to `dparams`.
 
 * `detrend` is a logical that controls whether the points should be detrended (as in Figure \ref{fig:ex-detrend}), producing ordinary detrended Q-Q plots. For additional details on how to use this parameter and produce the more powerful *adjusted* detrended Q-Q plots, see the \nameref{sec:detrending} section.
 
-* `identity` is a logical value only used in the case of detrending i.e., if `detrend = TRUE`. If `identity = FALSE` (default), then the points will be detrended according to the traditional Q-Q line that intersects the two data quantiles specified by \code{qprobs} (see below). If `identity = TRUE`, the identity line will be used instead as the reference line when constructing the detrended Q-Q plot.
+* `identity` is a logical value only used in the case of detrending---that is, if `detrend = TRUE`. If `identity = FALSE` (default), then the points will be detrended according to the traditional Q-Q line that intersects the two data quantiles specified by \code{qprobs} (see below). If `identity = TRUE`, the identity line will be used instead as the reference line when constructing the detrended Q-Q plot.
 
 * `qtype` and `qprobs` are only used when `detrend = TRUE` *and* `identity = FALSE`. These parameters are passed on to the `type` and `probs` parameters of the `quantile` function from \pkg{stats}, both of which are used to specify which quantiles are used to form the Q-Q line.
 
@@ -278,7 +278,7 @@ The use of groups is illustrated in more detail in the \nameref{sec:brfss} secti
 ## Examples
 \label{sec:examples}
 
-In this section, we demonstrate the capabilities of \pkg{qqplotr} by providing multiple examples on how the package can be used. We start by loading the package:
+In this section, we demonstrate the capabilities of \pkg{qqplotr} by providing multiple examples of how the package can be used. We start by loading the package:
 
 ```{r, message=FALSE}
 library(qqplotr)
@@ -291,7 +291,7 @@ To give a brief introduction on how to use \pkg{qqplotr} and its transformations
 We start by creating a normal Q-Q plot of the data. The top-left plot in Figure \ref{fig:urine-qq-bands} shows a Q-Q plot comparing the pH measurements to the normal distribution. The code used to create this plot is shown below. As previously noted, the parameters of the normal distribution are automatically estimated using the MLEs when the parameters are not specified otherwise in `dparams`. The shaded region represents the area between the normal pointwise confidence bands. As we can see, the distribution of urine pH measurements is somewhat right-skewed.
 
 ```{r eval=FALSE}
-library(dplyr) # for using `%>%` and some data transformation later
+library(dplyr) # for using `%>%` and later data transformation
 data(urine, package = "boot")
 urine %>% 
   ggplot(aes(sample = ph)) + 
@@ -423,7 +423,7 @@ grid.arrange(p11, p12, p13,
 ### User-provided distributions
 \label{sec:user-dists}
 
-Using the capabilities of \pkg{qqplotr} with the distributions implemented in \pkg{stats} is relatively straightfoward, since the implementation allows you to specify the suffix (i.e., distribution and or abbreviation) via the `distribution` argument and the parameter estimates via the `dparams` argument. However, there are times when the distributions in \pkg{stats} are not sufficient for the demands of the analysis. For example, there is no left-skewed distribution listed aside from the Beta Distribution, which has a restrictive support. User-coded distributions, or distributions from other packages, can be used with \pkg{qqplotr} as long as the distributions are defined following the conventions laid out in \pkg{stats}. Specfically, for some distribution there must be density/mass (`d` prefix), CDF (`p` prefix), quantile (`q` prefix), and simulation (`r` prefix) functions. In this section, we illustrate the use of the smallest extreme value distribution (SEV).
+Using the capabilities of \pkg{qqplotr} with the distributions implemented in \pkg{stats} is relatively straightfoward, since the implementation allows you to specify the suffix (i.e., distribution or abbreviation) via the `distribution` argument and the parameter estimates via the `dparams` argument. However, there are times when the distributions in \pkg{stats} are not sufficient for the demands of the analysis. For example, there is no left-skewed distribution listed aside from the Beta Distribution, which has a restrictive support. User-coded distributions, or distributions from other packages, can be used with \pkg{qqplotr} as long as the distributions are defined following the conventions laid out in \pkg{stats}. Specfically, for some distribution there must be density/mass (`d` prefix), CDF (`p` prefix), quantile (`q` prefix), and simulation (`r` prefix) functions. In this section, we illustrate the use of the smallest extreme value distribution (SEV).
 
 To qualify for the 2012 Olympics in the men's long jump, athletes had to meet/exceed the 8.1 meter standard or place in the top twelve. During the qualification events, each athlete was able to jump up to three times, using their best (i.e., longest) jump as the result. Figure \ref{fig:jump-density} shows a density plot of the results, which is clearly left skewed.
 
@@ -642,7 +642,7 @@ sample_ia %>%
 
 This paper presented the \pkg{qqplotr} package, an extension of \pkg{ggplot2} that implements Q-Q plots in both the standard and detrended orientations, along with reference lines and confidence bands. The examples illustrated how to create Q-Q plots for non-standard distributions found outside of the \pkg{stats} package, how to create detrended Q-Q plots, and how to create Q-Q plots when data are grouped. Further, in the BRFSS example, we illustrated how jittering can be used in Q-Q plots to better compare discretized data to a continuous distribution.
 
-While \pkg{qqplotr} provides a complete implementation of Q-Q plot, there is room for development in future versions. For example, Q-Q plots are members of the larger probability plotting family, so future versions of \pkg{qqplotr} will likely include additional members of that family.
+While \pkg{qqplotr} provides a complete implementation of the Q-Q plot, there is room for development in future versions. For example, Q-Q plots are members of the larger probability plotting family, so future versions of \pkg{qqplotr} will likely include additional members of that family.
 
 <!--incorporate additional plots. Specifically, two types of probability plots will be included:
 
@@ -774,13 +774,3 @@ ggplot(data.frame(x = chisq1), aes(sample = x)) +
   xlab("Theoretical quantiles") +
   xlab("Sample quantiles")
 ``` --->
-
-# Changes
-
-- changed sample size in the first couple of examples from 20 to 35
-- added Davison reference for point-wise confidence intervals
-- added references to sine illusion, robbins and cleveland for detrended plots (argument in favor of detrended version wrt to assessment of distances)
-- removed the comparison to the dark line in Fig 9
-- first stab at changing figure 10 
-- Added details for the Kolmogorov-type simultaneous confidence band
-- Using more simultaneous bands in the paper, as suggested
